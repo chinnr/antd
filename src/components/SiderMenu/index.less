@@ -6,15 +6,15 @@
   line-height: 64px;
   padding-left: (@menu-collapsed-width - 32px) / 2;
   transition: all .3s;
-  background: #002140;
+  background: #fff;
   overflow: hidden;
   img {
-    display: inline-block;
+    display: block;
     vertical-align: middle;
-    height: 32px;
+    height: 72px;
   }
   h1 {
-    color: #fff;
+    color: rgba(0, 21, 41, .35);
     display: inline-block;
     vertical-align: middle;
     font-size: 20px;
@@ -37,7 +37,7 @@
 }
 
 :global {
-  .drawer .drawer-content {
-    background: #001529;
+  .ant-layout-sider, .drawer .drawer-content {
+    background: #fff;
   }
 }

@@ -14,7 +14,7 @@ import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo1.jpg';
 
 const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
@@ -92,9 +92,9 @@ class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = 'Ant Design Pro';
+    let title = '白浪岛后台管理系统';
     if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - Ant Design Pro`;
+      title = `${routerData[pathname].name} - 白浪岛后台管理系统`;
     }
     return title;
   }
@@ -202,25 +202,10 @@ class BasicLayout extends React.PureComponent {
             </Switch>
           </Content>
           <GlobalFooter
-            links={[{
-              key: 'Pro 首页',
-              title: 'Pro 首页',
-              href: 'http://pro.ant.design',
-              blankTarget: true,
-            }, {
-              key: 'github',
-              title: <Icon type="github" />,
-              href: 'https://github.com/ant-design/ant-design-pro',
-              blankTarget: true,
-            }, {
-              key: 'Ant Design',
-              title: 'Ant Design',
-              href: 'http://ant.design',
-              blankTarget: true,
-            }]}
+            links={[]}
             copyright={
               <div>
-                Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+                Copyright <Icon type="copyright" /> 2018 BrownseaIslandYouth Standard
               </div>
             }
           />
