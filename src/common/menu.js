@@ -147,6 +147,11 @@ const menuData = [
         // hideInMenu: true,
       },
       {
+        name: '新建模板',
+        path: 'create-template',
+        hideInMenu: true,
+      },
+      {
         name: '兴趣课模板管理',
         path: 'interest-template'
       },

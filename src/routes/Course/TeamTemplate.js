@@ -1,6 +1,19 @@
 import React, { PureComponent } from 'react';
-import { Card, Form, Table, Input, Popconfirm, Divider, Button, Icon, Modal, Select } from 'antd';
+import {
+  Card,
+  Form,
+  Table,
+  Input,
+  Popconfirm,
+  Divider,
+  Button,
+  Icon,
+  Modal,
+  Select
+} from 'antd';
 import { connect } from 'dva';
+import { Link } from 'dva/router';
+
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const FormItem = Form.Item;
@@ -9,10 +22,15 @@ const Option = Select.Option;
 const data = [];
 const EditableCell = ({ editable, value, onChange }) => (
   <div>
-    {editable
-      ? <Input style={{ margin: '-5px 0' }} value={value} onChange={e => onChange(e.target.value)} />
-      : value
-    }
+    {editable ? (
+      <Input
+        style={{ margin: '-5px 0' }}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+      />
+    ) : (
+      value
+    )}
   </div>
 );
 
@@ -20,14 +38,46 @@ for (let i = 0; i < 100; i++) {
   data.push({
     key: i.toString(),
     name: `团集会 ${i}`,
-    theme: `团集会课程主题 {i}`,
+    theme: `团集会课程主题 ${i}`,
     createdAt: '2017-60-08',
-    address: `London Park no. ${i}`,
+    address: `London Park no. ${i}`
   });
 }
 
+const expandedRowRender = () => {
+  const columns = [
+    { title: '持续时间', dataIndex: 'date', key: 'date' },
+    { title: '安排名称', dataIndex: 'name', key: 'name' },
+    { title: '内容', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+    { title: '物资道具', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      render: () => (
+        <span className="table-operation">
+          <a href="#">向上</a>
+          <Divider type="vertical" />
+          <a href="#">向下</a>
+        </span>
+      )
+    }
+  ];
+
+  const data = [];
+  for (let i = 0; i < 3; ++i) {
+    data.push({
+      key: i,
+      date: '2014-12-24 23:12:00',
+      name: 'This is production name',
+      upgradeNum: 'Upgraded: 56'
+    });
+  }
+  return <Table columns={columns} dataSource={data} pagination={false} />;
+};
+
 @connect(({ loading }) => ({
-  submitting: loading.effects['form/submitRegularForm'],
+  submitting: loading.effects['form/submitRegularForm']
 }))
 @Form.create()
 class TeamTemplate extends PureComponent {
@@ -42,25 +92,25 @@ class TeamTemplate extends PureComponent {
         title: '课程名称',
         dataIndex: 'name',
         width: '20%',
-        render: (text, record) => this.renderColumns(text, record, 'name'),
+        render: (text, record) => this.renderColumns(text, record, 'name')
       },
       {
         title: '课程主题',
         dataIndex: 'theme',
         width: '20%',
-        render: (text, record) => this.renderColumns(text, record, 'theme'),
+        render: (text, record) => this.renderColumns(text, record, 'theme')
       },
       {
         title: '创建时间',
         dataIndex: 'createdAt',
         width: '20%',
-        render: (text, record) => this.renderColumns(text, record, 'createdAt'),
+        render: (text, record) => this.renderColumns(text, record, 'createdAt')
       },
       {
         title: '课程环节',
         dataIndex: 'courseLink',
         width: '20%',
-        render: (text, record) => this.renderColumns(text, record, 'courseLink'),
+        render: (text, record) => this.renderColumns(text, record, 'courseLink')
       },
       {
         title: '操作',
@@ -69,24 +119,26 @@ class TeamTemplate extends PureComponent {
           const { editable } = record;
           return (
             <div className="editable-row-operations">
-              {
-                editable ?
-                  <span>
-                    <a onClick={() => this.save(record.key)}>保存</a>
-                    <Popconfirm title="是否取消编辑?" onConfirm={() => this.cancel(record.key)}>
-                      <a>取消</a>
-                    </Popconfirm>
-                  </span>
-                  :
-                  <div>
-                    <a onClick={() => this.edit(record.key)}>编辑</a>
-                    <Divider type="vertical" />
-                    <a onClick={() => this.edit(record.key)}>删除</a>
-                  </div>
-              }
+              {editable ? (
+                <span>
+                  <a onClick={() => this.save(record.key)}>保存</a>
+                  <Popconfirm
+                    title="是否取消编辑?"
+                    onConfirm={() => this.cancel(record.key)}
+                  >
+                    <a>取消</a>
+                  </Popconfirm>
+                </span>
+              ) : (
+                <div>
+                  <a onClick={() => this.edit(record.key)}>编辑</a>
+                  <Divider type="vertical" />
+                  <a onClick={() => this.edit(record.key)}>删除</a>
+                </div>
+              )}
             </div>
           );
-        },
+        }
       }
     ];
   }
@@ -143,7 +195,7 @@ class TeamTemplate extends PureComponent {
    */
   showModal = () => {
     this.setState({
-      visible: true,
+      visible: true
     });
   };
 
@@ -151,10 +203,10 @@ class TeamTemplate extends PureComponent {
    * 确认添加
    * @param e
    */
-  handleOk = (e) => {
+  handleOk = e => {
     console.log(e);
     this.setState({
-      visible: false,
+      visible: false
     });
   };
 
@@ -162,10 +214,10 @@ class TeamTemplate extends PureComponent {
    * 关闭弹窗
    * @param e
    */
-  handleCancel = (e) => {
+  handleCancel = e => {
     console.log(e);
     this.setState({
-      visible: false,
+      visible: false
     });
   };
 
@@ -178,8 +230,12 @@ class TeamTemplate extends PureComponent {
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
-          <span>请选择模板列表  </span>
-          <Select defaultValue="海狸课程" style={{ width: 120, marginRight: 20 }} onChange={()=>this.handleSelectChange()}>
+          <span>请选择模板列表 </span>
+          <Select
+            defaultValue="海狸课程"
+            style={{ width: 120, marginRight: 20 }}
+            onChange={() => this.handleSelectChange()}
+          >
             <Option value="海狸课程">海狸课程</Option>
             <Option value="小狼课程">小狼课程</Option>
             <Option value="乐扶课程">乐扶课程</Option>
@@ -190,10 +246,17 @@ class TeamTemplate extends PureComponent {
             style={{ width: 200, marginBottom: 20, marginRight: 20 }}
           />
           <Button type="primary" onClick={() => this.showModal()}>
-            添加
-            <Icon type="plus" />
+            <Link to="create-template">
+              添加
+              <Icon type="plus" />
+            </Link>
           </Button>
-          <Table bordered dataSource={this.state.data} columns={this.columns} />
+          <Table
+            bordered
+            dataSource={this.state.data}
+            expandedRowRender={expandedRowRender}
+            columns={this.columns}
+          />
         </Card>
         {/*添加课程课程的弹窗*/}
         <Modal
@@ -205,15 +268,20 @@ class TeamTemplate extends PureComponent {
           <Form onSubmit={this.handleSubmit}>
             <FormItem>
               {getFieldDecorator('type', {
-                rules: [{ required: true, message: '课程名称不能够为空!' }],
+                rules: [{ required: true, message: '课程名称不能够为空!' }]
               })(
-                <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="课程名称" />
+                <Input
+                  prefix={
+                    <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
+                  }
+                  placeholder="课程名称"
+                />
               )}
             </FormItem>
           </Form>
         </Modal>
       </PageHeaderLayout>
-    )
+    );
   }
 }
 

@@ -168,6 +168,9 @@ export const getRouterData = (app) => {
     },
     '/course/team-template': {
       component: dynamicWrapper(app, [], () => import('../routes/Course/TeamTemplate')),
+    },
+    '/course/create-template': {
+      component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
     }
   };
   // Get name from ./menu.js or just set it in the router data.
