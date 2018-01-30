@@ -2,6 +2,8 @@ import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 import pathToRegexp from 'path-to-regexp';
 import { getMenuData } from './menu';
+import InterestTemplate from "../routes/Course/InterestTemplate";
+import ActivityCourse from "../routes/Course/ActivityCourse";
 
 let routerDataCache;
 
@@ -168,6 +170,12 @@ export const getRouterData = (app) => {
     },
     '/course/team-template': {
       component: dynamicWrapper(app, [], () => import('../routes/Course/TeamTemplate')),
+    },
+    '/course/interest-template': {
+      component: dynamicWrapper(app, [], () => import('../routes/Course/InterestTemplate')),
+    },
+    '/course/activity': {
+      component: dynamicWrapper(app, [], () => import('../routes/Course/ActivityCourse')),
     },
     '/course/create-template': {
       component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
