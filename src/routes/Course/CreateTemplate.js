@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CourseInfo from './components/CourseInfo';
 import CourseIntroduce from './components/CourseIntroduce';
+import SignNote from './components/SignNote';
 import 'react-quill/dist/quill.snow.css';
 
 const TabPane = Tabs.TabPane;
@@ -22,14 +23,16 @@ class CreateTemplate extends PureComponent {
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
-          <Tabs defaultActiveKey="2" onChange={()=>this.handleTabChange()}>
+          <Tabs defaultActiveKey="3" onChange={()=>this.handleTabChange()}>
             <TabPane tab="课程信息" key="1">
               <CourseInfo />
             </TabPane>
             <TabPane tab="课程介绍" key="2">
               <CourseIntroduce />
             </TabPane>
-            <TabPane tab="报名须知" key="3">报名须知</TabPane>
+            <TabPane tab="报名须知" key="3">
+              <SignNote />
+            </TabPane>
             <TabPane tab="课程级别" key="4">课程级别</TabPane>
           </Tabs>
         </Card>

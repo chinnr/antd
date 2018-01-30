@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {Row, Col, Card} from 'antd';
-
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
 
-export default class CourseIntroduce extends Component {
+export default class SignNote extends Component {
   constructor(props) {
     super(props)
     this.state = {
