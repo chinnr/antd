@@ -30,7 +30,7 @@ class CreateTemplate extends PureComponent {
               <CourseIntroduce />
             </TabPane>
             <TabPane tab="报名须知" key="3">报名须知</TabPane>
-            <TabPane tab="课程级别" key="3">课程级别</TabPane>
+            <TabPane tab="课程级别" key="4">课程级别</TabPane>
           </Tabs>
         </Card>
       </PageHeaderLayout>
