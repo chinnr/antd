@@ -179,6 +179,12 @@ export const getRouterData = (app) => {
     },
     '/course/create-template': {
       component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
+    },
+    '/student/level-manage': {
+      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentLevelManage'))
+    },  
+    '/student/info-manage': {
+      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentInfoManage'))
     }
   };
   // Get name from ./menu.js or just set it in the router data.

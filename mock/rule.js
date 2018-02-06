@@ -17,6 +17,10 @@ for (let i = 0; i < 46; i += 1) {
     updatedAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     createdAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     progress: Math.ceil(Math.random() * 100),
+    name: `编号 ${i}`,
+    ageFrom: Math.floor(Math.random() * 25),
+    ageTo: Math.floor(Math.random() * 25),
+    comment: '备注',
   });
 }
 
