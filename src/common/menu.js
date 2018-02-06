@@ -223,8 +223,22 @@ const menuData = [
   {
     name: '内容管理',
     icon: 'dashboard',
-    path: 'content',
-    children: []
+    path: 'post',
+    children: [
+      {
+        name: '新建文章',
+        path: 'new'
+      },
+      {
+        name: '文章列表',
+        path: 'list'
+      },
+      {
+        name: '文章详情',
+        path: 'detail',
+        hideInMenu: true,
+      }
+    ]
   }
   ];
 
