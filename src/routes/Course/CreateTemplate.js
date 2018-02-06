@@ -6,7 +6,7 @@ import CourseInfo from './components/CourseInfo';
 import CourseIntroduce from './components/CourseIntroduce';
 import SignNote from './components/SignNote';
 import CourseLevel from './components/CourseLevel';
-import 'react-quill/dist/quill.snow.css';
+// import 'react-quill/dist/quill.snow.css';
 
 const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
