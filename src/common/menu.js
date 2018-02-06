@@ -184,13 +184,35 @@ const menuData = [
     name: '学员管理',
     icon: 'dashboard',
     path: 'student',
-    children: []
+    children: [
+      {
+        name: '学员级别管理',
+        path: 'level-manage'
+      },
+      {
+        name: '学员信息管理',
+        path: 'info-manage'
+      }
+    ]
   },
   {
     name: '证章管理',
     icon: 'dashboard',
     path: 'badge',
-    children: []
+    children: [
+      {
+        name: '证章类型管理',
+        path: 'badge-type'
+      },
+      {
+        name: '证章模型管理',
+        path: 'badge-model'
+      },
+      {
+        name: '证章学员管理',
+        path: 'badge-student'
+      }
+    ]
   },
   {
     name: '商城管理',

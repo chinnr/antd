@@ -180,6 +180,12 @@ export const getRouterData = (app) => {
     '/course/create-template': {
       component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
     },
+    '/student/level-manage': {
+      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentLevelManage'))
+    },
+    '/student/info-manage': {
+      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentInfoManage'))
+    },
     '/team/new': {
       component: dynamicWrapper(app, [], () => import('../routes/Team/NewTeam')),
     },
