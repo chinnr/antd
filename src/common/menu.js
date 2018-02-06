@@ -129,6 +129,21 @@ const menuData = [
     ],
   },
   {
+    name: '团队管理',
+    icon: 'dashboard',
+    path: 'team',
+    children: [
+      {
+        name: '新建团队',
+        path: 'new',
+      },
+      {
+        name: '团队列表',
+        path: 'list',
+      }
+     ]
+  },
+  {
     name: '课程管理',
     icon: 'dashboard',
     path: 'course',
