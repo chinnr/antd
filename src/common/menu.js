@@ -237,6 +237,11 @@ const menuData = [
         name: '文章详情',
         path: 'detail',
         hideInMenu: true,
+      },
+      {
+        name: '编辑文章',
+        path: 'edit',
+        hideInMenu: true,
       }
     ]
   }

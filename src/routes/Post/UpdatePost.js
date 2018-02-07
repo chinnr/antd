@@ -4,7 +4,6 @@ import {connect} from "dva";
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './NewPost.less';
 
-
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
@@ -13,11 +12,12 @@ const RadioGroup = Radio.Group;
 let postGallery;
 
 @connect(({post}) => ({post}))
-export default class NewPost extends Component {
+export default class UpdatePost extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       initialContent: '',
+      htmlContent: '',
       postGallery: [],
       title: "",  // 文章标题
       content: "", // 文章内容
@@ -33,7 +33,7 @@ export default class NewPost extends Component {
     console.log("param==>", param)
     const xhr = new XMLHttpRequest;
     const fd = new FormData();
-    const mediaLibrary = this.editorInstance.getMediaLibraryInstance();
+    const mediaLibrary = this.editorInstance.getMediaLibraryInstance()
 
     const successFn = (response) => {
       console.log("图片上传成功:", JSON.parse(xhr.responseText));
@@ -132,6 +132,27 @@ export default class NewPost extends Component {
     console.log("content==>", _content)
   };
 
+  // 获取某一篇文章
+  getPost = () => {
+    let _id;
+    if(this.props.location.query === undefined) {
+      // console.log("没有 query id, 获取存储的query id")
+      _id = localStorage.getItem("id");
+      this.props.dispatch({
+        type: "post/getPostDetail",
+        payload: {id: _id}
+      });
+    }else {
+      localStorage.setItem("id", "");
+      localStorage.setItem("id", this.props.location.query.id);
+      this.props.dispatch({
+        type: "post/getPostDetail",
+        payload: this.props.location.query
+      });
+      // console.log("有 query id")
+    }
+  };
+
   componentWillMount() {
     this.props.dispatch({
       type: 'post/getClasses',
@@ -139,17 +160,23 @@ export default class NewPost extends Component {
         limit: 10
       }
     });
+
+  }
+  componentDidMount() {
+    const {classes, post} = this.props.post;
+    this.getPost();
+    console.log("update post view props==>", classes, post);
   }
 
   render() {
-    const {classes} = this.props.post;
-    console.log("view props==>", classes);
+    const {classes, post} = this.props.post;
+    // console.log("view props==>", classes, post);
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
           <div>
             <h3>文章标题</h3>
-            <Input placeholder="请输入文章标题" onChange={(v)=>this.handleTitleChange(v)}/>
+            <Input placeholder="请输入文章标题" defaultValue={post.title} onChange={(v)=>this.handleTitleChange(v)}/>
           </div>
           <div>
             <h3>上传封面图片</h3>
@@ -175,23 +202,23 @@ export default class NewPost extends Component {
               }
             </RadioGroup>
           </div>
-        <div className="demo" id="demo" style={{borderWidth: 1, borderStyle:'solid', borderColor:'#979797'}}>
-          <BraftEditor
-            height={400}
-            viewWrapper={'#demo'}
-            placeholder={"请输入文章正文"}
-            ref={instance => this.editorInstance = instance}
-            language="zh"
-            contentFormat="html"
-            initialContent={this.state.initialContent}
-            onChange={(content) => this.handleChange(content)}
-            onHTMLChange={(html) => this.handleHTMLChange(html)}
-            media={{
-              image: true,
-              uploadFn: (param) => this.uploadFn(param)
-            }}
-          />
-        </div>
+          <div className="demo" id="demo" style={{borderWidth: 1, borderStyle:'solid', borderColor:'#979797'}}>
+            <BraftEditor
+              height={400}
+              viewWrapper={'#demo'}
+              placeholder={"请输入文章内容"}
+              ref={instance => this.editorInstance = instance}
+              language="zh"
+              contentFormat="html"
+              initialContent={post.content}
+              onChange={(content) => this.handleChange(content)}
+              onHTMLChange={(html) => this.handleHTMLChange(html)}
+              media={{
+                image: true,
+                uploadFn: (param) => this.uploadFn(param)
+              }}
+            />
+          </div>
           <Button type="primary" onClick={() => this.submitPost()}>提交</Button>
         </Card>
       </PageHeaderLayout>
