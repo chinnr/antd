@@ -109,11 +109,11 @@ export default class UpdatePost extends Component {
       cid: e.target.value
     })
   }
-  //createPost
+  //updatePost
   createPost = (values) => {
-    console.log("createPostArgv==>", values)
+    console.log("updatePost==>", values)
     this.props.dispatch({
-      type: "post/createPost",
+      type: "post/updatePost",
       payload: values
     })
   };

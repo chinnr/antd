@@ -8,11 +8,13 @@ import styles from './NewPost.less';
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
+import {Form} from "antd/lib/index";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 let postGallery;
 
 @connect(({post}) => ({post}))
+@Form.create()
 export default class NewPost extends Component {
   constructor(props) {
     super(props)
@@ -107,29 +109,24 @@ export default class NewPost extends Component {
       cid: e.target.value
     })
   }
+
   //createPost
-  createPost = (title, content, cid) => {
-    const createPostArgv = {
-      title: this.state.title,
-      content,
-      cid
-    };
-    console.log("createPostArgv==>", createPostArgv)
+  createPost = (values) => {
+    console.log("createPostArgv==>", values)
     this.props.dispatch({
       type: "post/createPost",
-      payload: createPostArgv
+      payload: values
     })
   };
 
   // 提交文章
   submitPost = () => {
-    const _content = this.editorInstance.getContent('html');
-    this.setState({
-      content: _content
-    }, () => {
-      this.createPost(this.state.post, this.state.title, this.state.cid);
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if(!err) {
+        console.log("values==>", values);
+        this.createPost(values);
+      }
     });
-    console.log("content==>", _content)
   };
 
   componentWillMount() {
@@ -142,6 +139,7 @@ export default class NewPost extends Component {
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form;
     const {classes} = this.props.post;
     console.log("view props==>", classes);
     return (
@@ -149,7 +147,11 @@ export default class NewPost extends Component {
         <Card bordered={false}>
           <div>
             <h3>文章标题</h3>
-            <Input placeholder="请输入文章标题" onChange={(v)=>this.handleTitleChange(v)}/>
+            {getFieldDecorator('title', {
+              initialValue: ""
+            })(
+              <Input placeholder="请输入文章标题" onChange={(v)=>this.handleTitleChange(v)}/>
+            )}
           </div>
           <div>
             <h3>上传封面图片</h3>
@@ -165,32 +167,38 @@ export default class NewPost extends Component {
           </div>
           <div style={{marginTop: 10, marginBottom: 10}}>
             <span style={{fontWeight: 'bold', fontSize: 16}}>文章类型: </span>
-            <RadioGroup onChange={(e) => this.onClassChange(e)} defaultValue={classes.length > 0 ? classes[0].id : ""}>
-              {
-                classes.map((item ,i)=> {
-                  return(
-                    <RadioButton key={item.id} value={item.id}>{item.name}</RadioButton>
-                  )
-                })
-              }
-            </RadioGroup>
+            {getFieldDecorator('cid', {
+              initialValue: classes.length > 0 ? classes[0].id : ""
+            })(
+              <RadioGroup onChange={(e) => this.onClassChange(e)}>
+                {
+                  classes.map((item ,i)=> {
+                    return(
+                      <RadioButton key={item.id} value={item.id}>{item.name}</RadioButton>
+                    )
+                  })
+                }
+              </RadioGroup>
+            )}
           </div>
         <div className="demo" id="demo" style={{borderWidth: 1, borderStyle:'solid', borderColor:'#979797'}}>
-          <BraftEditor
-            height={400}
-            viewWrapper={'#demo'}
-            placeholder={"请输入文章正文"}
-            ref={instance => this.editorInstance = instance}
-            language="zh"
-            contentFormat="html"
-            initialContent={this.state.initialContent}
-            onChange={(content) => this.handleChange(content)}
-            onHTMLChange={(html) => this.handleHTMLChange(html)}
-            media={{
-              image: true,
-              uploadFn: (param) => this.uploadFn(param)
-            }}
-          />
+          {getFieldDecorator('content')(
+            <BraftEditor
+              height={400}
+              viewWrapper={'#demo'}
+              placeholder={"请输入文章正文"}
+              ref={instance => this.editorInstance = instance}
+              language="zh"
+              contentFormat="html"
+              initialContent={this.state.initialContent}
+              onChange={(content) => this.handleChange(content)}
+              onHTMLChange={(html) => this.handleHTMLChange(html)}
+              media={{
+                image: true,
+                uploadFn: (param) => this.uploadFn(param)
+              }}
+            />
+          )}
         </div>
           <Button type="primary" onClick={() => this.submitPost()}>提交</Button>
         </Card>
