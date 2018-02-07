@@ -7,11 +7,13 @@ import styles from './NewPost.less';
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/braft.css'
+import {Form} from "antd/lib/index";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 let postGallery;
-
+let count = 0;
 @connect(({post}) => ({post}))
+@Form.create()
 export default class UpdatePost extends Component {
   constructor(props) {
     super(props);
@@ -94,7 +96,7 @@ export default class UpdatePost extends Component {
   };
   // 处理标题
   handleTitleChange = (e) => {
-    console.log("文章标题: ", e.target.value);
+    // console.log("文章标题: ", e.target.value);
     this.setState({
       title: e.target.value
     })
@@ -108,35 +110,29 @@ export default class UpdatePost extends Component {
     })
   }
   //createPost
-  createPost = (title, content, cid) => {
-    const createPostArgv = {
-      title: this.state.title,
-      content,
-      cid
-    };
-    console.log("createPostArgv==>", createPostArgv)
+  createPost = (values) => {
+    console.log("createPostArgv==>", values)
     this.props.dispatch({
       type: "post/createPost",
-      payload: createPostArgv
+      payload: values
     })
   };
 
   // 提交文章
   submitPost = () => {
-    const _content = this.editorInstance.getContent('html');
-    this.setState({
-      content: _content
-    }, () => {
-      this.createPost(this.state.post, this.state.title, this.state.cid);
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if(!err) {
+        console.log("values==>", values);
+        this.createPost(values);
+      }
     });
-    console.log("content==>", _content)
   };
 
   // 获取某一篇文章
   getPost = () => {
     let _id;
     if(this.props.location.query === undefined) {
-      // console.log("没有 query id, 获取存储的query id")
+      console.log("没有 query id, 获取存储的query id")
       _id = localStorage.getItem("id");
       this.props.dispatch({
         type: "post/getPostDetail",
@@ -149,11 +145,12 @@ export default class UpdatePost extends Component {
         type: "post/getPostDetail",
         payload: this.props.location.query
       });
-      // console.log("有 query id")
+      console.log("有 query id")
     }
   };
 
   componentWillMount() {
+    this.getPost();
     this.props.dispatch({
       type: 'post/getClasses',
       payload: {
@@ -162,21 +159,24 @@ export default class UpdatePost extends Component {
     });
 
   }
-  componentDidMount() {
-    const {classes, post} = this.props.post;
-    this.getPost();
-    console.log("update post view props==>", classes, post);
-  }
 
   render() {
+    const { getFieldDecorator } = this.props.form;
     const {classes, post} = this.props.post;
-    // console.log("view props==>", classes, post);
+    if(JSON.stringify(post).length > 2 && count < 2) {
+      this.editorInstance.setContent(post.content, 'html');
+      count ++ ;
+    }
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
           <div>
             <h3>文章标题</h3>
-            <Input placeholder="请输入文章标题" defaultValue={post.title} onChange={(v)=>this.handleTitleChange(v)}/>
+            {getFieldDecorator('title', {
+              initialValue: post.title
+            })(
+              <Input placeholder="请输入文章标题" onChange={(v)=>this.handleTitleChange(v)}/>
+            )}
           </div>
           <div>
             <h3>上传封面图片</h3>
@@ -192,32 +192,38 @@ export default class UpdatePost extends Component {
           </div>
           <div style={{marginTop: 10, marginBottom: 10}}>
             <span style={{fontWeight: 'bold', fontSize: 16}}>文章类型: </span>
-            <RadioGroup onChange={(e) => this.onClassChange(e)} defaultValue={classes.length > 0 ? classes[0].id : ""}>
-              {
-                classes.map((item ,i)=> {
-                  return(
-                    <RadioButton key={item.id} value={item.id}>{item.name}</RadioButton>
-                  )
-                })
-              }
-            </RadioGroup>
+            {getFieldDecorator('cid', {
+              initialValue: classes.length > 0 ? classes[0].id : ""
+            })(
+              <RadioGroup onChange={(e) => this.onClassChange(e)}>
+                {
+                  classes.map((item ,i)=> {
+                    return(
+                      <RadioButton key={item.id} value={item.id}>{item.name}</RadioButton>
+                    )
+                  })
+                }
+              </RadioGroup>
+            )}
           </div>
           <div className="demo" id="demo" style={{borderWidth: 1, borderStyle:'solid', borderColor:'#979797'}}>
-            <BraftEditor
-              height={400}
-              viewWrapper={'#demo'}
-              placeholder={"请输入文章内容"}
-              ref={instance => this.editorInstance = instance}
-              language="zh"
-              contentFormat="html"
-              initialContent={post.content}
-              onChange={(content) => this.handleChange(content)}
-              onHTMLChange={(html) => this.handleHTMLChange(html)}
-              media={{
-                image: true,
-                uploadFn: (param) => this.uploadFn(param)
-              }}
-            />
+            {getFieldDecorator('content')(
+              <BraftEditor
+                height={400}
+                viewWrapper={'#demo'}
+                placeholder={"请输入文章内容"}
+                ref={instance => this.editorInstance = instance}
+                language="zh"
+                contentFormat="html"
+                initialContent=''
+                onChange={(content) => this.handleChange(content)}
+                onHTMLChange={(html) => this.handleHTMLChange(html)}
+                media={{
+                  image: true,
+                  uploadFn: (param) => this.uploadFn(param)
+                }}
+              />
+            )}
           </div>
           <Button type="primary" onClick={() => this.submitPost()}>提交</Button>
         </Card>
