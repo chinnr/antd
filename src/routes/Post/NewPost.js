@@ -116,7 +116,7 @@ export default class NewPost extends Component {
     this.props.dispatch({
       type: "post/createPost",
       payload: values
-    })
+    }).catch(err => err)
   };
 
   // 提交文章

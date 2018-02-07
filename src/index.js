@@ -1,6 +1,7 @@
 import '@babel/polyfill';
 import 'url-polyfill';
 import dva from 'dva';
+import {notification} from "antd";
 
 import createHistory from 'history/createHashHistory';
 // user BrowserHistory
@@ -14,6 +15,12 @@ import './index.less';
 // 1. Initialize
 const app = dva({
   history: createHistory(),
+  onError(e) {
+    notification['error']({
+      message: '错误警告',
+      description: e.message,
+    });
+  }
 });
 
 // 2. Plugins

@@ -22,7 +22,7 @@ export default class PostList extends PureComponent {
       payload: {
         query: {limit:10},
       },
-    });
+    }).catch(err => err);
   }
 
   /**
@@ -52,7 +52,7 @@ export default class PostList extends PureComponent {
           isActive: false,
         }
       }
-    })
+    }).catch(err => err)
   };
 
   /**

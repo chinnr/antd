@@ -7,7 +7,6 @@ import moment from 'moment';
 import { Map, Marker } from 'react-amap';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './team.less';
-import Geolocation from 'react-amap-plugin-geolocation';
 
 
 const pluginProps = {
@@ -64,7 +63,7 @@ export default class NewTeam extends PureComponent {
           modalVisible: true,
         });
       })
-    });
+    }).catch(err => err);
 
   };
 
@@ -124,9 +123,9 @@ export default class NewTeam extends PureComponent {
                 "longitude": addressInfo.longitude,
                 "latitude": addressInfo.latitude
               }},
-          });
+          }).catch(err => err);
         }
-      });
+      }).catch(err => err);
 
     });
 
