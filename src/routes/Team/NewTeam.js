@@ -1,44 +1,137 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import {
-  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
+  Form, Input, DatePicker, Select, Button, Card, Modal
 } from 'antd';
 import moment from 'moment';
+import { Map, Marker } from 'react-amap';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './team.less';
+import Geolocation from 'react-amap-plugin-geolocation';
+
+
+const pluginProps = {
+  enableHighAccuracy:true,
+  timeout: 10000,
+  showButton: true
+}
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
-@connect(({ loading }) => ({
-  submitting: loading.effects['form/submitRegularForm'],
-}))
+@connect(({ team }) => ({team}))
 @Form.create()
 export default class NewTeam extends PureComponent {
+  constructor(){
+    super();
+    this.state = {
+      modalVisible: false,
+      visible: true,
+      position: {longitude: 108.291275, latitude: 22.869617 },
+      clickable: true,
+      draggable: true,
+      addr: ""
+    };
+    this.mapPlugins = ['ToolBar'];
+    this.markerEvents = {
+      click: () => {
+        console.log('marker clicked!')
+      },
+      dragend: (lnglat) => {
+        console.log("dragend.....", lnglat)
+      }
+    }
+  }
+
+  // 点击弹出地图
+  showModal = () => {
+    this.props.dispatch({
+      type: "team/addrInfo",
+      payload: {input: this.state.addr}
+    }).then(res => {
+      console.log("view res: ", res);
+      const {addressInfo} = res;
+      const _position = {
+        longitude: addressInfo.longitude,
+        latitude: addressInfo.latitude
+      };
+      this.setState({
+        position: _position
+      }, () => {
+        this.setState({
+          modalVisible: true,
+        });
+      })
+    });
+
+  };
+
+  // 点击弹窗确认
+  handleOk = (e) => {
+    // console.log(e);
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  // 点击弹窗取消
+  handleCancel = (e) => {
+    // console.log(e);
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  // 处理地址
+  handleAddrChange = (e) => {
+    console.log("处理地址...", e.target.value);
+    this.setState({addr: e.target.value})
+  };
+
+
   handleSubmit = (e) => {
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log("NewTeam==>", values);
-        const formHead = {username: values.username, password: values.password};
-        const formGroup = {
-          name: values.name,
-          province: "",
-          city: "",
-          district: "",
-          address: "",
-          longitude: "",
-          latitude: ""
-        };
-        this.props.dispatch({
-          type: 'form/submitRegularForm',
-          payload: values,
-        });
-      }
+    this.props.dispatch({
+      type: "team/addrInfo",
+      payload: {input: this.state.addr}
+    }).then(res => {
+      const {addressInfo} = res;
+      console.log("addressInfo==>", addressInfo);
+
+      this.props.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          console.log("NewTeam==>", values);
+
+          this.props.dispatch({
+            type: 'team/createTeam',
+            payload: {
+              "formHead": {
+                "username": values.username,
+                "password": values.password,
+                "phone": '86-'+values.phone,
+                "level": 'level4',
+              },
+              "formGroup": {
+                "name": values.name,
+                "groupLevel": values.groupLevel,
+                "createdTime": "2018-02-07",
+                "province": addressInfo.province,
+                "city": addressInfo.city,
+                "district": addressInfo.district,
+                "address": addressInfo.format,
+                "longitude": addressInfo.longitude,
+                "latitude": addressInfo.latitude
+              }},
+          });
+        }
+      });
+
     });
-  }
+
+  };
+
   render() {
     const { submitting } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -86,16 +179,16 @@ export default class NewTeam extends PureComponent {
               {...formItemLayout}
               label="团部级别"
             >
-                {getFieldDecorator('level', {
-                  initialValue: '4'
+                {getFieldDecorator('groupLevel', {
+                  initialValue: 'level4'
                 })(
                   <Select
                     placeholder="请选择团部级别"
                   >
-                    <Option value="1">海狸</Option>
-                    <Option value="2">小狼</Option>
-                    <Option value="3">探索</Option>
-                    <Option value="4">乐扶</Option>
+                    <Option value="level1">海狸</Option>
+                    <Option value="level2">小狼</Option>
+                    <Option value="level3">探索</Option>
+                    <Option value="level4">乐扶</Option>
                   </Select>
                 )}
             </FormItem>
@@ -118,11 +211,12 @@ export default class NewTeam extends PureComponent {
             >
               {getFieldDecorator('address', {
                 rules: [{
-                  required: true, message: '请选择起止日期',
+                  required: true, message: '请输入地址',
                 }],
               })(
-                <Input placeholder="团名称" />
+                <Input placeholder="请输入地址" onChange={(e) => this.handleAddrChange(e)}/>
               )}
+              <Button type="primary" onClick={() => this.showModal()}>查看地图上标记的位置</Button>
             </FormItem>
             <FormItem
               {...formItemLayout}
@@ -168,6 +262,32 @@ export default class NewTeam extends PureComponent {
             </FormItem>
           </Form>
         </Card>
+        <Modal
+          title="请选择标记位置"
+          visible={this.state.modalVisible}
+          onOk={() => this.handleOk()}
+          onCancel={() => this.handleCancel()}
+        >
+          <div>
+            <div style={{width: '100%', height: 360}}>
+              <Map
+                amapkey={"a68fcf7d57d3cc225b948f23003b93f3"}
+                plugins={this.mapPlugins}
+                center={this.state.position}
+                zoom={60}
+              >
+                <Marker
+                  events={this.markerEvents}
+                  position={this.state.position}
+                  visible={this.state.visible}
+                  clickable={this.state.clickable}
+                  draggable={this.state.draggable}
+                />
+              </Map>
+            </div>
+          </div>
+        </Modal>
+
       </PageHeaderLayout>
     );
   }
