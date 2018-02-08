@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Card, Form, Table, Input, Popconfirm, Divider, Button, Icon, Modal } from 'antd';
+import { Card, Table,Pagination } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -37,22 +37,36 @@ export default class TeamList extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  // 处理翻页
+  onPagination = (p) => {
+    console.log("处理翻页==>", p);
+    this.getAllTeams(p-1);
+  };
+
+  // 获取团列表
+  getAllTeams = (p=0) => {
     this.props.dispatch({
       type: "team/getAllTeams",
       payload: {
-        query: {limit:10},
+        query: {limit:10, page: p},
       }
     }).catch(err=>err)
+  };
+
+  componentWillMount() {
+    this.getAllTeams();
   }
 
   render(){
-    const {teams} = this.props.team;
+    const {teams, teamsMeta} = this.props.team;
     console.log("teams==>", teams);
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
-          <Table bordered rowKey={record => record.gid} dataSource={teams} columns={this.columns} />
+          <Table bordered rowKey={record => record.gid} pagination={false} dataSource={teams} columns={this.columns} />
+          <div style={{marginTop: 10}}>
+            <Pagination defaultCurrent={1} total={teamsMeta.count} onChange={(p) => this.onPagination(p)}/>
+          </div>
         </Card>
       </PageHeaderLayout>
     )

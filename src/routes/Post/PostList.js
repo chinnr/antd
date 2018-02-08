@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { List, Card, Radio, Input, Icon, Dropdown, Menu, Avatar,Popconfirm } from 'antd';
+import { List, Card, Radio, Input,Pagination, Avatar,Popconfirm } from 'antd';
 import {routerRedux} from 'dva/router';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -16,13 +16,25 @@ const { Search } = Input;
   loading: loading.models.list,
 }))
 export default class PostList extends PureComponent {
-  componentDidMount() {
+
+  // 处理翻页
+  onPagination = (p) => {
+    console.log("处理翻页==>", p);
+    this.getPosts(p-1);
+  };
+
+  // 获取文章列表
+  getPosts = (p=0) => {
     this.props.dispatch({
       type: 'post/getPosts',
       payload: {
-        query: {limit:10},
+        query: {limit:10, page: p},
       },
     }).catch(err => err);
+  };
+
+  componentDidMount() {
+    this.getPosts();
   }
 
   /**
@@ -112,6 +124,9 @@ export default class PostList extends PureComponent {
                 </List.Item>
               )}
             />
+            <div style={{marginTop: 10}}>
+              <Pagination defaultCurrent={1} total={postsMeta.count} onChange={(p) => this.onPagination(p)}/>
+            </div>
           </Card>
         </div>
       </PageHeaderLayout>
