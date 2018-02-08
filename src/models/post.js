@@ -39,7 +39,7 @@ export default {
         const err = errors[0].message;
         throw new Error(err)
       }else {
-        const classes = data.data.public.classes.data;
+        const classes = data.public.classes.data;
         yield put({
           type: "storeClasses",
           payload: {classes}
@@ -56,7 +56,6 @@ export default {
       }else {
         console.log("createPost ==> ", data);
       }
-
     },
 
     *getPosts({payload}, {call, put}) {

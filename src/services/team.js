@@ -15,6 +15,32 @@ export function createTeam(argv) {
   return graphRequest(createTeamMutation, argv, 'young-admin')
 }
 
+// 管理员获取所有团
+export function getAllTeams(query) {
+  const getAllTeams = `query allTeams($query: FormQuery) {
+    me {
+      groups(query: $query) {
+        data {
+          gid
+          uid
+          createdAt
+          name
+          groupLevel
+          head{
+            phone
+          }
+        }
+        meta {
+          limit
+          page
+          count
+        }
+      }
+    }
+  }`;
+  return graphRequest(getAllTeams, query, 'young-admin')
+}
+
 // 根据地址获取经纬度
 export function addrInfo(input) {
   const getAddrInfo = `query address($input: String!) {
@@ -31,7 +57,7 @@ export function addrInfo(input) {
 }
 
 // 根据经纬度获取地址
-export function locationInfo() {
+export function locationInfo(argv) {
   const locationInfo = `query locationInfo($longitude: Float!, $latitude: Float!){
     locationInfo(longitude:$longitude, latitude:$latitude){
       input
@@ -39,7 +65,9 @@ export function locationInfo() {
       province
       city
       district
+      longitude
+      latitude
     }
   }`;
-  return graphRequest(locationInfo, input, 'user');
+  return graphRequest(locationInfo, argv, 'user');
 }

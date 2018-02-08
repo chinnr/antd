@@ -1,9 +1,13 @@
+import {notification, message} from "antd";
 import * as teamService from '../services/team';
 
 export default {
   namespace: 'team',
   state: {
-    addressInfo: {}
+    addressInfo: {},
+    teams: [],
+    teamsMeta: {},
+    loading: true,
   },
   reducers: {
     storeAddressInfo(state, {payload}) {
@@ -12,18 +16,47 @@ export default {
         ...state,
         ...payload
       }
+    },
+    storeAllTeams(state, {payload}) {
+      console.log("storeAllTeams: ", payload);
+      return {
+        ...state,
+        ...payload
+      }
     }
   },
   effects: {
     *createTeam({payload}, {call, put}) {
-      console.log("createTeam...payload ", payload);
-      const {data, errors} = yield call(teamService.createTeam, payload)
+      console.log("createTeam...payload: ", payload);
+      message.loading('正在新建团',3);
+      const {data, errors} = yield call(teamService.createTeam, payload);
+      if(errors) {
+        message.destroy();
+        const err = errors[0].message;
+        throw new Error(err);
+      }else {
+        console.log("createTeam==>", data);
+        message.destroy();
+        notification['success']({
+          message: '新建团成功',
+        });
+      }
+    },
+
+    *getAllTeams({payload}, {call, put}) {
+      console.log("getAllTeams...payload: ", payload);
+      const {data, errors} = yield call(teamService.getAllTeams, payload)
       if(errors) {
         const err = errors[0].message;
         throw new Error(err)
       }else {
-        console.log("createTeam==>", data);
-        return data;
+        const teams = data.me.groups.data;
+        const teamsMeta = data.me.groups.meta;
+        console.log("getAllTeams==>", teams, teamsMeta);
+        yield put({
+          type: "storeAllTeams",
+          payload: {teams, teamsMeta}
+        })
       }
     },
 
@@ -34,13 +67,21 @@ export default {
         const err = errors[0].message;
         throw new Error(err)
       }else {
-        console.log("addrInfo...", data.data);
+        console.log("addrInfo...", data);
         return data;
       }
-      // yield put({
-      //   type: 'storeAddressInfo',
-      //   payload: data.data
-      // })
+    },
+
+    *locationInfo({payload}, {call, put}) {
+      console.log("addrInfo...payload ", payload);
+      const {data, errors} = yield call(teamService.locationInfo, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err)
+      }else {
+        console.log("locationInfo...", data);
+        return data;
+      }
     }
   }
 }
