@@ -126,16 +126,14 @@ class BasicLayout extends React.PureComponent {
       payload: type,
     });
   }
-  handleMenuClick = ({ key }) => {
+  handleMenuClick = () => {
     // if (key === 'triggerError') {
     //   this.props.dispatch(routerRedux.push('/exception/trigger'));
     //   return;
     // }
-    if (key === 'logout') {
       this.props.dispatch({
         type: 'login/logout',
       });
-    }
   }
   handleNoticeVisibleChange = (visible) => {
     if (visible) {
