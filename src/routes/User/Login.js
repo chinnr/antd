@@ -1,94 +1,67 @@
+/*
+ * @Author: littlestone
+ * @Date: 2018-02-22 12:03:00
+ * @Last Modified by: littlestone
+ * @Last Modified time: 2018-02-22 12:20:52
+ */
+
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Checkbox, Alert, Icon } from 'antd';
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import Login from '../../components/Login';
 import styles from './Login.less';
-
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
+import Divider from 'antd/lib/divider';
+const FormItem = Form.Item;
 
 @connect(({ login, loading }) => ({
   login,
   submitting: loading.effects['login/login'],
 }))
+@Form.create()
 export default class LoginPage extends Component {
-  state = {
-    type: 'account',
-    autoLogin: true,
-  }
-
-  onTabChange = (type) => {
-    this.setState({ type });
-  }
-
-  handleSubmit = (err, values) => {
-    const { type } = this.state;
-    if (!err) {
-      this.props.dispatch({
-        type: 'login/login',
-        payload: {
-          ...values,
-          type,
-        },
-      });
-    }
-  }
-
-  changeAutoLogin = (e) => {
-    this.setState({
-      autoLogin: e.target.checked,
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.props.dispatch({
+          type: 'login/login',
+          payload: {
+            ...values,
+          },
+        }).catch(err => err);
+      }
     });
-  }
-
-  renderMessage = (content) => {
-    return (
-      <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
-    );
-  }
-
+  };
   render() {
-    const { login, submitting } = this.props;
-    const { type } = this.state;
+    const { getFieldDecorator } = this.props.form;
     return (
       <div className={styles.main}>
-        <Login
-          defaultActiveKey={type}
-          onTabChange={this.onTabChange}
-          onSubmit={this.handleSubmit}
-        >
-          <Tab key="account" tab="账户密码登录">
-            {
-              login.status === 'error' &&
-              login.type === 'account' &&
-              !login.submitting &&
-              this.renderMessage('账户或密码错误（admin/888888）')
-            }
-            <UserName name="userName" placeholder="admin/user" />
-            <Password name="password" placeholder="888888/123456" />
-          </Tab>
-          <Tab key="mobile" tab="手机号登录">
-            {
-              login.status === 'error' &&
-              login.type === 'mobile' &&
-              !login.submitting &&
-              this.renderMessage('验证码错误')
-            }
-            <Mobile name="mobile" />
-            <Captcha name="captcha" />
-          </Tab>
-          <div>
-            <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>自动登录</Checkbox>
-            <a style={{ float: 'right' }} href="">忘记密码</a>
-          </div>
-          <Submit loading={submitting}>登录</Submit>
-          <div className={styles.other}>
-            其他登录方式
-            <Icon className={styles.icon} type="alipay-circle" />
-            <Icon className={styles.icon} type="taobao-circle" />
-            <Icon className={styles.icon} type="weibo-circle" />
-            <Link className={styles.register} to="/user/register">注册账户</Link>
-          </div>
-        </Login>
+        <Form onSubmit={this.handleSubmit} className="login-form">
+          <FormItem>
+            {getFieldDecorator('adminName', {
+              rules: [{ required: true, message: '请输入管理员账号!' }],
+            })(
+              <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+            )}
+          </FormItem>
+          <FormItem>
+            {getFieldDecorator('password', {
+              rules: [{ required: true, message: '请输入管理员密码!' }],
+            })(
+              <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+            )}
+          </FormItem>
+          <FormItem>
+            <div>
+              <a href="">忘记密码?</a>
+            </div>
+            <Button type="primary" style={{width: '100%'}} htmlType="submit">
+              登录
+            </Button>
+          </FormItem>
+        </Form>
       </div>
     );
   }
