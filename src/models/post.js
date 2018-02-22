@@ -10,7 +10,8 @@ export default {
   },
   reducers: {
     storeClasses(state, {payload}){
-      const {classes} = payload;
+      const classes = payload;
+      console.log("storeClasses: ", payload)
       return {
         ...state,
         classes
@@ -40,9 +41,10 @@ export default {
         throw new Error(err)
       }else {
         const classes = data.public.classes.data;
+        console.log("classes ===>", classes)
         yield put({
           type: "storeClasses",
-          payload: {classes}
+          payload: classes
         });
       }
     },
