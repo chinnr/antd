@@ -41,7 +41,7 @@ export default {
         throw new Error(err)
       }else {
         const classes = data.public.classes.data;
-        console.log("classes ===>", classes)
+        // console.log("classes ===>", classes)
         yield put({
           type: "storeClasses",
           payload: classes

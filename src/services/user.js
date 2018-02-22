@@ -1,9 +1,15 @@
-import request from '../utils/request';
+import graphRequest from '../utils/graphRequest';
 
-export async function query() {
-  return request('/api/users');
-}
-
-export async function queryCurrent() {
-  return request('/api/currentUser');
+// 获取管理员信息
+export function getAdminDetail() {
+  const adminDetail = `query adminDetail {
+  me {
+    detail{
+      nickname
+      username
+      uid
+    }
+  }
+}`;
+  return graphRequest(adminDetail, {}, 'user-admin')
 }

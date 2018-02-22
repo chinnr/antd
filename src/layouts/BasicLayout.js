@@ -87,7 +87,7 @@ class BasicLayout extends React.PureComponent {
     });
     this.props.dispatch({
       type: 'user/fetchCurrent',
-    });
+    }).catch(err => err);
   }
   getPageTitle() {
     const { routerData, location } = this.props;

@@ -1,5 +1,4 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
-
+import * as userService from '../services/user';
 export default {
   namespace: 'user',
 
@@ -9,19 +8,25 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
+    // *fetch(_, { call, put }) {
+    //   const response = yield call(queryUsers);
+    //   yield put({
+    //     type: 'save',
+    //     payload: response,
+    //   });
+    // },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
+      const {data, errors} = yield call(userService.getAdminDetail);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err)
+      }else {
+        console.log("fetchCurrent response: ", data);
+        yield put({
+          type: 'saveCurrentUser',
+          payload: data.me.detail,
+        });
+      }
     },
   },
 
