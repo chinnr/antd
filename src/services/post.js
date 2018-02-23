@@ -75,15 +75,14 @@ export function postDetail(id) {
 
 // 更新某一篇文章
 export function updatePost(argv) {
-  const updatePost = `mutation deletePost($argv: UpdatePostArgv!) {
-    me {
-      updatePost(argv: $argv) {
+  const updatePost = `mutation updatePost($argv: UpdatePostArgv!) {
+    me{
+      updatePost(argv: $argv){
+        id
         title
-        content
-        createdAt
       }
     }
   }`;
-  return graphRequest(updatePost, {argv}, 'post')
+  return graphRequest(updatePost, argv, 'post')
 }
 

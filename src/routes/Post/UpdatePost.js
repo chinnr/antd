@@ -156,8 +156,7 @@ export default class UpdatePost extends Component {
       payload: {
         limit: 10
       }
-    });
-
+    }).catch(err => err);
   }
 
   render() {
