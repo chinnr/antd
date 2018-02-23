@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, Card, Button, Radio, Icon } from "antd";
+import { Input, Card, Button, Radio, Icon, Popconfirm } from "antd";
 import { connect } from "dva";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import styles from "./NewPost.less";
@@ -150,10 +150,33 @@ export default class NewPost extends Component {
       .catch(err => err);
   }
 
+  /**
+   * 删除上传的图片
+   * @returns {*}
+   */
+  deleteUpload = (item) => {
+    console.log("this.postGallery==>", this.postGallery);
+    console.log("删除上传的图片: ", item);
+    Array.prototype.indexOf = function(val) {
+      for (let i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+      }
+      return -1;
+    };
+    Array.prototype.remove = function(val) {
+      let index = this.indexOf(val);
+      if (index > -1) {
+        this.splice(index, 1);
+      }
+    };
+    this.postGallery.remove(item);
+    console.log("删除后: ", this.postGallery);
+    this.setState({postGallery: this.postGallery})
+  };
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { classes } = this.props.post;
-    console.log("view props==>", classes);
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
@@ -173,7 +196,7 @@ export default class NewPost extends Component {
             <label className={styles.upload_img_label} htmlFor="upload-img">
               <Icon type="plus" className={styles.upload_icon} />
             </label>
-            {this.state.postGallery &&
+            {this.state.postGallery.length > 0 &&
               this.state.postGallery.map(item => {
                 return (
                   <div key={item} className={styles.upload_list_item}>
@@ -181,9 +204,14 @@ export default class NewPost extends Component {
                       className={styles.upload_list_img}
                       src={rootUrl + thumbnailPath + item}
                     />
+                    <div className={styles.delete_upload_mask}>
+                      <Popconfirm placement="top" title={"你确定删除该图片?"} onConfirm={() => this.deleteUpload(item)} okText="确定" cancelText="取消">
+                        <Icon type="delete" className={styles.delete_upload} />
+                      </Popconfirm>
+                    </div>
                   </div>
                 );
-              })}
+               })}
             <input
               className={styles.upload_img}
               id="upload-img"
