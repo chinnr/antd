@@ -8,7 +8,11 @@
     "development": {
       "extraBabelPlugins": [
         "dva-hmr"
-      ]
+      ],
+      "publicPath": "/"
+    },
+    "production": {
+      "publicPath": "https://api.yichui.net/api/young/demo/admin/"
     }
   },
   "ignoreMomentLocale": true,
@@ -16,7 +20,6 @@
   "html": {
     "template": "./src/index.ejs"
   },
-  "publicPath": "./",
   "disableDynamicImport": false,
   "hash": true
 }
