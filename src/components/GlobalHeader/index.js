@@ -90,16 +90,16 @@ export default class GlobalHeader extends PureComponent {
           onClick={this.toggle}
         />
         <div className={styles.right}>
-          {/*{currentUser.username ? (*/}
-            {/*<Dropdown overlay={menu}>*/}
-              {/*<span className={`${styles.action} ${styles.account}`}>*/}
-                {/*<Icon type="poweroff" className={styles.avatar}/>*/}
-                {/*<span className={styles.name}>{currentUser.username}</span>*/}
-              {/*</span>*/}
-            {/*</Dropdown>*/}
-          {/*) : <Spin size="small" style={{ marginLeft: 8 }} />}*/}
-          {currentUser.username && <span className={styles.name}>{currentUser.username}</span>}
-          <a onClick={() => this.props.onMenuClick()}><Icon type="logout" />退出登录</a>
+          {currentUser.username ? (
+            <Dropdown overlay={menu}>
+              <span className={`${styles.action} ${styles.account}`}>
+                <Icon type="poweroff" className={styles.avatar}/>
+                <span className={styles.name}>{currentUser.username}</span>
+              </span>
+            </Dropdown>
+          ) : <Spin size="small" style={{ marginLeft: 8 }} />}
+          {/*{currentUser.username && <span className={styles.name}>{currentUser.username}</span>}*/}
+          {/*<a onClick={() => this.props.onMenuClick()}><Icon type="logout" />退出登录</a>*/}
         </div>
       </Header>
     );
