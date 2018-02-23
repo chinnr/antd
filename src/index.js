@@ -2,7 +2,7 @@ import '@babel/polyfill';
 import 'url-polyfill';
 import dva from 'dva';
 import {notification} from "antd";
-
+import {parseError} from './utils/utils';
 import createHistory from 'history/createHashHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
@@ -18,7 +18,7 @@ const app = dva({
   onError(e) {
     notification['error']({
       message: '错误警告',
-      description: e.message,
+      description: parseError(e.message),
     });
   }
 });
