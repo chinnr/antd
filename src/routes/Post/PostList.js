@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { List, Card, Radio, Input,Pagination, Avatar,Popconfirm } from 'antd';
 import {routerRedux} from 'dva/router';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { thumbnailPath, rootUrl } from "../../utils/constant";
 
 import styles from './PostList.less';
 
@@ -72,6 +73,18 @@ export default class PostList extends PureComponent {
    */
   cancelDelete = () => {};
 
+  /**
+   * 处理文章简介
+   * @returns {*}
+   */
+  handleDescription(content) {
+    const reg = /<(?:.|\s)*?>/g;
+    if(content.length >= 20) {
+      return content.replace(reg, '').replace(/&nbsp;/ig, '').substring(0, 20).concat("......")
+    }else {
+      return content.replace(reg, '').replace(/&nbsp;/ig, '')
+    }
+  }
   render() {
     const {posts, postsMeta} = this.props.post;
     const { loading } = this.props;
@@ -116,9 +129,9 @@ export default class PostList extends PureComponent {
                   ]}
                 >
                   <List.Item.Meta
-                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
+                    avatar={item.gallery.length>0  ? <Avatar src={ rootUrl + thumbnailPath+item.gallery[0]} shape="square" size="large" /> : null}
                     title={<a href="#">{item.title}</a>}
-                    description={"subDescription"}
+                    description={this.handleDescription(item.content)}
                   />
                   <ListContent data={item} />
                 </List.Item>
