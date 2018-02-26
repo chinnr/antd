@@ -16,6 +16,7 @@ import './index.less';
 const app = dva({
   history: createHistory(),
   onError(e) {
+    e.preventDefault();
     notification['error']({
       message: '错误警告',
       description: parseError(e.message),
