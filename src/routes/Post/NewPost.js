@@ -1,6 +1,16 @@
 import React, { Component } from "react";
-import { Input, Card, Button, Radio, Icon, Popconfirm } from "antd";
+import {
+  Input,
+  Card,
+  Button,
+  Radio,
+  Icon,
+  Popconfirm,
+  notification
+} from "antd";
 import { connect } from "dva";
+import { routerRedux } from "dva/router";
+
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import styles from "./NewPost.less";
 import { thumbnailPath, rootUrl } from "../../utils/constant";
@@ -80,7 +90,6 @@ export default class NewPost extends Component {
     xhr.open("POST", "https://api.yichui.net/api/young/post/upload/image");
     xhr.send(formData);
     xhr.addEventListener("load", () => {
-      // let _src = 'https://api.yichui.net/api/duomi/upload/' + JSON.parse(xhr.responseText).filename;
       let _src = JSON.parse(xhr.responseText).filename;
       this.srcArr.push(_src);
       this.postGallery = this.srcArr;
@@ -95,11 +104,11 @@ export default class NewPost extends Component {
   }
 
   handleChange = content => {
-    console.log("handleChange==>", content);
+    // console.log("handleChange==>", content);
   };
 
   handleHTMLChange = html => {
-    console.log("handleHTMLChange==>", html);
+    // console.log("handleHTMLChange==>", html);
   };
   // 处理标题
   handleTitleChange = e => {
@@ -111,7 +120,7 @@ export default class NewPost extends Component {
 
   // 选择类型
   onClassChange(e) {
-    console.log(`radio checked:${e.target.value}`);
+    // console.log(`radio checked:${e.target.value}`);
     this.setState({
       cid: e.target.value
     });
@@ -119,13 +128,26 @@ export default class NewPost extends Component {
 
   //createPost
   createPost = values => {
-    console.log("createPostArgv==>", values);
+    // console.log("createPostArgv==>", values);
     this.props
       .dispatch({
         type: "post/createPost",
         payload: values
       })
-      .catch(err => err);
+      .then(() => {
+        let _this = this;
+        setTimeout(function() {
+          _this.props.dispatch(routerRedux.push("/post/list"));
+          window.location.reload();
+        }, 2500);
+        this.props.dispatch(
+          notification["success"]({
+            message: "新建成功!",
+            duration: 2
+          })
+        );
+      })
+      .catch(err => {});
   };
 
   // 提交文章
@@ -154,7 +176,7 @@ export default class NewPost extends Component {
    * 删除上传的图片
    * @returns {*}
    */
-  deleteUpload = (item) => {
+  deleteUpload = item => {
     console.log("this.postGallery==>", this.postGallery);
     console.log("删除上传的图片: ", item);
     Array.prototype.indexOf = function(val) {
@@ -171,7 +193,7 @@ export default class NewPost extends Component {
     };
     this.postGallery.remove(item);
     console.log("删除后: ", this.postGallery);
-    this.setState({postGallery: this.postGallery})
+    this.setState({ postGallery: this.postGallery });
   };
 
   render() {
@@ -205,13 +227,19 @@ export default class NewPost extends Component {
                       src={rootUrl + thumbnailPath + item}
                     />
                     <div className={styles.delete_upload_mask}>
-                      <Popconfirm placement="top" title={"你确定删除该图片?"} onConfirm={() => this.deleteUpload(item)} okText="确定" cancelText="取消">
+                      <Popconfirm
+                        placement="top"
+                        title={"你确定删除该图片?"}
+                        onConfirm={() => this.deleteUpload(item)}
+                        okText="确定"
+                        cancelText="取消"
+                      >
                         <Icon type="delete" className={styles.delete_upload} />
                       </Popconfirm>
                     </div>
                   </div>
                 );
-               })}
+              })}
             <input
               className={styles.upload_img}
               id="upload-img"

@@ -67,6 +67,7 @@ export function postDetail(id) {
         content
         createdAt
         title
+        gallery
       }
     }
   }`;

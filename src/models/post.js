@@ -1,45 +1,45 @@
-import * as postService from '../services/post';
+import * as postService from "../services/post";
 
 export default {
-  namespace: 'post',
+  namespace: "post",
   state: {
     classes: [], // 文章类型
     posts: [], // 文章列表
     postsMeta: {}, // 文章分页信息
-    post: {},  // 文章详情页
+    post: {} // 文章详情页
   },
   reducers: {
-    storeClasses(state, {payload}){
+    storeClasses(state, { payload }) {
       const classes = payload;
-      console.log("storeClasses: ", payload)
+      console.log("storeClasses: ", payload);
       return {
         ...state,
         classes
-      }
+      };
     },
 
-    storePosts(state, {payload}) {
+    storePosts(state, { payload }) {
       return {
         ...state,
         ...payload
-      }
+      };
     },
 
-    storePostDetail(state, {payload}) {
+    storePostDetail(state, { payload }) {
       console.log("storePostDetail payload==>", payload);
       return {
         ...state,
         ...payload
-      }
+      };
     }
   },
   effects: {
-    *getClasses({payload}, {call, put}) {
-      const {data, errors} = yield call(postService.getClasses, payload);
-      if(errors) {
+    *getClasses({ payload }, { call, put }) {
+      const { data, errors } = yield call(postService.getClasses, payload);
+      if (errors) {
         const err = errors[0].message;
-        throw new Error(err)
-      }else {
+        throw new Error(err);
+      } else {
         const classes = data.public.classes.data;
         // console.log("classes ===>", classes)
         yield put({
@@ -60,44 +60,44 @@ export default {
       }
     },
 
-    *getPosts({payload}, {call, put}) {
-      const {data, errors} = yield call(postService.postList, payload);
-      if(errors) {
+    *getPosts({ payload }, { call, put }) {
+      const { data, errors } = yield call(postService.postList, payload);
+      if (errors) {
         const err = errors[0].message;
-        throw new Error(err)
-      }else {
+        throw new Error(err);
+      } else {
         console.log("post list: ", data.public.posts.data);
         const posts = data.public.posts.data;
         const postsMeta = data.public.posts.meta;
         yield put({
           type: "storePosts",
-          payload: {posts, postsMeta}
+          payload: { posts, postsMeta }
         });
       }
     },
 
-    *getPostDetail({payload}, {call, put}) {
-      const {data, errors} = yield call(postService.postDetail, payload);
-      if(errors) {
+    *getPostDetail({ payload }, { call, put }) {
+      const { data, errors } = yield call(postService.postDetail, payload);
+      if (errors) {
         const err = errors[0].message;
-        throw new Error(err)
-      }else {
+        throw new Error(err);
+      } else {
         const post = data.public.post;
         yield put({
           type: "storePostDetail",
-          payload: {post}
-        })
+          payload: { post }
+        });
       }
     },
 
-    *updatePost({payload}, {call, put}) {
-      const {data, errors} = yield call(postService.updatePost, payload);
-      if(errors) {
+    *updatePost({ payload }, { call, put }) {
+      const { data, errors } = yield call(postService.updatePost, payload);
+      if (errors) {
         const err = errors[0].message;
-        throw new Error(err)
-      }else {
+        throw new Error(err);
+      } else {
         console.log("update  post: ", data);
       }
     }
   }
-}
+};
