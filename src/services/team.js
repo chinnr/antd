@@ -8,7 +8,6 @@ export function createTeam(argv) {
         uid
         number
         level
-      }
     }
   }`;
   console.log("createTeamMutation==>", argv)
@@ -28,6 +27,7 @@ export function getAllTeams(query) {
           groupLevel
           head{
             phone
+            name
           }
         }
         meta {
