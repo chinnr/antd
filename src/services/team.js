@@ -23,6 +23,7 @@ export function getAllTeams(query) {
           gid
           uid
           createdAt
+          numJoin
           name
           groupLevel
           head{

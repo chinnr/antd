@@ -37,6 +37,11 @@ export default class TeamList extends PureComponent {
         dataIndex: "phone",
         key: "phone",
         render: (text, record) => record.head.phone
+      },
+      {
+        title: "已加入人数",
+        dataIndex: "numJoin",
+        key: "numJoin",
       }
     ];
     this.state = {
