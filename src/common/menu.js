@@ -19,7 +19,7 @@ const menuData = [
   },
   {
     name: '团队管理',
-    icon: 'dashboard',
+    icon: 'team',
     path: 'team',
     children: [
       {
@@ -34,7 +34,7 @@ const menuData = [
   },
   {
     name: '课程管理',
-    icon: 'dashboard',
+    icon: 'book',
     path: 'course',
     children: [
       {
@@ -71,7 +71,7 @@ const menuData = [
   },
   {
     name: '学员管理',
-    icon: 'dashboard',
+    icon: 'idcard',
     path: 'student',
     children: [
       {
@@ -86,7 +86,7 @@ const menuData = [
   },
   {
     name: '证章管理',
-    icon: 'dashboard',
+    icon: 'trophy',
     path: 'badge',
     children: [
       {
@@ -105,13 +105,13 @@ const menuData = [
   },
   {
     name: '商城管理',
-    icon: 'dashboard',
+    icon: 'shop',
     path: 'mall',
     children: []
   },
   {
     name: '内容管理',
-    icon: 'dashboard',
+    icon: 'file',
     path: 'post',
     children: [
       {
