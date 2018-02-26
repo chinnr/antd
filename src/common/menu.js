@@ -90,12 +90,12 @@ const menuData = [
     path: 'badge',
     children: [
       {
-        name: '证章类型管理',
-        path: 'badge-type'
+        name: '新建证章',
+        path: 'new'
       },
       {
-        name: '证章模型管理',
-        path: 'badge-model'
+        name: '证章列表',
+        path: 'list'
       },
       {
         name: '证章学员管理',

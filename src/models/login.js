@@ -23,6 +23,7 @@ export default {
           console.log("login response: ", data);
           localStorage.setItem('exp', data.login.exp);
           localStorage.setItem('token', data.login.token);
+          localStorage.setItem('uid', data.login.uid);
           data["currentAuthority"] = "admin";
           data["status"] = "ok";
           yield put({

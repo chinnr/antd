@@ -192,6 +192,12 @@ export const getRouterData = (app) => {
     '/team/list': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/TeamList')),
     },
+    '/badge/new': {
+      component: dynamicWrapper(app, ['badge'], () => import('../routes/Badge/NewBadge')),
+    },
+    '/badge/list': {
+      component: dynamicWrapper(app, ['badge'], () => import('../routes/Badge/BadgeList')),
+    },
     '/post/new': {
       component: dynamicWrapper(app, ['post'], () => import('../routes/Post/NewPost')),
     },
