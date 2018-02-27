@@ -8,6 +8,7 @@ export function createTeam(argv) {
         uid
         number
         level
+      }
     }
   }`;
   console.log("createTeamMutation==>", argv)
