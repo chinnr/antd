@@ -15,6 +15,7 @@ import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import moment from "moment/moment";
 import { rootUrl, thumbnailPath, uploadPath } from "../../utils/constant";
 import styles from "./NewBadge.less";
+import { router, routerRedux } from "dva/router";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -27,15 +28,15 @@ export default class NewBadge extends PureComponent {
   constructor() {
     super();
     this.state = {
-      normalImg: '',
-      grayImg: '',
+      normalImg: "",
+      grayImg: ""
     };
   }
 
   // 上传证章图片
   uploadImage = (id, type) => {
     console.log("图片type ==>: ", id, type);
-    const _token = "Bearer "+localStorage.getItem('token');
+    const _token = "Bearer " + localStorage.getItem("token");
     const img = document.getElementById(id).files[0];
     let formData = new FormData();
     formData.append("file", img);
@@ -48,8 +49,8 @@ export default class NewBadge extends PureComponent {
         console.log(type, this.state[type])
       );
       this.props.form.setFieldsValue({
-        [type]:_src
-      })
+        [type]: _src
+      });
     });
     xhr.addEventListener("error", () => {
       console.log("上传失败：", JSON.parse(xhr.responseText));
@@ -61,43 +62,91 @@ export default class NewBadge extends PureComponent {
    * @returns {*}
    */
   deleteUpload = type => {
-    console.log("this.postGallery==>", this.postGallery);
-
-    this.setState({ postGallery: this.postGallery });
+    this.setState({[type]: ''});
+    this.props.form.setFieldsValue({
+      [type]: ''
+    });
   };
 
-  // 创建团
-  createBadge = (values) => {
-    this.props.dispatch({
-      type: "badge/createBadge",
-      payload: {
-        form: values
-      }
-    }).then(() => {
-      this.props.dispatch(
+  // 创建证章
+  submitBadge = (values, type) => {
+    this.props
+      .dispatch({
+        type: "badge/" + type,
+        payload: {
+          form: values
+        }
+      })
+      .then(() => {
         notification["success"]({
-          message: "新建成功!",
+          message: type === "updateBadge" ? "修改成功" : "新建成功!",
           duration: 2
-        })
+        });
+        if (type === "updateBadge") {
+          localStorage.removeItem("badgeParams");
+          localStorage.setItem("isEditBadge", "false");
+        }
+        this.props.dispatch(routerRedux.push("/badge/list"));
+      })
+      .catch(err => {});
+  };
+
+  // 获取要修改的证章字段
+  getBadgeParams = () => {
+    let values = {};
+    if (this.props.location.query === undefined) {
+      // "没有 query, 获取存储的query"
+      values = JSON.parse(localStorage.getItem("badgeParams")).record;
+    } else {
+      // 有 query
+      localStorage.setItem(
+        "badgeParams",
+        JSON.stringify(this.props.location.query)
       );
-    }).catch(err => {})
+      values = this.props.location.query.record;
+    }
+    let keys = Object.keys(values);
+    keys.map(item => {
+      this.props.form.setFieldsValue({
+        [item]: values[item]
+      });
+    });
+    this.setState({
+      normalImg: values.normalImg,
+      grayImg: values.grayImg
+    });
   };
 
   // 提交新建证章
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        if (localStorage.getItem("badgeParams")) {
+          let _bid = JSON.parse(localStorage.getItem("badgeParams")).record.bid;
+          values["bid"] = _bid;
+        } else {
+          let _uid = localStorage.getItem("uid");
+          values["uid"] = _uid;
+        }
         console.log("values==>", values);
-        let _uid = localStorage.getItem("uid");
-        values["uid"] = _uid;
-        this.createBadge(values);
+        localStorage.getItem("badgeParams")
+          ? this.submitBadge(values, "updateBadge")
+          : this.submitBadge(values, "createBadge");
       }
     });
   };
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
+  }
+
+  componentDidMount() {
+    console.log("isEditBadge ==>", localStorage.getItem("isEditBadge"));
+    if(localStorage.getItem("isEditBadge") === "true") {
+      console.log("读取参数");
+      this.getBadgeParams();
+    }
   }
 
   render() {
@@ -107,7 +156,7 @@ export default class NewBadge extends PureComponent {
       getFieldError,
       isFieldTouched
     } = this.props.form;
-    const {normalImg,grayImg} = this.state;
+    const { normalImg, grayImg } = this.state;
     const badgeNameError = isFieldTouched("name") && getFieldError("name");
     const formItemLayout = {
       labelCol: {
@@ -217,34 +266,36 @@ export default class NewBadge extends PureComponent {
                   >
                     <Icon type="plus" className={styles.upload_icon} />
                   </label>
-                  {normalImg.length > 0 &&
-                  <div className={styles.upload_list_item}>
-                    <img
-                      className={styles.upload_list_img}
-                      src={rootUrl + thumbnailPath + normalImg}
-                    />
-                    <div className={styles.delete_upload_mask}>
-                      <Popconfirm
-                        placement="top"
-                        title={"你确定删除该图片?"}
-                        onConfirm={() => this.deleteUpload(item)}
-                        okText="确定"
-                        cancelText="取消"
-                      >
-                        <Icon
-                          type="delete"
-                          className={styles.delete_upload}
-                        />
-                      </Popconfirm>
+                  {normalImg.length > 0 && (
+                    <div className={styles.upload_list_item}>
+                      <img
+                        className={styles.upload_list_img}
+                        src={rootUrl + thumbnailPath + normalImg}
+                      />
+                      <div className={styles.delete_upload_mask}>
+                        <Popconfirm
+                          placement="top"
+                          title={"你确定删除该图片?"}
+                          onConfirm={() => this.deleteUpload("normalImg")}
+                          okText="确定"
+                          cancelText="取消"
+                        >
+                          <Icon
+                            type="delete"
+                            className={styles.delete_upload}
+                          />
+                        </Popconfirm>
+                      </div>
                     </div>
-                  </div>
-                  }
+                  )}
                   <input
                     className={styles.upload_img}
                     id="upload-img-normal"
                     type="file"
                     name="img"
-                    onChange={() => this.uploadImage("upload-img-normal", "normalImg")}
+                    onChange={() =>
+                      this.uploadImage("upload-img-normal", "normalImg")
+                    }
                   />
                 </div>
               )}
@@ -265,34 +316,36 @@ export default class NewBadge extends PureComponent {
                   >
                     <Icon type="plus" className={styles.upload_icon} />
                   </label>
-                  {grayImg.length > 0 &&
-                  <div className={styles.upload_list_item}>
-                    <img
-                      className={styles.upload_list_img}
-                      src={rootUrl + thumbnailPath + grayImg}
-                    />
-                    <div className={styles.delete_upload_mask}>
-                      <Popconfirm
-                        placement="top"
-                        title={"你确定删除该图片?"}
-                        onConfirm={() => this.deleteUpload(item)}
-                        okText="确定"
-                        cancelText="取消"
-                      >
-                        <Icon
-                          type="delete"
-                          className={styles.delete_upload}
-                        />
-                      </Popconfirm>
+                  {grayImg.length > 0 && (
+                    <div className={styles.upload_list_item}>
+                      <img
+                        className={styles.upload_list_img}
+                        src={rootUrl + thumbnailPath + grayImg}
+                      />
+                      <div className={styles.delete_upload_mask}>
+                        <Popconfirm
+                          placement="top"
+                          title={"你确定删除该图片?"}
+                          onConfirm={() => this.deleteUpload("grayImg")}
+                          okText="确定"
+                          cancelText="取消"
+                        >
+                          <Icon
+                            type="delete"
+                            className={styles.delete_upload}
+                          />
+                        </Popconfirm>
+                      </div>
                     </div>
-                  </div>
-                  }
+                  )}
                   <input
                     className={styles.upload_img}
                     id="upload-img-gray"
                     type="file"
                     name="img"
-                    onChange={() => this.uploadImage("upload-img-gray", "grayImg")}
+                    onChange={() =>
+                      this.uploadImage("upload-img-gray", "grayImg")
+                    }
                   />
                 </div>
               )}

@@ -1,12 +1,13 @@
 import React, { PureComponent } from "react";
-import { Card, Table, Pagination } from "antd";
+import { Card, Table, Pagination, Divider, Popconfirm, notification } from "antd";
 import { connect } from "dva";
-import moment from "moment";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import {rootUrl, thumbnailPath} from "../../utils/constant";
-import styles from './BadgeList.less';
+import { rootUrl, thumbnailPath } from "../../utils/constant";
+import styles from "./BadgeList.less";
+import { routerRedux } from "dva/router";
+
 @connect(({ badge }) => ({ badge }))
-export default class TeamList extends PureComponent {
+export default class BadgeList extends PureComponent {
   constructor(props) {
     super(props);
     this.columns = [
@@ -58,13 +59,33 @@ export default class TeamList extends PureComponent {
             />
           </div>
         )
+      },
+      {
+        title: "操作",
+        dataIndex: "option",
+        key: "option",
+        render: (text, record) => (
+          <span>
+            <a onClick={() => this.goToPage(record)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="确定删除该证章?"
+              onConfirm={() => this.confirmDelete(record.bid)}
+              onCancel={() => this.cancelDelete()}
+              okText="确定"
+              cancelText="取消"
+            >
+              <a>删除</a>
+            </Popconfirm>
+          </span>
+        )
       }
     ];
     this.state = {
       data: []
     };
   }
-
+  // 处理证章分类
   handleBadgeClass = cl => {
     let name = "";
     switch (cl) {
@@ -90,6 +111,7 @@ export default class TeamList extends PureComponent {
     return name;
   };
 
+  // 处理证章阶段
   handleBadgeStage = stage => {
     let name = "";
     switch (stage) {
@@ -112,6 +134,7 @@ export default class TeamList extends PureComponent {
     return name;
   };
 
+  // 处理证章级别
   handleBadgeLevel = level => {
     let name = "";
     switch (level) {
@@ -132,6 +155,41 @@ export default class TeamList extends PureComponent {
         break;
     }
     return name;
+  };
+
+  /**
+   * 点击编辑
+   * @param record  record 要修改的某一个证章
+   */
+  goToPage = record => {
+    // console.log("id==>", id);
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: "/badge/new",
+        query: {
+          record: record
+        }
+      })
+    );
+  };
+
+  // 删除证章
+  confirmDelete = id => {
+    console.log("删除 bid: ", id);
+    this.props.dispatch({
+      type: "badge/deleteBadge",
+      payload: {bid: id}
+    }).then(()=>{
+      notification["success"]({
+        message: "删除成功!",
+        duration: 2
+      });
+      this.getAllBadges();
+    }).catch(err => {})
+  };
+
+  cancelDelete = () => {
+    return false;
   };
 
   // 处理翻页
