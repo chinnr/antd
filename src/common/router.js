@@ -181,10 +181,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
     },
     '/student/level-manage': {
-      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentLevelManage'))
+      component: dynamicWrapper(app, ['rule'], () => import('../routes/Student/StudentLevelManage'))
     },
     '/student/info-manage': {
-      component: dynamicWrapper(app, [], () => import('../routes/Student/StudentInfoManage'))
+      component: dynamicWrapper(app, ['rule'], () => import('../routes/Student/StudentInfoManage'))
     },
     '/team/new': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/NewTeam')),
