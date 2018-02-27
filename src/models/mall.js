@@ -4,6 +4,7 @@ export default {
   namespace: 'mall',
   state: {
   	goodsType: [],
+    goodsList: [],
     count: 0,
     limit: 0,
     page: 0
@@ -30,6 +31,23 @@ export default {
           }
         })
       }
+    },
+    *getGoodsList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsList);
+      if(errors) {
+        throw new Error(errors);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            goodsList: data.me.goods.getAll.data,
+            count: data.me.goods.getAll.meta.count,
+            limit: data.me.goods.getAll.meta.limit,
+            page: data.me.goods.getAll.meta.page
+          }
+        })
+      }
     }
   },
   subscriptions: {
@@ -37,6 +55,9 @@ export default {
   		history.listen(({ pathname }) => {
         if(pathname === '/mall/goods-type') {
           dispatch({type: 'getGoodsType'})
+        }
+        if(pathname === '/mall/goods-list') {
+          dispatch({type: 'getGoodsList'})
         }
       })
   	}
