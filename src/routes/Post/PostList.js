@@ -20,7 +20,7 @@ export default class PostList extends PureComponent {
 
   // 处理翻页
   onPagination = (p) => {
-    console.log("处理翻页==>", p);
+    // console.log("处理翻页==>", p);
     this.getPosts(p-1);
   };
 
@@ -40,15 +40,15 @@ export default class PostList extends PureComponent {
 
   /**
    * 点击查看详情
-   * @param id  文章id
+   * @param _query  传递的参数
    */
-  goToPage = (id, path) => {
-    // console.log("id==>", id);
+  goToPage = (_query, path) => {
+    // console.log("_query==>", _query);
+    let query = {};
+    path === 'edit' ? query = {post: _query} : query = {id: _query};
     this.props.dispatch(routerRedux.push({
       pathname: '/post/'+path,
-      query: {
-        id:id
-      }
+      query: query
     }))
   };
 
@@ -120,7 +120,7 @@ export default class PostList extends PureComponent {
                 <List.Item
                   actions={[
                     <a onClick={() => this.goToPage(item.id, 'detail')}>查看</a>,
-                    <a onClick={() => this.goToPage(item.id, 'edit')}>编辑</a>,
+                    <a onClick={() => this.goToPage(item, 'edit')}>编辑</a>,
                     <Popconfirm title="确定删除这篇文章?" onConfirm={()=>this.confirmDelete(item.id)} onCancel={()=>this.cancelDelete()} okText="确定" cancelText="取消">
                       <a>
                         删除

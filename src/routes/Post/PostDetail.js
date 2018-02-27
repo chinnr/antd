@@ -24,7 +24,7 @@ export default class PostDetail extends Component {
         type: "post/getPostDetail",
         payload: this.props.location.query
       }).catch(err => err);
-      // console.log("有 query id")
+      // console.log("有 query id", this.props.location.query.id)
     }
   }
   render() {

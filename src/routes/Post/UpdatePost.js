@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Input, Card, Button, Radio, Icon, notification } from "antd";
+import {
+  Input,
+  Card,
+  Button,
+  Radio,
+  Icon,
+  notification,
+  Popconfirm
+} from "antd";
 import { connect } from "dva";
 import { routerRedux } from "dva/router";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
@@ -24,7 +32,9 @@ export default class UpdatePost extends Component {
       postGallery: [],
       title: "", // 文章标题
       content: "", // 文章内容
-      cid: "" // 文章类型
+      cid: "", // 文章类型
+      postDetail: {}, // 文章详情
+      gallery: []
     };
     this.srcArr = [];
     this.postGallery = [];
@@ -35,13 +45,13 @@ export default class UpdatePost extends Component {
    * @param param
    */
   uploadFn = param => {
-    console.log("param==>", param);
+    // console.log("param==>", param);
     const xhr = new XMLHttpRequest();
     const fd = new FormData();
     const mediaLibrary = this.editorInstance.getMediaLibraryInstance();
 
     const successFn = response => {
-      console.log("图片上传成功:", JSON.parse(xhr.responseText));
+      // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
       const imgUrl =
         "https://api.yichui.net/api/young/post/download/image/origin/" +
@@ -86,23 +96,21 @@ export default class UpdatePost extends Component {
       // let _src = 'https://api.yichui.net/api/duomi/upload/' + JSON.parse(xhr.responseText).filename;
       let _src = JSON.parse(xhr.responseText).filename;
       this.srcArr.push(_src);
-      this.postGallery = this.srcArr;
-      console.log("图片数组: ", this.srcArr);
-      this.setState({ postGallery: this.srcArr }, () =>
-        console.log("postGallery", this.state.postGallery)
-      );
+      // this.postGallery = this.srcArr;
+      // console.log("图片数组: ", this.postGallery);
+      this.setState({ gallery: this.srcArr });
     });
     xhr.addEventListener("error", () => {
-      console.log("上传失败：", JSON.parse(xhr.responseText));
+      console.error("上传失败：", JSON.parse(xhr.responseText));
     });
   }
 
   handleChange = content => {
-    console.log("handleChange==>", content);
+    // console.log("handleChange==>", content);
   };
 
   handleHTMLChange = html => {
-    console.log("handleHTMLChange==>", html);
+    // console.log("handleHTMLChange==>", html);
   };
   // 处理标题
   handleTitleChange = e => {
@@ -114,43 +122,74 @@ export default class UpdatePost extends Component {
 
   // 选择类型
   onClassChange(e) {
-    console.log(`radio checked:${e.target.value}`);
+    // console.log(`radio checked:${e.target.value}`);
     this.setState({
       cid: e.target.value
     });
   }
-  //updatePost
+
+  // 更新文章
   updatePost = values => {
-    console.log("updatePost==>", values);
-    let _id = localStorage.getItem("id");
+    // console.log("updatePost==>", values);
+    let _id = this.state.postDetail.id;
     let _argv = {
       id: _id,
       title: values.title,
-      content: values.content
+      content: values.content,
+      gallery: values.gallery,
     };
-    this.props.dispatch({
-      type: "post/updatePost",
-      payload: { argv: _argv }
-    }).then(() => {
-      let _this = this;
-      setTimeout(function() {
-        _this.props.dispatch(routerRedux.push("/post/list"));
-        window.location.reload();
-      }, 2500);
-      this.props.dispatch(
-        notification["success"]({
-          message: "编辑成功!",
-          duration: 2
-        })
-      );
-    }).catch(err => {});
+    this.props
+      .dispatch({
+        type: "post/updatePost",
+        payload: { argv: _argv }
+      })
+      .then(() => {
+        // let _this = this;
+        // setTimeout(function() {
+        //   _this.props.dispatch(routerRedux.push("/post/list"));
+        //   window.location.reload();
+        // }, 2500);
+        this.props.dispatch(
+          notification["success"]({
+            message: "编辑成功!",
+            duration: 2
+          })
+        );
+      })
+      .catch(err => {});
+  };
+
+  /**
+   * 删除上传的图片
+   * @returns {*}
+   */
+  deleteUpload = item => {
+    // console.log("this.postGallery==>", this.postGallery);
+    // console.log("删除上传的图片: ", item);
+    Array.prototype.indexOf = function(val) {
+      for (let i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+      }
+      return -1;
+    };
+    Array.prototype.remove = function(val) {
+      let index = this.indexOf(val);
+      if (index > -1) {
+        this.splice(index, 1);
+      }
+    };
+    this.state.gallery.remove(item);
+
+    this.setState({ gallery: this.state.gallery });
   };
 
   // 提交文章
   submitPost = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log("values==>", values);
+        // console.log("this.state.gallery ==>", this.state.gallery);
+        values["gallery"] = this.state.gallery;
+        // console.log("values==>", values);
         this.updatePost(values);
       }
     });
@@ -158,27 +197,28 @@ export default class UpdatePost extends Component {
 
   // 获取某一篇文章
   getPost = () => {
-    let _id;
+    let post = {};
     if (this.props.location.query === undefined) {
-      console.log("没有 query id, 获取存储的query id");
-      _id = localStorage.getItem("id");
-      this.props.dispatch({
-        type: "post/getPostDetail",
-        payload: { id: _id }
-      });
+      post = JSON.parse(localStorage.getItem("post"));
     } else {
-      localStorage.setItem("id", "");
-      localStorage.setItem("id", this.props.location.query.id);
-      this.props.dispatch({
-        type: "post/getPostDetail",
-        payload: this.props.location.query
-      });
-      console.log("有 query id");
+      localStorage.setItem("post", "");
+      localStorage.setItem(
+        "post",
+        JSON.stringify(this.props.location.query.post)
+      );
+      post = this.props.location.query.post;
     }
+    this.setState({
+      postDetail: post,
+      gallery: post.gallery
+    });
+    this.editorInstance.setContent(post.content, "html");
+    this.props.form.setFieldsValue({
+      content: post.content
+    });
   };
 
   componentWillMount() {
-    this.getPost();
     this.props
       .dispatch({
         type: "post/getClasses",
@@ -189,20 +229,22 @@ export default class UpdatePost extends Component {
       .catch(err => err);
   }
 
+  componentDidMount() {
+    this.getPost();
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { classes, post } = this.props.post;
-    if (JSON.stringify(post).length > 2 && count < 2) {
-      this.editorInstance.setContent(post.content, "html");
-      count++;
-    }
+    const { postDetail, gallery } = this.state;
+    // this.postGallery = post.gallery;
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
           <div>
             <h3>文章标题</h3>
             {getFieldDecorator("title", {
-              initialValue: post.title
+              initialValue: postDetail.title ? postDetail.title : ""
             })(
               <Input
                 placeholder="请输入文章标题"
@@ -215,14 +257,25 @@ export default class UpdatePost extends Component {
             <label className={styles.upload_img_label} htmlFor="upload-img">
               <Icon type="plus" className={styles.upload_icon} />
             </label>
-            {post.gallery &&
-              post.gallery.map(item => {
+            {gallery &&
+              gallery.map(item => {
                 return (
                   <div key={item} className={styles.upload_list_item}>
                     <img
                       className={styles.upload_list_img}
                       src={rootUrl + thumbnailPath + item}
                     />
+                    <div className={styles.delete_upload_mask}>
+                      <Popconfirm
+                        placement="top"
+                        title={"你确定删除该图片?"}
+                        onConfirm={() => this.deleteUpload(item)}
+                        okText="确定"
+                        cancelText="取消"
+                      >
+                        <Icon type="delete" className={styles.delete_upload} />
+                      </Popconfirm>
+                    </div>
                   </div>
                 );
               })}
@@ -231,13 +284,14 @@ export default class UpdatePost extends Component {
               id="upload-img"
               type="file"
               name="img"
+              disabled={gallery.length > 0 ? "disabled" : ""}
               onChange={file => this.uploadCover(file)}
             />
           </div>
           <div style={{ marginTop: 10, marginBottom: 10 }}>
             <span style={{ fontWeight: "bold", fontSize: 16 }}>文章类型: </span>
             {getFieldDecorator("cid", {
-              initialValue: classes.length > 0 ? classes[0].id : ""
+              initialValue: postDetail.cid ? postDetail.cid : ""
             })(
               <RadioGroup onChange={e => this.onClassChange(e)}>
                 {classes.map((item, i) => {
@@ -259,7 +313,9 @@ export default class UpdatePost extends Component {
               borderColor: "#979797"
             }}
           >
-            {getFieldDecorator("content")(
+            {getFieldDecorator("content", {
+              initialValue: post.content
+            })(
               <BraftEditor
                 height={400}
                 viewWrapper={"#demo"}

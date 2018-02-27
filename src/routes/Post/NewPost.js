@@ -42,13 +42,13 @@ export default class NewPost extends Component {
    * @param param
    */
   uploadFn = param => {
-    console.log("param==>", param);
+    // console.log("param==>", param);
     const xhr = new XMLHttpRequest();
     const fd = new FormData();
     const mediaLibrary = this.editorInstance.getMediaLibraryInstance();
 
     const successFn = response => {
-      console.log("图片上传成功:", JSON.parse(xhr.responseText));
+      // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
       const imgUrl =
         "https://api.yichui.net/api/young/post/download/image/origin/" +
@@ -93,13 +93,11 @@ export default class NewPost extends Component {
       let _src = JSON.parse(xhr.responseText).filename;
       this.srcArr.push(_src);
       this.postGallery = this.srcArr;
-      console.log("图片数组: ", this.srcArr);
-      this.setState({ postGallery: this.srcArr }, () =>
-        console.log("postGallery", this.state.postGallery)
-      );
+      // console.log("图片数组: ", this.srcArr);
+      this.setState({ postGallery: this.srcArr });
     });
     xhr.addEventListener("error", () => {
-      console.log("上传失败：", JSON.parse(xhr.responseText));
+      console.error("上传失败：", JSON.parse(xhr.responseText));
     });
   }
 
@@ -155,7 +153,7 @@ export default class NewPost extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values["gallery"] = this.postGallery;
-        console.log("values==>", values);
+        // console.log("values==>", values);
         this.createPost(values);
       }
     });
@@ -177,8 +175,8 @@ export default class NewPost extends Component {
    * @returns {*}
    */
   deleteUpload = item => {
-    console.log("this.postGallery==>", this.postGallery);
-    console.log("删除上传的图片: ", item);
+    // console.log("this.postGallery==>", this.postGallery);
+    // console.log("删除上传的图片: ", item);
     Array.prototype.indexOf = function(val) {
       for (let i = 0; i < this.length; i++) {
         if (this[i] == val) return i;
@@ -192,7 +190,7 @@ export default class NewPost extends Component {
       }
     };
     this.postGallery.remove(item);
-    console.log("删除后: ", this.postGallery);
+    // console.log("删除后: ", this.postGallery);
     this.setState({ postGallery: this.postGallery });
   };
 
@@ -245,6 +243,7 @@ export default class NewPost extends Component {
               id="upload-img"
               type="file"
               name="img"
+              disabled={this.state.postGallery.length > 0 ? "disabled" : ""}
               onChange={file => this.uploadCover(file)}
             />
           </div>

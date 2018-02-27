@@ -45,6 +45,7 @@ export function postList(query) {
           content
           gallery
           id
+          cid
           createdAt
         }
         meta {
