@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+const Search = Input.Search;
 
 const columns = [
   {
@@ -82,6 +83,10 @@ class StudentLevelManage extends PureComponent {
     return (
       <PageHeaderLayout title="学员级别管理">
         <Card bordered={false}>
+          <Button type="primary" style={{marginBottom: '10px'}}>
+            <Icon type="plus" />新建
+          </Button>
+          <Search placeholder="input search text" style={{width: 200, float: 'right'}} />
           <div>
             <StandardTable
               selectedRows={selectedRows}

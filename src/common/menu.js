@@ -103,7 +103,24 @@ const menuData = [
     name: '商城管理',
     icon: 'shop',
     path: 'mall',
-    children: []
+    children: [
+      {
+        name: '商品类型管理',
+        path: 'goods-type'
+      },
+      {
+        name: '商品管理',
+        path: 'goods-list'
+      },
+      {
+        name: '广告位',
+        path: 'ad'
+      },
+      {
+        name: '订单管理',
+        path: 'order'
+      }
+    ]
   },
   {
     name: '内容管理',
