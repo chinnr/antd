@@ -7,6 +7,7 @@ import createHistory from 'history/createHashHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
+import { createLogger } from 'redux-logger';
 import 'moment/locale/zh-cn';
 import FastClick from 'fastclick';
 import './rollbar';
@@ -36,8 +37,9 @@ const app = dva({
         description: parseError(e.message),
       });
     }
-  }
-});
+  },
+  onAction: createLogger()
+})
 
 // 2. Plugins
 app.use(createLoading());
