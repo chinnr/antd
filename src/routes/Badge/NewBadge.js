@@ -143,7 +143,7 @@ export default class NewBadge extends PureComponent {
 
   componentDidMount() {
     console.log("isEditBadge ==>", localStorage.getItem("isEditBadge"));
-    if(localStorage.getItem("isEditBadge") === "true") {
+    if (localStorage.getItem("isEditBadge") === "true") {
       console.log("读取参数");
       this.getBadgeParams();
     }
@@ -200,6 +200,7 @@ export default class NewBadge extends PureComponent {
             </FormItem>
             <FormItem {...formItemLayout} label="证章级别">
               {getFieldDecorator("level", {
+                initialValue: "level1",
                 rules: [
                   {
                     required: true,
@@ -217,6 +218,7 @@ export default class NewBadge extends PureComponent {
             </FormItem>
             <FormItem {...formItemLayout} label="证章阶段">
               {getFieldDecorator("stage", {
+                initialValue: "stage1",
                 rules: [
                   {
                     required: true,
@@ -234,6 +236,7 @@ export default class NewBadge extends PureComponent {
             </FormItem>
             <FormItem {...formItemLayout} label="证章分类">
               {getFieldDecorator("class", {
+                initialValue: "class1",
                 rules: [
                   {
                     required: true,
@@ -260,12 +263,14 @@ export default class NewBadge extends PureComponent {
                 ]
               })(
                 <div>
-                  <label
-                    className={styles.upload_img_label}
-                    htmlFor="upload-img-normal"
-                  >
-                    <Icon type="plus" className={styles.upload_icon} />
-                  </label>
+                  {normalImg.length === 0 && (
+                    <label
+                      className={styles.upload_img_label}
+                      htmlFor="upload-img-normal"
+                    >
+                      <Icon type="plus" className={styles.upload_icon} />
+                    </label>
+                  )}
                   {normalImg.length > 0 && (
                     <div className={styles.upload_list_item}>
                       <img
@@ -310,12 +315,14 @@ export default class NewBadge extends PureComponent {
                 ]
               })(
                 <div>
-                  <label
-                    className={styles.upload_img_label}
-                    htmlFor="upload-img-gray"
-                  >
-                    <Icon type="plus" className={styles.upload_icon} />
-                  </label>
+                  {grayImg.length === 0 && (
+                    <label
+                      className={styles.upload_img_label}
+                      htmlFor="upload-img-gray"
+                    >
+                      <Icon type="plus" className={styles.upload_icon} />
+                    </label>
+                  )}
                   {grayImg.length > 0 && (
                     <div className={styles.upload_list_item}>
                       <img
