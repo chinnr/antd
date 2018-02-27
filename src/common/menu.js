@@ -96,10 +96,6 @@ const menuData = [
       {
         name: '证章列表',
         path: 'list'
-      },
-      {
-        name: '证章学员管理',
-        path: 'badge-student'
       }
     ]
   },

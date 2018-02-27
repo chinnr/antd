@@ -12,13 +12,11 @@ import FastClick from 'fastclick';
 import './rollbar';
 
 import './index.less';
-import {routerRedux} from "dva/router";
 // 1. Initialize
 const app = dva({
   history: createHistory(),
   onError(e) {
     e.preventDefault();
-    console.log("错误警告==>", e.message);
     if( e.message === "rest136|会话已过期") {
       notification['error']({
         message: '错误警告',
@@ -27,6 +25,9 @@ const app = dva({
       });
       setTimeout(function () {
         localStorage.setItem('authority', 'guest');
+        localStorage.removeItem('token');
+        localStorage.removeItem('uid');
+        localStorage.removeItem('exp');
         window.location.reload();
       },2500)
     }else {
