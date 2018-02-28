@@ -209,10 +209,10 @@ export default class NewBadge extends PureComponent {
                 ]
               })(
                 <Select placeholder="请选择证章级别">
-                  <Option value="level1">1级</Option>
-                  <Option value="level2">2级</Option>
-                  <Option value="level3">3级</Option>
-                  <Option value="level4">4级</Option>
+                  <Option value="level1">海狸</Option>
+                  <Option value="level2">小狼</Option>
+                  <Option value="level3">探索</Option>
+                  <Option value="level4">乐扶</Option>
                 </Select>
               )}
             </FormItem>

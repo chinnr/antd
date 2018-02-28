@@ -139,19 +139,19 @@ export default class BadgeList extends PureComponent {
     let name = "";
     switch (level) {
       case "level1":
-        name = "级别一";
+        name = "海狸";
         break;
       case "level2":
-        name = "级别二";
+        name = "小狼";
         break;
       case "level3":
-        name = "级别三";
+        name = "探索";
         break;
       case "level4":
-        name = "级别四";
+        name = "乐扶";
         break;
       default:
-        name = stage;
+        name = level;
         break;
     }
     return name;
