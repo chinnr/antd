@@ -9,13 +9,14 @@ import {
   Card,
   Icon,
   Popconfirm,
-  notification
+  notification,
+  Tooltip
 } from "antd";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import moment from "moment/moment";
 import { rootUrl, thumbnailPath, uploadPath } from "../../utils/constant";
 import styles from "./NewBadge.less";
-import { router, routerRedux } from "dva/router";
+import { routerRedux } from "dva/router";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -62,9 +63,9 @@ export default class NewBadge extends PureComponent {
    * @returns {*}
    */
   deleteUpload = type => {
-    this.setState({[type]: ''});
+    this.setState({ [type]: "" });
     this.props.form.setFieldsValue({
-      [type]: ''
+      [type]: ""
     });
   };
 
@@ -135,6 +136,17 @@ export default class NewBadge extends PureComponent {
           : this.submitBadge(values, "createBadge");
       }
     });
+  };
+
+  // 文字提示
+  renderToolTipTitle = () => {
+    return (
+      <div>
+        <h3 style={{ color: "#fff" }}>输入格式参考:</h3>
+        <p>1. 加强组织性 纪律性和整体观念;</p>
+        <p>2. 提高团队合作意识;</p>
+      </div>
+    );
   };
 
   hasErrors(fieldsError) {
@@ -252,6 +264,26 @@ export default class NewBadge extends PureComponent {
                   <Option value="class5">服务章</Option>
                 </Select>
               )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="证章简介">
+              {getFieldDecorator("description", {
+                rules: [
+                  {
+                    required: true,
+                    message: "请输入证章简介"
+                  }
+                ]
+              })(<TextArea rows={4} />)}
+            </FormItem>
+            <FormItem {...formItemLayout} label="证章意义">
+              <Tooltip
+                trigger={["focus"]}
+                title={() => this.renderToolTipTitle()}
+                placement="topLeft"
+                overlayClassName="numeric-input"
+              >
+                {getFieldDecorator("significance")(<TextArea rows={4} />)}
+              </Tooltip>
             </FormItem>
             <FormItem {...formItemLayout} label="正常证章图片">
               {getFieldDecorator("normalImg", {
