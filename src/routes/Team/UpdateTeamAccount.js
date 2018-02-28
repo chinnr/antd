@@ -137,20 +137,18 @@ export default class UpdateTeamAccount extends PureComponent {
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           console.log("表单 values ", values);
-          /*this.props
+          this.props
             .dispatch({
               type: "team/updateTeam",
               payload: {
-                formHead: {
-                  username: values.username,
-                  password: values.password,
+                form: {
+                  nickname: values.nickname,
                   phone: "86-" + values.phone,
-                  level: "level4"
                 },
                 gid: this.state.gid,
               }
             }).then(() => localStorage.removeItem("teamAccount"))
-            .catch(err => err);*/
+            .catch(err => err);
         }
       });
   };

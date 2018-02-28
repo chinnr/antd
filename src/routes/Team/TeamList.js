@@ -160,38 +160,11 @@ export default class TeamList extends Component {
       .catch(err => err);
   };
 
-  // 获取要修改的团信息字段
-  getBadgeParams = () => {
-    let values = {};
-    if (this.props.location.query === undefined) {
-      // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem("teamAccount")).record;
-    } else {
-      // 有 query
-      localStorage.setItem(
-        "teamAccount",
-        JSON.stringify(this.props.location.query)
-      );
-      values = this.props.location.query.record;
-    }
-    let keys = Object.keys(values);
-    this.setState({
-      gid: values.gid
-    });
-    keys.map(item => {
-      this.props.form.setFieldsValue({
-        [item]: values[item]
-      });
-    });
-  };
 
   componentWillMount() {
     this.getAllTeams();
   }
 
-  componentDidMount() {
-    this.getBadgeParams()
-  }
 
 
   render() {
