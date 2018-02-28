@@ -28,17 +28,29 @@ export default {
   effects: {
     *createTeam({payload}, {call, put}) {
       console.log("createTeam...payload: ", payload);
-      message.loading('正在新建团',3);
       const {data, errors} = yield call(teamService.createTeam, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      }else {
+        console.log("createTeam==>", data);
+        notification['success']({
+          message: '新建团成功',
+        });
+      }
+    },
+
+    *updateTeam({payload}, {call, put}) {
+      console.log("updateTeam...payload==>: ", payload);
+      const {data, errors} = yield call(teamService.updateTeam, payload);
       if(errors) {
         message.destroy();
         const err = errors[0].message;
         throw new Error(err);
       }else {
-        console.log("createTeam==>", data);
-        message.destroy();
+        console.log("updateTeam==>", data);
         notification['success']({
-          message: '新建团成功',
+          message: '修改团信息成功',
         });
       }
     },
@@ -81,6 +93,17 @@ export default {
       }else {
         console.log("locationInfo...", data);
         return data;
+      }
+    },
+
+    *modifyTeamPsw({payload}, {call, put}) {
+      console.log("modifyTeamPsw...payload==> ", payload);
+      const {data, errors} = yield call(teamService.modifyTeamPsw, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err)
+      }else {
+        console.log("modifyTeamPsw...", data);
       }
     }
   }

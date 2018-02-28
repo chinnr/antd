@@ -31,7 +31,7 @@ const RadioGroup = Radio.Group;
 
 @connect(({ team }) => ({ team }))
 @Form.create()
-export default class NewTeam extends PureComponent {
+export default class UpdateTeamInfo extends PureComponent {
   constructor() {
     super();
     this.state = {
@@ -41,7 +41,8 @@ export default class NewTeam extends PureComponent {
       clickable: true,
       draggable: true,
       addr: "",
-      clickMap: false
+      clickMap: false,
+      gid: ""
     };
     this.mapPlugins = ["ToolBar"];
     this.isDragMap = false;
@@ -120,6 +121,7 @@ export default class NewTeam extends PureComponent {
 
   // 处理地址
   handleAddrChange = e => {
+    console.log("处理地址...", e.target.value);
     this.setState({ addr: e.target.value }, () => {
       if (this.state.addr.length > 0) {
         this.setState({ clickMap: true });
@@ -139,30 +141,20 @@ export default class NewTeam extends PureComponent {
           console.log("表单 values ", values);
           this.props
             .dispatch({
-              type: "team/createTeam",
+              type: "team/updateTeam",
               payload: {
-                formHead: {
-                  username: values.username,
-                  password: values.password,
-                  phone: "86-" + values.phone,
-                  level: "level4"
-                },
-                formGroup: {
-                  name: values.name,
-                  type: values.type === "main" ? "" : values.type,
-                  groupLevel: values.groupLevel,
-                  createdTime: values.createdTime.toISOString(),
+                gid: this.state.gid,
+                form: {
+                  createdAt: values.createdTime.toISOString(),
                   province: this.dragLocationInfo.province,
                   city: this.dragLocationInfo.city,
                   district: this.dragLocationInfo.district,
                   address: this.dragLocationInfo.format,
                   longitude: this.dragLocationInfo.longitude,
-                  latitude: this.dragLocationInfo.latitude,
-                  provinceLim: values.area[0],
-                  cityLim: values.area[1]
+                  latitude: this.dragLocationInfo.latitude
                 }
               }
-            })
+            }).then(() => localStorage.removeItem("teamInfo"))
             .catch(err => err);
         }
       });
@@ -171,7 +163,7 @@ export default class NewTeam extends PureComponent {
       this.props
         .dispatch({
           type: "team/addrInfo",
-          payload: { input: this.state.addr }
+          payload: { input: this.props.form.getFieldValue('address') }
         })
         .then(res => {
           const { addressInfo } = res;
@@ -181,31 +173,20 @@ export default class NewTeam extends PureComponent {
               console.log("values: ", values);
               this.props
                 .dispatch({
-                  type: "team/createTeam",
+                  type: "team/updateTeam",
                   payload: {
-                    formHead: {
-                      username: values.username,
-                      nickname: values.nickname,
-                      password: values.password,
-                      phone: "86-" + values.phone,
-                      level: "level4"
-                    },
-                    formGroup: {
-                      name: values.name,
-                      type: values.type === "main" ? "" : values.type,
-                      groupLevel: values.groupLevel,
-                      createdTime: values.createdTime.toISOString(),
+                    gid: this.state.gid,
+                    form: {
+                      createdAt: values.createdTime.toISOString(),
                       province: addressInfo.province,
                       city: addressInfo.city,
                       district: addressInfo.district,
                       address: addressInfo.format,
                       longitude: addressInfo.longitude,
-                      latitude: addressInfo.latitude,
-                      provinceLim: values.area[0],
-                      cityLim: values.area[1]
+                      latitude: addressInfo.latitude
                     }
                   }
-                })
+                }).then(() => localStorage.removeItem("teamInfo"))
                 .catch(err => err);
             }
           });
@@ -218,10 +199,35 @@ export default class NewTeam extends PureComponent {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
 
+  // 获取要修改的团信息字段
+  getBadgeParams = () => {
+    let values = {};
+    if (this.props.location.query === undefined) {
+      // "没有 query, 获取存储的query"
+      values = JSON.parse(localStorage.getItem("teamInfo")).record;
+    } else {
+      // 有 query
+      localStorage.setItem(
+        "teamInfo",
+        JSON.stringify(this.props.location.query)
+      );
+      values = this.props.location.query.record;
+    }
+    let keys = Object.keys(values);
+    this.setState({
+      gid: values.gid
+    });
+    keys.map(item => {
+      this.props.form.setFieldsValue({
+        [item]: values[item]
+      });
+    });
+  };
+
   componentDidMount() {
     // To disabled submit button at the beginning.
     this.props.form.validateFields();
-    console.log("options--->", options);
+    this.getBadgeParams()
   }
 
   render() {
@@ -240,11 +246,6 @@ export default class NewTeam extends PureComponent {
     const createTimeError =
       isFieldTouched("createTime") && getFieldError("createTime");
     const addressError = isFieldTouched("address") && getFieldError("address");
-    const usernameError =
-      isFieldTouched("username") && getFieldError("username");
-    const passwordError =
-      isFieldTouched("password") && getFieldError("password");
-    const phoneError = isFieldTouched("phone") && getFieldError("phone");
 
     const formItemLayout = {
       labelCol: {
@@ -280,28 +281,14 @@ export default class NewTeam extends PureComponent {
               label="团名称"
             >
               {getFieldDecorator("name", {
+                initialValue: "南宁旅-航洋一团",
                 rules: [
                   {
                     required: true,
                     message: "请输入团名称"
                   }
                 ]
-              })(<Input placeholder="团名称" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={teamNameError ? "error" : ""}
-              help={teamNameError || ""}
-              label="团长昵称"
-            >
-              {getFieldDecorator("nickname", {
-                rules: [
-                  {
-                    required: true,
-                    message: "请输入团长昵称"
-                  }
-                ]
-              })(<Input placeholder="团长昵称" />)}
+              })(<Input placeholder="团名称" disabled={true}/>)}
             </FormItem>
             <FormItem
               {...formItemLayout}
@@ -312,7 +299,7 @@ export default class NewTeam extends PureComponent {
               {getFieldDecorator("groupLevel", {
                 initialValue: "level4"
               })(
-                <Select placeholder="请选择团部级别">
+                <Select placeholder="请选择团部级别" disabled={true}>
                   <Option value="level1">海狸</Option>
                   <Option value="level2">小狼</Option>
                   <Option value="level3">探索</Option>
@@ -357,8 +344,8 @@ export default class NewTeam extends PureComponent {
                 initialValue: "main"
               })(
                 <RadioGroup>
-                  <Radio value="main">普通团</Radio>
-                  <Radio value="temp">临时团</Radio>
+                  <Radio value="main" disabled={true}>普通团</Radio>
+                  <Radio value="temp" disabled={true}>临时团</Radio>
                 </RadioGroup>
               )}
             </FormItem>
@@ -368,7 +355,7 @@ export default class NewTeam extends PureComponent {
               help={createTimeError || ""}
               label="地区"
             >
-              {getFieldDecorator("area", {
+              {getFieldDecorator("district", {
                 rules: [
                   {
                     required: true,
@@ -377,7 +364,7 @@ export default class NewTeam extends PureComponent {
                 ],
                 initialValue: ["全国"]
               })(
-                <Cascader options={options} changeOnSelect={true}/>
+                <Cascader options={options} changeOnSelect={true} disabled={true}/>
               )}
             </FormItem>
             <FormItem
@@ -406,51 +393,6 @@ export default class NewTeam extends PureComponent {
               >
                 查看地图上标记的位置
               </Button>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={usernameError ? "error" : ""}
-              help={usernameError || ""}
-              label="团长账号"
-            >
-              {getFieldDecorator("username", {
-                rules: [
-                  {
-                    required: true,
-                    message: "请输入团长账号"
-                  }
-                ]
-              })(<Input placeholder="团长账号" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={passwordError ? "error" : ""}
-              help={passwordError || ""}
-              label="团长密码"
-            >
-              {getFieldDecorator("password", {
-                rules: [
-                  {
-                    required: true,
-                    message: "请输入团长密码"
-                  }
-                ]
-              })(<Input placeholder="团长密码" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={phoneError ? "error" : ""}
-              help={phoneError || ""}
-              label="团长电话"
-            >
-              {getFieldDecorator("phone", {
-                rules: [
-                  {
-                    required: true,
-                    message: "请输入团长电话"
-                  }
-                ]
-              })(<Input placeholder="团长电话" />)}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button

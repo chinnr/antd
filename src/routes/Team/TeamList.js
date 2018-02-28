@@ -1,11 +1,14 @@
-import React, { PureComponent } from "react";
-import { Card, Table, Pagination } from "antd";
+import React, { Component } from "react";
+import { Card, Table, Pagination, Divider, Form, notification } from "antd";
 import { connect } from "dva";
 import moment from "moment";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
+import PswForm from './PswForm';
+import {routerRedux} from "dva/router";
 
 @connect(({ team }) => ({ team }))
-export default class TeamList extends PureComponent {
+@Form.create()
+export default class TeamList extends Component {
   constructor(props) {
     super(props);
     this.columns = [
@@ -18,7 +21,6 @@ export default class TeamList extends PureComponent {
         title: "团账号",
         dataIndex: "username",
         key: "username",
-        render: (text, record) => record.head.name
       },
       {
         title: "团部级别",
@@ -42,12 +44,82 @@ export default class TeamList extends PureComponent {
         title: "已加入人数",
         dataIndex: "numJoin",
         key: "numJoin",
+      },
+      {
+        title: "操作",
+        dataIndex: "option",
+        key: "option",
+        render: (text, record) => (
+          <span>
+            <a onClick={() => this.goToPage(record, "edit-info")}>修改信息</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.goToPage(record, "edit-account")}>修改账号</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.modifyPsw(record)}>修改密码</a>
+          </span>
+        )
       }
     ];
     this.state = {
-      data: []
+      data: [],
+      visible: false,
+      username: ''
     };
   }
+
+  // 跳转到修改编辑页面
+  goToPage = (record, path) => {
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: "/team/"+path,
+        query: {
+          record: record
+        }
+      })
+    );
+  };
+
+  // 打开修改密码弹窗
+  modifyPsw = (record) => {
+    this.setState({
+      visible: true,
+      username: record.username
+    });
+  };
+
+  // 修改密码
+  handleCreate = () => {
+    const form = this.form;
+    const {username} = this.state;
+    form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.props.dispatch({
+          type: "team/modifyTeamPsw",
+          payload: {
+            password: values.password,
+            username
+          }
+        }).then(() => {
+          notification['success']({
+            message: '修改密码成功!',
+            duration: 2,
+          });
+        }).catch(err=>{})
+      }
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+  };
+
+  // 关闭弹窗
+  hideModal = () => {
+    this.setState({visible: false})
+  };
+
+  saveFormRef = (form) => {
+    this.form = form;
+  };
 
   handleGroupLevel = level => {
     let name = "";
@@ -88,12 +160,43 @@ export default class TeamList extends PureComponent {
       .catch(err => err);
   };
 
+  // 获取要修改的团信息字段
+  getBadgeParams = () => {
+    let values = {};
+    if (this.props.location.query === undefined) {
+      // "没有 query, 获取存储的query"
+      values = JSON.parse(localStorage.getItem("teamAccount")).record;
+    } else {
+      // 有 query
+      localStorage.setItem(
+        "teamAccount",
+        JSON.stringify(this.props.location.query)
+      );
+      values = this.props.location.query.record;
+    }
+    let keys = Object.keys(values);
+    this.setState({
+      gid: values.gid
+    });
+    keys.map(item => {
+      this.props.form.setFieldsValue({
+        [item]: values[item]
+      });
+    });
+  };
+
   componentWillMount() {
     this.getAllTeams();
   }
 
+  componentDidMount() {
+    this.getBadgeParams()
+  }
+
+
   render() {
     const { teams, teamsMeta } = this.props.team;
+
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
@@ -112,6 +215,12 @@ export default class TeamList extends PureComponent {
             />
           </div>
         </Card>
+        <PswForm
+          ref={this.saveFormRef}
+          visible={this.state.visible}
+          onCancel={this.hideModal}
+          onCreate={this.handleCreate}
+        />
       </PageHeaderLayout>
     );
   }

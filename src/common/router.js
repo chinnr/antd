@@ -192,6 +192,12 @@ export const getRouterData = (app) => {
     '/team/list': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/TeamList')),
     },
+    '/team/edit-info': {
+      component: dynamicWrapper(app, ['team'], () => import('../routes/Team/UpdateTeamInfo')),
+    },
+    '/team/edit-account': {
+      component: dynamicWrapper(app, ['team'], () => import('../routes/Team/UpdateTeamAccount')),
+    },
     '/mall/goods-type': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsType')),
     },

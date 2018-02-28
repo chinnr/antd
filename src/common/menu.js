@@ -23,6 +23,16 @@ const menuData = [
     path: 'team',
     children: [
       {
+        name: '团信息修改',
+        path: 'edit-info',
+        hideInMenu: true,
+      },
+      {
+        name: '团账号修改',
+        path: 'edit-account',
+        hideInMenu: true,
+      },
+      {
         name: '新建团队',
         path: 'new',
       },

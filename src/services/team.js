@@ -11,8 +11,24 @@ export function createTeam(argv) {
       }
     }
   }`;
-  console.log("createTeamMutation==>", argv)
-  return graphRequest(createTeamMutation, argv, 'young-admin')
+  // console.log("createTeamMutation==>", argv)
+  return graphRequest(createTeamMutation, argv, 'young-admin');
+}
+
+// 修改团信息
+export function updateTeam(payload) {
+  const updateTeam = `mutation updateTeam($gid: String!, $form: FormGroupBase!) {
+    me {
+      groupInfoSet(gid: $gid, form: $form){
+        gid
+        uid
+        name
+      }
+    }
+  }`;
+  const gid = payload.gid;
+  const form = payload.form;
+  return graphRequest(updateTeam, {gid, form}, 'young-admin');
 }
 
 // 管理员获取所有团
@@ -26,7 +42,9 @@ export function getAllTeams(query) {
           createdAt
           numJoin
           name
+          address
           groupLevel
+          username
           head{
             phone
             name
@@ -72,4 +90,20 @@ export function locationInfo(argv) {
     }
   }`;
   return graphRequest(locationInfo, argv, 'user');
+}
+
+// 修改团密码
+export function modifyTeamPsw(payload) {
+  const modifyPsw = `mutation modifyPsw($username:String, $formUser: FormUser!) {
+    meExec{
+      userEdit(username:$username, form: $formUser){
+        nickname
+        username
+        uid
+      }
+    }
+  }`;
+  const username = payload.username;
+  const formUser = {password: {password:payload.password}};
+  return graphRequest(modifyPsw,{username, formUser}, 'user-admin');
 }
