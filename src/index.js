@@ -18,7 +18,7 @@ const app = dva({
   history: createHistory(),
   onError(e) {
     e.preventDefault();
-    if( e.message === "rest136|会话已过期") {
+    if( e.message === "rest136|会话已过期" || e.message === 'Token is expired' || e.message === 'TokenExpiredError: jwt expired') {
       notification['error']({
         message: '错误警告',
         description: "会话已过期, 请重新登录",
@@ -38,7 +38,7 @@ const app = dva({
       });
     }
   },
-  onAction: createLogger()
+  // onAction: createLogger()
 })
 
 // 2. Plugins
