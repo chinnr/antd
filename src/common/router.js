@@ -2,8 +2,6 @@ import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 import pathToRegexp from 'path-to-regexp';
 import { getMenuData } from './menu';
-import InterestTemplate from "../routes/Course/InterestTemplate";
-import ActivityCourse from "../routes/Course/ActivityCourse";
 
 let routerDataCache;
 

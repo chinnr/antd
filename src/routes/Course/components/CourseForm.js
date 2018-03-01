@@ -1,3 +1,6 @@
+
+import React, { PureComponent } from "react";
+import {connect} from "dva";
 import {
   Button,
   Modal,
@@ -10,8 +13,7 @@ import {
 } from "antd";
 import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
-import { PureComponent } from "react";
-import {connect} from "dva";
+import CourseImageUpload from "./CourseImageUpload";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -254,11 +256,16 @@ export default class CourseForm extends PureComponent {
             rules: [{ required: true, message: "请输入报名须知!" }]
           })(<TextArea rows={4} />)}
         </FormItem>
+        <FormItem {...formItemLayout} label="课程风采">
+          {getFieldDecorator("gallery")(
+            <CourseImageUpload form={this.props.form} />
+          )}
+        </FormItem>
         <FormItem style={{ marginTop: 32 }}>
           {getFieldDecorator("description", {
           })(
             <CourseIntroduce form={this.props.form}/>
-            )}
+          )}
         </FormItem>
 
         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
