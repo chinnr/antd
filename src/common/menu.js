@@ -82,17 +82,7 @@ const menuData = [
   {
     name: '学员管理',
     icon: 'idcard',
-    path: 'student',
-    children: [
-      {
-        name: '学员级别管理',
-        path: 'level-manage'
-      },
-      {
-        name: '学员信息管理',
-        path: 'info-manage'
-      }
-    ]
+    path: 'student-manage'
   },
   {
     name: '证章管理',

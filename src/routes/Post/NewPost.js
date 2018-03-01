@@ -86,6 +86,7 @@ export default class NewPost extends Component {
     const img = document.getElementById("upload-img").files[0];
     let formData = new FormData();
     formData.append("file", img);
+    // console.log('formData ', formData, img)
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "https://api.yichui.net/api/young/post/upload/image");
     xhr.send(formData);
@@ -153,8 +154,8 @@ export default class NewPost extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values["gallery"] = this.postGallery;
-        // console.log("values==>", values);
-        this.createPost(values);
+        console.log("values==>", values);
+        // this.createPost(values);
       }
     });
   };
