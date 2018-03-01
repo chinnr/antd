@@ -38,7 +38,13 @@ export default class TeamList extends Component {
         title: "团长电话",
         dataIndex: "phone",
         key: "phone",
-        render: (text, record) => record.head.phone
+        render: (text, record) => record.head.phone ? record.head.phone.replace("86-","") : ""
+      },
+      {
+        title: '团类型',
+        dataIndex: 'type',
+        key: 'type',
+        render: (text, record) => record.type === "" ? "普通管" : "临时团"
       },
       {
         title: "已加入人数",
@@ -105,9 +111,9 @@ export default class TeamList extends Component {
             message: '修改密码成功!',
             duration: 2,
           });
+          form.resetFields();
         }).catch(err=>{})
       }
-      form.resetFields();
       this.setState({ visible: false });
     });
   };

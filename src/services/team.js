@@ -45,7 +45,9 @@ export function getAllTeams(query) {
           address
           groupLevel
           username
-          head{
+          nickname
+          type
+          head {
             phone
             name
           }

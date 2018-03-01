@@ -1,33 +1,8 @@
 import React, { PureComponent } from "react";
 import { connect } from "dva";
-import {
-  Form,
-  Input,
-  DatePicker,
-  Select,
-  Button,
-  Card,
-  Modal,
-  Radio,
-  Cascader
-} from "antd";
-import moment from "moment";
-import { Map, Marker } from "react-amap";
+import { Form, Input, Button, Card } from "antd";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import styles from "./team.less";
-import options from '../../utils/cascader-address-options';
-
-const pluginProps = {
-  enableHighAccuracy: true,
-  timeout: 10000,
-  showButton: true
-};
-
 const FormItem = Form.Item;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
-const RadioGroup = Radio.Group;
 
 @connect(({ team }) => ({ team }))
 @Form.create()
@@ -35,81 +10,10 @@ export default class UpdateTeamAccount extends PureComponent {
   constructor() {
     super();
     this.state = {
-      modalVisible: false,
       visible: true,
-      position: { longitude: 108.291275, latitude: 22.869617 },
-      clickable: true,
-      draggable: true,
-      addr: "",
-      clickMap: false,
       gid: ""
     };
-    this.mapPlugins = ["ToolBar"];
-    this.isDragMap = false;
-    this.dragLocationInfo = {};
   }
-
-  // 地图事件监听
-  markerEvents = {
-    click: () => {
-      console.log("marker clicked!");
-    },
-    dragend: map => {
-      // console.log("dragend.....", map);
-      this.props
-        .dispatch({
-          type: "team/locationInfo",
-          payload: {
-            longitude: map.lnglat.lng,
-            latitude: map.lnglat.lat
-          }
-        })
-        .then(res => {
-          console.log("res locationInfo: ", res);
-          // 重新设置输入框地址
-          this.props.form.setFieldsValue({ address: res.locationInfo.format });
-          this.isDragMap = true;
-          this.dragLocationInfo = res.locationInfo;
-        })
-        .catch(err => err);
-    }
-  };
-
-  // 点击弹出地图
-  showModal = () => {
-    this.props
-      .dispatch({
-        type: "team/addrInfo",
-        payload: { input: this.state.addr }
-      })
-      .then(res => {
-        console.log("view res: ", res);
-        const { addressInfo } = res;
-        const _position = {
-          longitude: addressInfo.longitude,
-          latitude: addressInfo.latitude
-        };
-        this.setState(
-          {
-            position: _position
-          },
-          () => {
-            this.setState({
-              modalVisible: true
-            });
-          }
-        );
-      })
-      .catch(err => err);
-  };
-
-  // 点击弹窗确认
-  handleOk = e => {
-    // console.log(e);
-    this.setState({
-      modalVisible: false
-    });
-  };
 
   // 点击弹窗取消
   handleCancel = e => {
@@ -119,46 +23,35 @@ export default class UpdateTeamAccount extends PureComponent {
     });
   };
 
-  // 处理地址
-  handleAddrChange = e => {
-    console.log("处理地址...", e.target.value);
-    this.setState({ addr: e.target.value }, () => {
-      if (this.state.addr.length > 0) {
-        this.setState({ clickMap: true });
-      } else {
-        this.setState({ clickMap: false });
-      }
-    });
-  };
-
   // 提交新建团信息
   handleSubmit = e => {
     e.preventDefault();
-      this.props.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          console.log("表单 values ", values);
-          this.props
-            .dispatch({
-              type: "team/updateTeam",
-              payload: {
-                form: {
-                  nickname: values.nickname,
-                  phone: "86-" + values.phone,
-                },
-                gid: this.state.gid,
-              }
-            }).then(() => localStorage.removeItem("teamAccount"))
-            .catch(err => err);
-        }
-      });
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log("表单 values ", values);
+        this.props
+          .dispatch({
+            type: "team/updateTeam",
+            payload: {
+              form: {
+                nickname: values.nickname,
+                phone: "86-" + values.phone
+              },
+              gid: this.state.gid
+            }
+          })
+          .then(() => localStorage.removeItem("teamAccount"))
+          .catch(err => err);
+      }
+    });
   };
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
 
-  // 获取要修改的团信息字段
-  getBadgeParams = () => {
+  // 获取路由传递的修改的团信息字段
+  getTeamParams = () => {
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
@@ -175,21 +68,21 @@ export default class UpdateTeamAccount extends PureComponent {
     this.setState({
       gid: values.gid
     });
-    keys.map(item => {
-      this.props.form.setFieldsValue({
-        [item]: values[item]
-      });
+
+    this.props.form.setFieldsValue({
+      name: values.name,
+      nickname: values.nickname,
+      phone: values.head.phone ? values.head.phone.replace("86-","") : ""
     });
   };
 
   componentDidMount() {
     // To disabled submit button at the beginning.
     this.props.form.validateFields();
-    this.getBadgeParams();
+    this.getTeamParams();
   }
 
   render() {
-    const { clickMap } = this.state;
     const { submitting } = this.props;
     const {
       getFieldDecorator,
@@ -200,8 +93,8 @@ export default class UpdateTeamAccount extends PureComponent {
     // Only show error after a field is touched.
     const usernameError =
       isFieldTouched("username") && getFieldError("username");
-    const passwordError =
-      isFieldTouched("password") && getFieldError("password");
+    const nicknameError =
+      isFieldTouched("nickname") && getFieldError("nickname");
     const phoneError = isFieldTouched("phone") && getFieldError("phone");
 
     const formItemLayout = {
@@ -245,12 +138,12 @@ export default class UpdateTeamAccount extends PureComponent {
                     message: "请输入团长账号"
                   }
                 ]
-              })(<Input placeholder="团长账号" disabled={true}/>)}
+              })(<Input placeholder="团长账号" disabled={true} />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={passwordError ? "error" : ""}
-              help={passwordError || ""}
+              validateStatus={nicknameError ? "error" : ""}
+              help={nicknameError || ""}
               label="团长昵称"
             >
               {getFieldDecorator("nickname", {
@@ -286,35 +179,9 @@ export default class UpdateTeamAccount extends PureComponent {
               >
                 提交
               </Button>
-              {/*<Button style={{ marginLeft: 8 }}>保存</Button>*/}
             </FormItem>
           </Form>
         </Card>
-        <Modal
-          title="请选择标记位置"
-          visible={this.state.modalVisible}
-          onOk={() => this.handleOk()}
-          onCancel={() => this.handleCancel()}
-        >
-          <div>
-            <div style={{ width: "100%", height: 360 }}>
-              <Map
-                amapkey={"a68fcf7d57d3cc225b948f23003b93f3"}
-                plugins={this.mapPlugins}
-                center={this.state.position}
-                zoom={60}
-              >
-                <Marker
-                  events={this.markerEvents}
-                  position={this.state.position}
-                  visible={this.state.visible}
-                  clickable={this.state.clickable}
-                  draggable={this.state.draggable}
-                />
-              </Map>
-            </div>
-          </div>
-        </Modal>
       </PageHeaderLayout>
     );
   }
