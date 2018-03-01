@@ -48,34 +48,12 @@ const menuData = [
     path: 'course',
     children: [
       {
-        name: '课程类型管理',
-        path: 'type',
+        name: '新建课程',
+        path: 'new',
       },
       {
-        name: '课程标签管理',
-        path: 'tag',
-      },
-      {
-        name: '团集会模板管理',
-        path: 'team-template',
-        // hideInMenu: true,
-      },
-      {
-        name: '新建模板',
-        path: 'create-template',
-        hideInMenu: true,
-      },
-      {
-        name: '兴趣课模板管理',
-        path: 'interest-template'
-      },
-      {
-        name: '活动课管理',
-        path: 'activity'
-      },
-      {
-        name: '开课记录',
-        path: 'records'
+        name: '课程列表',
+        path: 'list',
       }
     ],
   },

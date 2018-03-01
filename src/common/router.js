@@ -162,23 +162,11 @@ export const getRouterData = (app) => {
     '/user/register-result': {
       component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
     },
-    '/course/type': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/CourseType')),
+    '/course/new': {
+      component: dynamicWrapper(app, ['course', 'badge'], () => import('../routes/Course/NewCourse')),
     },
-    '/course/tag': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/CourseTag')),
-    },
-    '/course/team-template': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/TeamTemplate')),
-    },
-    '/course/interest-template': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/InterestTemplate')),
-    },
-    '/course/activity': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/ActivityCourse')),
-    },
-    '/course/create-template': {
-      component: dynamicWrapper(app, [], () => import('../routes/Course/CreateTemplate')),
+    '/course/list': {
+      component: dynamicWrapper(app, ['course'], () => import('../routes/Course/CourseList')),
     },
     '/student/level-manage': {
       component: dynamicWrapper(app, ['rule'], () => import('../routes/Student/StudentLevelManage'))
