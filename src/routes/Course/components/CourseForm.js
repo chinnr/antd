@@ -11,21 +11,26 @@ import {
 import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
 import { PureComponent } from "react";
+import {connect} from "dva";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
 const dateFormat = "YYYY-MM-DD";
 const RadioGroup = Radio.Group;
 const { TextArea } = Input;
+
+@connect(({ course, badge }) => ({ course, badge }))
 @Form.create()
 export default class CourseForm extends PureComponent {
-  state={
-    level: "level1",
-    stage: "stage1",
-    // filterBadges: []
-  };
-  count = 0;
-  handleCreate = () => {
+  constructor(props){
+    super(props);
+    this.state={
+      level: "level1",
+      stage: "stage1",
+    };
+  }
+  handleCreate = (e) => {
+    e.preventDefault();
     const form = this.props.form;
     form.validateFields((err, values) => {
       if (!err) {
@@ -37,38 +42,40 @@ export default class CourseForm extends PureComponent {
 
   onSelect(v, type) {
     console.log("onSelect: ", v, type);
+    let _this = this;
     this.setState({
       [type] : v
     }, () => {
-      this.props.getAllBadges({level:this.state.level, stage:this.state.stage})
+      this.getAllBadges(0,{level:_this.state.level, stage:_this.state.stage})
     });
   }
 
-  // handleBadges = (badges) => {
-  //   let result =  badges.filter( v => {
-  //     if(v.level === this.state.level && v.stage === this.state.stage){
-  //       return v
-  //     }
-  //   });
-  //   console.log("handleBadges ==>", result);
-  //   this.setState({filterBadges: result});
-  //   return result;
-  // };
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
-  componentDidMount() {
-    this.props.form.validateFields();
-  }
 
-  // 获取筛选的证章
-  getFilterBadges = () => {
-    console.log("获取筛选的证章");
+  // 获取团列表
+  getAllBadges = (p = 0) => {
+    let _this = this;
+    this.props
+      .dispatch({
+        type: "badge/getAllBadges",
+        payload: {
+          query: { limit: 10, page: p },
+          queryOption: {stage: _this.state.stage, level:_this.state.level}
+        }
+      })
+      .catch(err => err);
   };
 
+  componentDidMount() {
+    this.props.form.validateFields();
+    this.getAllBadges();
+  }
+
   render() {
-    const { badges } = this.props;
+    const { badges } = this.props.badge;
     const {
       getFieldDecorator,
       getFieldsError,
@@ -171,7 +178,7 @@ export default class CourseForm extends PureComponent {
           {getFieldDecorator("badge", {
             rules: [{ required: true, message: "请选择课程对应的证章!" }]
           })(
-            <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getFilterBadges()}>
+            <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
               {badges.map((item, i) => {
                   return (
                     <Option
@@ -248,7 +255,10 @@ export default class CourseForm extends PureComponent {
           })(<TextArea rows={4} />)}
         </FormItem>
         <FormItem style={{ marginTop: 32 }}>
-          <CourseIntroduce />
+          {getFieldDecorator("description", {
+          })(
+            <CourseIntroduce form={this.props.form}/>
+            )}
         </FormItem>
 
         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
@@ -259,7 +269,6 @@ export default class CourseForm extends PureComponent {
           >
             提交
           </Button>
-          {/*<Button style={{ marginLeft: 8 }}>保存</Button>*/}
         </FormItem>
       </Form>
     );
