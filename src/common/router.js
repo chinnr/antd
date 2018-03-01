@@ -168,11 +168,8 @@ export const getRouterData = (app) => {
     '/course/list': {
       component: dynamicWrapper(app, ['course'], () => import('../routes/Course/CourseList')),
     },
-    '/student/level-manage': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/Student/StudentLevelManage'))
-    },
-    '/student/info-manage': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/Student/StudentInfoManage'))
+    '/student-manage': {
+      component: dynamicWrapper(app, ['student'], () => import('../routes/Student/StudentManage'))
     },
     '/team/new': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/NewTeam')),

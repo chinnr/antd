@@ -24,6 +24,24 @@ export function goodsType() {
   return graphRequest(query, {}, 'mall-admin')
 }
 
+export function addGoodsType(formData) {
+  const mutation = `mutation addGoodsType($formData: GoodsTypeInputCreate) {
+    me {
+      goodsType {
+        createGoodsType(form: $formData) {
+          tid
+          name
+          type
+          level
+          typeImg
+          priority
+        }
+      }
+    }
+  }`;
+  return graphRequest(mutation, formData, 'mall-admin')
+}
+
 export function goodsList() {
   const query = `
     query getGoodsList {
