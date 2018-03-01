@@ -44,11 +44,12 @@ export function deleteBadge(bid) {
 }
 
 // 证章列表
-export function getAllBadges(query) {
-  const badgeList = `query badgeList($t: String,$query: FormQuery) {
-    me(token: $t) {
+export function getAllBadges(payload) {
+  console.log("证章列表==>", payload);
+  const badgeList = `query badgeList($queryOption: QueryOption, $query: FormQuery) {
+    me{
       badge {
-        getAllBadge(query: $query) {
+        getAllBadge(queryOption:$queryOption, query: $query) {
           data {
             bid
             name
@@ -57,7 +58,7 @@ export function getAllBadges(query) {
             stage
             class
             normalImg
-            grayImg,
+            grayImg
             description
             significance
           }
@@ -70,5 +71,6 @@ export function getAllBadges(query) {
       }
     }
   }`;
-  return graphRequest(badgeList, query, "grow-admin");
+  const p = payload;
+  return graphRequest(badgeList, payload, "grow-admin");
 }
