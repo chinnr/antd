@@ -45,7 +45,6 @@ export function deleteBadge(bid) {
 
 // 证章列表
 export function getAllBadges(query) {
-  console.log("证章列表 ==> ", query);
   const badgeList = `query badgeList($t: String,$query: FormQuery) {
     me(token: $t) {
       badge {
@@ -58,7 +57,9 @@ export function getAllBadges(query) {
             stage
             class
             normalImg
-            grayImg
+            grayImg,
+            description
+            significance
           }
           meta {
             count
