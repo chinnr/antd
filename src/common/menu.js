@@ -48,12 +48,16 @@ const menuData = [
     path: 'course',
     children: [
       {
-        name: '新建课程',
+        name: '新建课程模版',
         path: 'new',
       },
       {
-        name: '课程列表',
-        path: 'list',
+        name: '课程模版列表',
+        path: 'template-list',
+      },
+      {
+        name: '开课列表',
+        path: 'course-record',
       }
     ],
   },
