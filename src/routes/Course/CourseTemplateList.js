@@ -1,9 +1,21 @@
 import React, { Component } from "react";
-import { Card, Table, Divider, Form, Popconfirm } from "antd";
+import {
+  Card,
+  Table,
+  Divider,
+  Form,
+  Popconfirm,
+  Select,
+  Button,
+  Input
+} from "antd";
 import { connect } from "dva";
 import {routerRedux} from "dva/router";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import {handleLevel, handleSore, handleStage} from "../../utils/utils";
+
+const FormItem = Form.Item;
+const Option = Select.Option;
 
 @connect(({ course }) => ({ course }))
 @Form.create()
@@ -60,7 +72,8 @@ export default class CourseTempalteList extends Component {
     this.state = {
       data: [],
       visible: false,
-      username: ''
+      username: '',
+      filterValue: 1,
     };
   }
 
@@ -99,17 +112,116 @@ export default class CourseTempalteList extends Component {
     console.log("处理翻页==>", p);
   };
 
+  // 筛选
+  onChange = (e) => {
+    // console.log('radio checked', e.target.value);
+    // this.setState({
+    //   filterValue: e.target.value,
+    // });
+  };
+
+  filter = (e) => {
+    e.preventDefault();
+    const form = this.props.form;
+    form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        // form.resetFields();
+      }
+    });
+  };
+
+  hasErrors(fieldsError) {
+    return Object.keys(fieldsError).some(field => fieldsError[field]);
+  }
+
+  componentDidMount() {
+    this.props.form.validateFields();
+  }
+
   render() {
     const pagination = {
       total: 26,
       pageSize: 10,
       current: 1
     };
+    const {
+      getFieldDecorator,
+      getFieldsError,
+      getFieldError,
+      isFieldTouched
+    } = this.props.form;
+    const {filterValue} = this.state;
     // const { courseTempList, courseTempListMeta } = this.props.course;
 
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
+          <div>
+            <Form layout={"inline"} onSubmit={this.filter}>
+              <FormItem label="课程主题">
+                {getFieldDecorator("title")(
+                  <Input />
+                )}
+              </FormItem>
+              <FormItem label="类型">
+                {getFieldDecorator("type", {
+                  initialValue: '0'
+                })(
+                  <Select placeholder="请选择课程类型">
+                    <Option value="0">团集会</Option>
+                    <Option value="1">活动</Option>
+                    <Option value="2">兴趣课</Option>
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem label="课程级别">
+                {getFieldDecorator("level", {
+                  initialValue: "level1",
+                })(
+                  <Select placeholder="请选择课程级别">
+                    <Option value="level1">海狸</Option>
+                    <Option value="level2">小狼</Option>
+                    <Option value="level3">探索</Option>
+                    <Option value="level4">乐扶</Option>
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem label="课程阶段">
+                {getFieldDecorator("stage", {
+                  initialValue: "stage1"
+                })(
+                  <Select placeholder="请选择课程阶段">
+                    <Option value="stage1">阶段1</Option>
+                    <Option value="stage2">阶段2</Option>
+                    <Option value="stage3">阶段3</Option>
+                    <Option value="stage4">阶段4</Option>
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem label="服务范围">
+                {getFieldDecorator("score", {
+                  initialValue: "public"
+                })(
+                  <Select placeholder="请选择课程服务范围">
+                    <Option value="public">公开</Option>
+                    <Option value="member">仅会员</Option>
+                    <Option value="non-member">非会员</Option>
+                    <Option value="welcome">欢迎课</Option>
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={this.hasErrors(getFieldsError())}
+                >
+                  筛选
+                </Button>
+              </FormItem>
+            </Form>
+          </div>
           <Table
             bordered
             rowKey={record => record.gid}
