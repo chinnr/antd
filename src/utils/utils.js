@@ -1,4 +1,5 @@
 import moment from "moment";
+import {notification} from "antd/lib/index";
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -179,3 +180,10 @@ export function parseError(errors) {
   }
   return errorString;
 }
+
+export const successNotification = (msg = "操作成功!") => {
+  notification["success"]({
+    message: msg,
+    duration: 2
+  });
+};

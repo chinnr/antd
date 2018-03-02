@@ -173,7 +173,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/NewTeam')),
     },
     '/team/list': {
-      component: dynamicWrapper(app, ['team'], () => import('../routes/Team/TeamList')),
+      component: dynamicWrapper(app, ['team', 'student'], () => import('../routes/Team/TeamList')),
     },
     '/team/edit-info': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/UpdateTeamInfo')),

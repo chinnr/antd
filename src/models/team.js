@@ -1,5 +1,6 @@
 import {notification, message} from "antd";
 import * as teamService from '../services/team';
+import {successNotification} from '../utils/utils';
 
 export default {
   namespace: 'team',
@@ -11,14 +12,14 @@ export default {
   },
   reducers: {
     storeAddressInfo(state, {payload}) {
-      console.log("storeAddressInfo: ", payload);
+      // console.log("storeAddressInfo: ", payload);
       return {
         ...state,
         ...payload
       }
     },
     storeAllTeams(state, {payload}) {
-      console.log("storeAllTeams: ", payload);
+      // console.log("storeAllTeams: ", payload);
       return {
         ...state,
         ...payload
@@ -44,19 +45,16 @@ export default {
       console.log("updateTeam...payload==>: ", payload);
       const {data, errors} = yield call(teamService.updateTeam, payload);
       if(errors) {
-        message.destroy();
         const err = errors[0].message;
         throw new Error(err);
       }else {
+        successNotification('修改团信息成功!');
         console.log("updateTeam==>", data);
-        notification['success']({
-          message: '修改团信息成功',
-        });
       }
     },
 
     *getAllTeams({payload}, {call, put}) {
-      console.log("getAllTeams...payload: ", payload);
+      // console.log("getAllTeams...payload: ", payload);
       const {data, errors} = yield call(teamService.getAllTeams, payload)
       if(errors) {
         const err = errors[0].message;
@@ -64,7 +62,7 @@ export default {
       }else {
         const teams = data.me.groups.data;
         const teamsMeta = data.me.groups.meta;
-        console.log("getAllTeams==>", teams, teamsMeta);
+        // console.log("getAllTeams==>", teams, teamsMeta);
         yield put({
           type: "storeAllTeams",
           payload: {teams, teamsMeta}
@@ -97,13 +95,26 @@ export default {
     },
 
     *modifyTeamPsw({payload}, {call, put}) {
-      console.log("modifyTeamPsw...payload==> ", payload);
+      // console.log("modifyTeamPsw...payload==> ", payload);
       const {data, errors} = yield call(teamService.modifyTeamPsw, payload);
       if(errors) {
         const err = errors[0].message;
-        throw new Error(err)
+        throw new Error(err);
       }else {
+        successNotification();
         console.log("modifyTeamPsw...", data);
+      }
+    },
+
+    *addCoach({payload}, {call, put}) {
+      // console.log("addCoach...payload==> ", payload);
+      const {data, errors} = yield call(teamService.addCoach, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      }else {
+        successNotification();
+        console.log("addCoach...", data);
       }
     }
   }

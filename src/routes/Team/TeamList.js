@@ -3,10 +3,11 @@ import { Card, Table, Pagination, Divider, Form, notification } from "antd";
 import { connect } from "dva";
 import moment from "moment";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import PswForm from './PswForm';
-import {routerRedux} from "dva/router";
+import PswForm from "./PswForm";
+import CoachForm from "./CoachForm";
+import { routerRedux } from "dva/router";
 
-@connect(({ team }) => ({ team }))
+@connect(({ team, student }) => ({ team, student }))
 @Form.create()
 export default class TeamList extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ export default class TeamList extends Component {
       {
         title: "团账号",
         dataIndex: "username",
-        key: "username",
+        key: "username"
       },
       {
         title: "团部级别",
@@ -38,18 +39,19 @@ export default class TeamList extends Component {
         title: "团长电话",
         dataIndex: "phone",
         key: "phone",
-        render: (text, record) => record.head.phone ? record.head.phone.replace("86-","") : ""
+        render: (text, record) =>
+          record.head.phone ? record.head.phone.replace("86-", "") : ""
       },
       {
-        title: '团类型',
-        dataIndex: 'type',
-        key: 'type',
-        render: (text, record) => record.type === "" ? "普通管" : "临时团"
+        title: "团类型",
+        dataIndex: "type",
+        key: "type",
+        render: (text, record) => (record.type === "" ? "普通管" : "临时团")
       },
       {
         title: "已加入人数",
         dataIndex: "numJoin",
-        key: "numJoin",
+        key: "numJoin"
       },
       {
         title: "操作",
@@ -59,17 +61,23 @@ export default class TeamList extends Component {
           <span>
             <a onClick={() => this.goToPage(record, "edit-info")}>修改信息</a>
             <Divider type="vertical" />
-            <a onClick={() => this.goToPage(record, "edit-account")}>修改账号</a>
+            <a onClick={() => this.goToPage(record, "edit-account")}>
+              修改账号
+            </a>
             <Divider type="vertical" />
             <a onClick={() => this.modifyPsw(record)}>修改密码</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.openCoachModal(record)}>指派教官</a>
           </span>
         )
       }
     ];
+    this.gid = "";
     this.state = {
       data: [],
       visible: false,
-      username: ''
+      coachFormVisible: false,
+      username: ""
     };
   }
 
@@ -77,7 +85,7 @@ export default class TeamList extends Component {
   goToPage = (record, path) => {
     this.props.dispatch(
       routerRedux.push({
-        pathname: "/team/"+path,
+        pathname: "/team/" + path,
         query: {
           record: record
         }
@@ -86,7 +94,7 @@ export default class TeamList extends Component {
   };
 
   // 打开修改密码弹窗
-  modifyPsw = (record) => {
+  modifyPsw = record => {
     this.setState({
       visible: true,
       username: record.username
@@ -96,35 +104,67 @@ export default class TeamList extends Component {
   // 修改密码
   handleCreate = () => {
     const form = this.form;
-    const {username} = this.state;
+    const { username } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        this.props.dispatch({
-          type: "team/modifyTeamPsw",
-          payload: {
-            password: values.password,
-            username
-          }
-        }).then(() => {
-          notification['success']({
-            message: '修改密码成功!',
-            duration: 2,
-          });
-          form.resetFields();
-        }).catch(err=>{})
+        console.log("Received values of form: ", values);
+        this.props
+          .dispatch({
+            type: "team/modifyTeamPsw",
+            payload: {
+              password: values.password,
+              username
+            }
+          })
+          .catch(err => {});
       }
       this.setState({ visible: false });
     });
   };
 
-  // 关闭弹窗
-  hideModal = () => {
-    this.setState({visible: false})
+  // 打开指派教官弹窗
+  openCoachModal = record => {
+    this.gid = record.gid;
+    this.setState({
+      coachFormVisible: true
+    });
   };
 
-  saveFormRef = (form) => {
+  // 指派教官
+  addCoach = () => {
+    const form = this.coachForm;
+    form.validateFields((err, values) => {
+      if (!err) {
+        console.log("Received values of form ===>: ", values, this.gid);
+        this.props
+          .dispatch({
+            type: "team/addCoach",
+            payload: {
+              gid: this.gid,
+              uid: values.uid,
+              isOn: true
+            }
+          })
+          .catch(err => {});
+      }
+      this.setState({ coachFormVisible: false });
+    });
+  };
+
+  // 关闭弹窗
+  hideModal = () => {
+    this.setState({
+      visible: false,
+      coachFormVisible: false
+    });
+  };
+
+  saveFormRef = form => {
     this.form = form;
+  };
+
+  saveCoachFormRef = form => {
+    this.coachForm = form;
   };
 
   handleGroupLevel = level => {
@@ -154,6 +194,19 @@ export default class TeamList extends Component {
     this.getAllTeams(p - 1);
   };
 
+  // 处理教官列表翻页
+  handleTableChange = (p) => {
+    console.log('page ', p);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'student/getStudentList',
+      payload: {
+        page: p-1,
+        limit: 10
+      }
+    });
+  };
+
   // 获取团列表
   getAllTeams = (p = 0) => {
     this.props
@@ -166,15 +219,14 @@ export default class TeamList extends Component {
       .catch(err => err);
   };
 
-
   componentWillMount() {
     this.getAllTeams();
   }
 
-
-
   render() {
     const { teams, teamsMeta } = this.props.team;
+    const { studentList, page, count } = this.props.student;
+    const { visible, coachFormVisible } = this.state;
 
     return (
       <PageHeaderLayout title={null} content={null}>
@@ -196,9 +248,19 @@ export default class TeamList extends Component {
         </Card>
         <PswForm
           ref={this.saveFormRef}
-          visible={this.state.visible}
+          visible={visible}
           onCancel={this.hideModal}
           onCreate={this.handleCreate}
+        />
+        <CoachForm
+          ref={this.saveCoachFormRef}
+          coach={studentList}
+          page={page}
+          count={count}
+          visible={coachFormVisible}
+          onCancel={this.hideModal}
+          addCoach={this.addCoach}
+          onPagination={this.handleTableChange}
         />
       </PageHeaderLayout>
     );

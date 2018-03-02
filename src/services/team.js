@@ -109,3 +109,14 @@ export function modifyTeamPsw(payload) {
   const formUser = {password: {password:payload.password}};
   return graphRequest(modifyPsw,{username, formUser}, 'user-admin');
 }
+
+// 指派教官
+export function addCoach(payload) {
+  // console.log("指派教官 payload==>", payload);
+  const addCoachMutate = `mutation addCoach($gid: String!,$uid: String!,$isOn: Boolean!) {
+    me {
+      groupCoachStaffSet(gid: $gid, uid: $uid, isOn:$isOn)
+    }
+  }`;
+  return graphRequest(addCoachMutate, payload, 'young-admin');
+}

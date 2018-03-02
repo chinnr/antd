@@ -35,7 +35,7 @@ export default {
   subscriptions: {
     setup({dispatch, history}) {
       history.listen(({pathname}) => {
-        if(pathname === '/student-manage') {
+        if(pathname === '/student-manage' || pathname === '/team/list') {
           dispatch({
             type: 'getStudentList',
             payload: {
@@ -44,7 +44,7 @@ export default {
             }
           })
         }
-      }) 
+      })
     }
   }
 }
