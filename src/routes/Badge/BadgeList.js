@@ -5,6 +5,7 @@ import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import { rootUrl, thumbnailPath } from "../../utils/constant";
 import styles from "./BadgeList.less";
 import { routerRedux } from "dva/router";
+import {handleLevel, handleStage} from "../../utils/utils";
 
 @connect(({ badge }) => ({ badge }))
 export default class BadgeList extends PureComponent {
@@ -20,13 +21,13 @@ export default class BadgeList extends PureComponent {
         title: "证章级别",
         dataIndex: "level",
         key: "level",
-        render: (text, record) => this.handleBadgeLevel(record.level)
+        render: (text, record) => handleLevel(record.level)
       },
       {
         title: "证章阶段",
         dataIndex: "stage",
         key: "stage",
-        render: (text, record) => this.handleBadgeStage(record.stage)
+        render: (text, record) => handleStage(record.stage)
       },
       {
         title: "证章分类",

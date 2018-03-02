@@ -6,6 +6,7 @@ import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import PswForm from "./PswForm";
 import CoachForm from "./CoachForm";
 import { routerRedux } from "dva/router";
+import {handleLevel} from  '../../utils/utils';
 
 @connect(({ team, student }) => ({ team, student }))
 @Form.create()
@@ -27,7 +28,7 @@ export default class TeamList extends Component {
         title: "团部级别",
         dataIndex: "groupLevel",
         key: "groupLevel",
-        render: (text, record) => this.handleGroupLevel(record.groupLevel)
+        render: (text, record) => handleLevel(record.groupLevel)
       },
       {
         title: "成立时间",
@@ -165,28 +166,6 @@ export default class TeamList extends Component {
 
   saveCoachFormRef = form => {
     this.coachForm = form;
-  };
-
-  handleGroupLevel = level => {
-    let name = "";
-    switch (level) {
-      case "level1":
-        name = "海狸";
-        break;
-      case "level2":
-        name = "小狼";
-        break;
-      case "level3":
-        name = "探索";
-        break;
-      case "level4":
-        name = "乐扶";
-        break;
-      default:
-        name = level;
-        break;
-    }
-    return name;
   };
 
   // 处理翻页
