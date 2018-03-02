@@ -187,3 +187,37 @@ export const successNotification = (msg = "操作成功!") => {
     duration: 2
   });
 };
+
+// score
+export const handleSore = (score) => {
+  const scoreObj = {
+    "public":"公开",
+    "member":"仅会员",
+    "non-member":"非会员",
+    "welcome":"欢迎课"
+  };
+  return scoreObj[score];
+};
+
+// level
+export const handleLevel = (level) => {
+  const levelObj = {
+    "level1":"海狸",
+    "level2":"小狼",
+    "level3":"探索",
+    "level4":"乐扶"
+  };
+  return levelObj[level];
+};
+
+// stage
+export const handleStage = (stage) => {
+  const stageObj = {
+    "stage1":"阶段一",
+    "stage2":"阶段二",
+    "stage3":"阶段三",
+    "stage4":"阶段四",
+    "stage5":"阶段五"
+  };
+  return stageObj[stage];
+};
