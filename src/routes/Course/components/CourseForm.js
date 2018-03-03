@@ -139,12 +139,7 @@ export default class CourseForm extends PureComponent {
             initialValue: "public",
             rules: [{ required: true, message: "请输入服务范围!" }]
           })(
-            <RadioGroup>
-              <Radio value="public">公开</Radio>
-              <Radio value="member">仅会员</Radio>
-              <Radio value="non-member">非会员</Radio>
-              <Radio value="welcome">欢迎课</Radio>
-            </RadioGroup>
+            <TextArea rows={4} />
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="课程级别">
@@ -193,58 +188,6 @@ export default class CourseForm extends PureComponent {
               })}
             </Select>
           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="课时">
-          {getFieldDecorator("lesson", {
-            initialValue: "lesson1",
-            rules: [{ required: true, message: "请选择课时!" }]
-          })(
-            <Select placeholder="请选择课时">
-              {lessons.map((item, i) => (
-                <Option key={i} value={"lesson" + item.lesson}>
-                  {item.value}
-                </Option>
-              ))}
-            </Select>
-          )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="报名截止时间">
-          {getFieldDecorator("deadlinedAt", {
-            rules: [{ required: true, message: "请选择报名截止时间!" }],
-            initialValue: moment(new Date(), "YYYY-MM-DD")
-          })(<DatePicker style={{ width: "100%" }} format={dateFormat} />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="开课时间">
-          {getFieldDecorator("startedAt", {
-            rules: [{ required: true, message: "请选择开课时间!" }],
-            initialValue: moment(new Date(), "YYYY-MM-DD")
-          })(<DatePicker style={{ width: "100%" }} format={dateFormat} />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="结课时间">
-          {getFieldDecorator("endedAt", {
-            rules: [{ required: true, message: "请选择结课时间!" }],
-            initialValue: moment(new Date(), "YYYY-MM-DD")
-          })(<DatePicker style={{ width: "100%" }} format={dateFormat} />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="上课地点">
-          {getFieldDecorator("courseLocation", {
-            rules: [{ required: true, message: "请输入上课地点!" }]
-          })(<Input />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="集合地点">
-          {getFieldDecorator("collectLocation", {
-            rules: [{ required: true, message: "请输入集合地点!" }]
-          })(<Input />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="体验券">
-          {getFieldDecorator("payExpCoupons", {
-            rules: [{ required: true, message: "请输入体验券数量!" }]
-          })(<InputNumber min={1} style={{ width: "100%" }} />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="课时券">
-          {getFieldDecorator("payClassCoupons", {
-            rules: [{ required: true, message: "请输入课时券数量!" }]
-          })(<InputNumber min={1} style={{ width: "100%" }} />)}
         </FormItem>
         <FormItem {...formItemLayout} label="课程内容">
           {getFieldDecorator("content", {
