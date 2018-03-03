@@ -4,6 +4,7 @@ export default {
   namespace: 'student',
   state: {
     studentList: [],
+    studentDetail: {},
     page: null,
     limit: null,
     count: null
@@ -30,11 +31,39 @@ export default {
           }
         })
       }
+    },
+    *getStudentDetail({ payload: uid }, { call, put }) {
+      const { data, error } = yield call(studentService.studentDetail, uid);
+      if(error) {
+        throw new Error(errors);
+      }
+
+      if(data.me) {
+        const studentDetail = {
+          ...data.me.userOne.base.profile,
+          ...data.me.userOne.guardian
+        };
+
+        yield put({
+          type: 'updateState',
+          payload: {
+            studentDetail
+          }
+        })
+      }
+    },
+    *updateUserPassword({ payload: { uid, form } }, { call, put }) {
+      const { data, error } = yield call(studentService.updatePassword, { uid, form });
+      if(error) {
+        throw new Error(errors);
+      }
+      console.log('data pwd ', data)
     }
   },
   subscriptions: {
     setup({dispatch, history}) {
       history.listen(({pathname}) => {
+        const reg = /\/student-detail\/(.+)/;
         if(pathname === '/student-manage' || pathname === '/team/list') {
           dispatch({
             type: 'getStudentList',
@@ -43,6 +72,15 @@ export default {
               limit: 10
             }
           })
+        }
+        if(pathname.match(reg)) {
+          const uid = pathname.match(reg)[1];
+          if(uid.length > 0) {
+            dispatch({
+              type: 'getStudentDetail',
+              payload: uid
+            })
+          }
         }
       })
     }

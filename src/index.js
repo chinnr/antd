@@ -39,7 +39,7 @@ const app = dva({
     }
   },
   onAction: createLogger()
-})
+});
 
 // 2. Plugins
 app.use(createLoading());

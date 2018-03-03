@@ -181,10 +181,11 @@ export function parseError(errors) {
   return errorString;
 }
 
-export const successNotification = (msg = "操作成功!") => {
+export const successNotification = (msg = "操作成功!", callback) => {
   notification["success"]({
     message: msg,
-    duration: 2
+    duration: 2,
+    onClose: () => { callback() }
   });
 };
 
