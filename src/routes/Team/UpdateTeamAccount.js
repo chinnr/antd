@@ -1,7 +1,10 @@
-import React, { PureComponent } from "react";
-import { connect } from "dva";
-import { Form, Input, Button, Card } from "antd";
-import PageHeaderLayout from "../../layouts/PageHeaderLayout";
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Form, Input, Button, Card } from 'antd';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { successNotification } from '../../utils/utils';
+import { routerRedux } from 'dva/router';
+
 const FormItem = Form.Item;
 
 @connect(({ team }) => ({ team }))
@@ -11,7 +14,7 @@ export default class UpdateTeamAccount extends PureComponent {
     super();
     this.state = {
       visible: true,
-      gid: ""
+      gid: ''
     };
   }
 
@@ -26,21 +29,27 @@ export default class UpdateTeamAccount extends PureComponent {
   // 提交新建团信息
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
+    const props = this.props;
+    props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log("表单 values ", values);
+        console.log('表单 values ', values);
         this.props
           .dispatch({
-            type: "team/updateTeam",
+            type: 'team/updateTeam',
             payload: {
               form: {
                 nickname: values.nickname,
-                phone: "86-" + values.phone
+                phone: '86-' + values.phone
               },
               gid: this.state.gid
             }
           })
-          .then(() => localStorage.removeItem("teamAccount"))
+          .then(() => {
+            successNotification('修改团账号成功!', function() {
+              props.dispatch(routerRedux.push('/team/list'));
+            });
+            localStorage.removeItem('teamAccount');
+          })
           .catch(err => err);
       }
     });
@@ -55,11 +64,11 @@ export default class UpdateTeamAccount extends PureComponent {
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem("teamAccount")).record;
+      values = JSON.parse(localStorage.getItem('teamAccount')).record;
     } else {
       // 有 query
       localStorage.setItem(
-        "teamAccount",
+        'teamAccount',
         JSON.stringify(this.props.location.query)
       );
       values = this.props.location.query.record;
@@ -72,7 +81,7 @@ export default class UpdateTeamAccount extends PureComponent {
     this.props.form.setFieldsValue({
       name: values.name,
       nickname: values.nickname,
-      phone: values.head.phone ? values.head.phone.replace("86-","") : ""
+      phone: values.head.phone ? values.head.phone.replace('86-', '') : ''
     });
   };
 
@@ -83,6 +92,20 @@ export default class UpdateTeamAccount extends PureComponent {
   }
 
   render() {
+    const breadcrumbList = [
+      {
+        title: '首页',
+        href: '/'
+      },
+      {
+        title: '团队列表',
+        href: '/team/list'
+      },
+      {
+        title: '团账号修改',
+        href: '/team/edit-account'
+      }
+    ];
     const { submitting } = this.props;
     const {
       getFieldDecorator,
@@ -92,10 +115,10 @@ export default class UpdateTeamAccount extends PureComponent {
     } = this.props.form;
     // Only show error after a field is touched.
     const usernameError =
-      isFieldTouched("username") && getFieldError("username");
+      isFieldTouched('username') && getFieldError('username');
     const nicknameError =
-      isFieldTouched("nickname") && getFieldError("nickname");
-    const phoneError = isFieldTouched("phone") && getFieldError("phone");
+      isFieldTouched('nickname') && getFieldError('nickname');
+    const phoneError = isFieldTouched('phone') && getFieldError('phone');
 
     const formItemLayout = {
       labelCol: {
@@ -117,7 +140,11 @@ export default class UpdateTeamAccount extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title={null} content={null}>
+      <PageHeaderLayout
+        title={null}
+        content={null}
+        breadcrumbList={breadcrumbList}
+      >
         <Card bordered={false}>
           <Form
             onSubmit={this.handleSubmit}
@@ -126,46 +153,46 @@ export default class UpdateTeamAccount extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              validateStatus={usernameError ? "error" : ""}
-              help={usernameError || ""}
+              validateStatus={usernameError ? 'error' : ''}
+              help={usernameError || ''}
               label="团长账号"
             >
-              {getFieldDecorator("username", {
-                initialValue: "1004",
+              {getFieldDecorator('username', {
+                initialValue: '1004',
                 rules: [
                   {
                     required: true,
-                    message: "请输入团长账号"
+                    message: '请输入团长账号'
                   }
                 ]
               })(<Input placeholder="团长账号" disabled={true} />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={nicknameError ? "error" : ""}
-              help={nicknameError || ""}
+              validateStatus={nicknameError ? 'error' : ''}
+              help={nicknameError || ''}
               label="团长昵称"
             >
-              {getFieldDecorator("nickname", {
+              {getFieldDecorator('nickname', {
                 rules: [
                   {
                     required: true,
-                    message: "请输入团长昵称"
+                    message: '请输入团长昵称'
                   }
                 ]
               })(<Input placeholder="团长昵称" />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={phoneError ? "error" : ""}
-              help={phoneError || ""}
+              validateStatus={phoneError ? 'error' : ''}
+              help={phoneError || ''}
               label="团长电话"
             >
-              {getFieldDecorator("phone", {
+              {getFieldDecorator('phone', {
                 rules: [
                   {
                     required: true,
-                    message: "请输入团长电话"
+                    message: '请输入团长电话'
                   }
                 ]
               })(<Input placeholder="团长电话" />)}

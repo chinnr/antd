@@ -234,12 +234,22 @@ export default class UpdatePost extends Component {
   }
 
   render() {
+    const breadcrumbList = [{
+      title: '首页',
+      href: '/',
+    }, {
+      title: '文章列表',
+      href: '/post/list',
+    }, {
+      title: '编辑文章',
+      href: '/post/detail',
+    }];
     const { getFieldDecorator } = this.props.form;
     const { classes, post } = this.props.post;
     const { postDetail, gallery } = this.state;
     // this.postGallery = post.gallery;
     return (
-      <PageHeaderLayout title={null} content={null}>
+      <PageHeaderLayout title={null} content={null} breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <div>
             <h3>文章标题</h3>
