@@ -142,7 +142,7 @@ export default class TeamList extends Component {
             type: 'team/addCoach',
             payload: {
               gid: this.gid,
-              uid: values.uid,
+              uids: values.uids,
               isOn: true
             }
           })

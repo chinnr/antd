@@ -1,6 +1,6 @@
-import { Modal, Form, Pagination, Radio } from 'antd';
+import { Modal, Form, Pagination, Checkbox } from 'antd';
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 
 const CoachForm = Form.create()(props => {
   const {
@@ -24,16 +24,16 @@ const CoachForm = Form.create()(props => {
     >
       <Form layout="vertical">
         <FormItem label="教官列表">
-          {getFieldDecorator('uid', {
+          {getFieldDecorator('uids', {
             rules: [{ required: true, message: '请指定教官!' }]
           })(
-            <RadioGroup>
+            <CheckboxGroup>
               {coach.map(item => (
-                <Radio key={item.uid} value={item.uid}>
-                  {item.base.userName}
-                </Radio>
+                <Checkbox key={item.uid} value={item.uid}>
+                  {item.base.profile.name}
+                </Checkbox>
               ))}
-            </RadioGroup>
+            </CheckboxGroup>
           )}
           <div style={{ marginTop: 20 }}>
             <Pagination
