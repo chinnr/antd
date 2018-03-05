@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { Card, Table, Pagination, Divider, Form, notification } from "antd";
-import { connect } from "dva";
-import moment from "moment";
-import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import PswForm from "./PswForm";
-import CoachForm from "./CoachForm";
-import { routerRedux } from "dva/router";
-import {handleLevel} from  '../../utils/utils';
+import React, { Component } from 'react';
+import { Card, Table, Pagination, Divider, Form, notification } from 'antd';
+import { connect } from 'dva';
+import moment from 'moment';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import PswForm from './PswForm';
+import CoachForm from './CoachForm';
+import { routerRedux } from 'dva/router';
+import { handleLevel, successNotification } from '../../utils/utils';
 
 @connect(({ team, student }) => ({ team, student }))
 @Form.create()
@@ -15,54 +15,54 @@ export default class TeamList extends Component {
     super(props);
     this.columns = [
       {
-        title: "团名称",
-        dataIndex: "name",
-        key: "name"
+        title: '团名称',
+        dataIndex: 'name',
+        key: 'name'
       },
       {
-        title: "团账号",
-        dataIndex: "username",
-        key: "username"
+        title: '团账号',
+        dataIndex: 'username',
+        key: 'username'
       },
       {
-        title: "团部级别",
-        dataIndex: "groupLevel",
-        key: "groupLevel",
+        title: '团部级别',
+        dataIndex: 'groupLevel',
+        key: 'groupLevel',
         render: (text, record) => handleLevel(record.groupLevel)
       },
       {
-        title: "成立时间",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text, record) => moment(record.createdAt).format("YYYY-MM-DD")
+        title: '成立时间',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (text, record) => moment(record.createdAt).format('YYYY-MM-DD')
       },
       {
-        title: "团长电话",
-        dataIndex: "phone",
-        key: "phone",
+        title: '团长电话',
+        dataIndex: 'phone',
+        key: 'phone',
         render: (text, record) =>
-          record.head.phone ? record.head.phone.replace("86-", "") : ""
+          record.head.phone ? record.head.phone.replace('86-', '') : ''
       },
       {
-        title: "团类型",
-        dataIndex: "type",
-        key: "type",
-        render: (text, record) => (record.type === "" ? "普通管" : "临时团")
+        title: '团类型',
+        dataIndex: 'type',
+        key: 'type',
+        render: (text, record) => (record.type === '' ? '普通管' : '临时团')
       },
       {
-        title: "已加入人数",
-        dataIndex: "numJoin",
-        key: "numJoin"
+        title: '已加入人数',
+        dataIndex: 'numJoin',
+        key: 'numJoin'
       },
       {
-        title: "操作",
-        dataIndex: "option",
-        key: "option",
+        title: '操作',
+        dataIndex: 'option',
+        key: 'option',
         render: (text, record) => (
           <span>
-            <a onClick={() => this.goToPage(record, "edit-info")}>修改信息</a>
+            <a onClick={() => this.goToPage(record, 'edit-info')}>修改信息</a>
             <Divider type="vertical" />
-            <a onClick={() => this.goToPage(record, "edit-account")}>
+            <a onClick={() => this.goToPage(record, 'edit-account')}>
               修改账号
             </a>
             <Divider type="vertical" />
@@ -73,12 +73,12 @@ export default class TeamList extends Component {
         )
       }
     ];
-    this.gid = "";
+    this.gid = '';
     this.state = {
       data: [],
       visible: false,
       coachFormVisible: false,
-      username: ""
+      username: ''
     };
   }
 
@@ -86,7 +86,7 @@ export default class TeamList extends Component {
   goToPage = (record, path) => {
     this.props.dispatch(
       routerRedux.push({
-        pathname: "/team/" + path,
+        pathname: '/team/' + path,
         query: {
           record: record
         }
@@ -108,10 +108,10 @@ export default class TeamList extends Component {
     const { username } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
+        console.log('Received values of form: ', values);
         this.props
           .dispatch({
-            type: "team/modifyTeamPsw",
+            type: 'team/modifyTeamPsw',
             payload: {
               password: values.password,
               username
@@ -136,15 +136,20 @@ export default class TeamList extends Component {
     const form = this.coachForm;
     form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form ===>: ", values, this.gid);
+        console.log('Received values of form ===>: ', values, this.gid);
         this.props
           .dispatch({
-            type: "team/addCoach",
+            type: 'team/addCoach',
             payload: {
               gid: this.gid,
               uid: values.uid,
               isOn: true
             }
+          })
+          .then(() => {
+            successNotification('指派教官成功!', function() {
+              return false;
+            });
           })
           .catch(err => {});
       }
@@ -174,13 +179,13 @@ export default class TeamList extends Component {
   };
 
   // 处理教官列表翻页
-  handleTableChange = (p) => {
+  handleTableChange = p => {
     console.log('page ', p);
     const { dispatch } = this.props;
     dispatch({
       type: 'student/getStudentList',
       payload: {
-        page: p-1,
+        page: p - 1,
         limit: 10
       }
     });
@@ -190,7 +195,7 @@ export default class TeamList extends Component {
   getAllTeams = (p = 0) => {
     this.props
       .dispatch({
-        type: "team/getAllTeams",
+        type: 'team/getAllTeams',
         payload: {
           query: { limit: 10, page: p }
         }
@@ -205,6 +210,7 @@ export default class TeamList extends Component {
   render() {
     const { teams, teamsMeta } = this.props.team;
     const { studentList, page, count } = this.props.student;
+    console.log('studentList==>', studentList);
     const { visible, coachFormVisible } = this.state;
 
     return (

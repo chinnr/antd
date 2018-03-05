@@ -1,5 +1,5 @@
-import React, { PureComponent } from "react";
-import { connect } from "dva";
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
 import {
   Form,
   Input,
@@ -11,12 +11,13 @@ import {
   Popconfirm,
   notification,
   Tooltip
-} from "antd";
-import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import moment from "moment/moment";
-import { rootUrl, thumbnailPath, uploadPath } from "../../utils/constant";
-import styles from "./NewBadge.less";
-import { routerRedux } from "dva/router";
+} from 'antd';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import moment from 'moment/moment';
+import { rootUrl, thumbnailPath, uploadPath } from '../../utils/constant';
+import styles from './NewBadge.less';
+import { routerRedux } from 'dva/router';
+import { successNotification } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -29,22 +30,22 @@ export default class NewBadge extends PureComponent {
   constructor() {
     super();
     this.state = {
-      normalImg: "",
-      grayImg: ""
+      normalImg: '',
+      grayImg: ''
     };
   }
 
   // 上传证章图片
   uploadImage = (id, type) => {
-    console.log("图片type ==>: ", id, type);
-    const _token = "Bearer " + localStorage.getItem("token");
+    console.log('图片type ==>: ', id, type);
+    const _token = 'Bearer ' + localStorage.getItem('token');
     const img = document.getElementById(id).files[0];
     let formData = new FormData();
-    formData.append("file", img);
+    formData.append('file', img);
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", uploadPath);
+    xhr.open('POST', uploadPath);
     xhr.send(formData);
-    xhr.addEventListener("load", () => {
+    xhr.addEventListener('load', () => {
       let _src = JSON.parse(xhr.responseText).filename;
       this.setState({ [type]: _src }, () =>
         console.log(type, this.state[type])
@@ -53,8 +54,8 @@ export default class NewBadge extends PureComponent {
         [type]: _src
       });
     });
-    xhr.addEventListener("error", () => {
-      console.log("上传失败：", JSON.parse(xhr.responseText));
+    xhr.addEventListener('error', () => {
+      console.log('上传失败：', JSON.parse(xhr.responseText));
     });
   };
 
@@ -63,9 +64,9 @@ export default class NewBadge extends PureComponent {
    * @returns {*}
    */
   deleteUpload = type => {
-    this.setState({ [type]: "" });
+    this.setState({ [type]: '' });
     this.props.form.setFieldsValue({
-      [type]: ""
+      [type]: ''
     });
   };
 
@@ -73,21 +74,23 @@ export default class NewBadge extends PureComponent {
   submitBadge = (values, type) => {
     this.props
       .dispatch({
-        type: "badge/" + type,
+        type: 'badge/' + type,
         payload: {
           form: values
         }
       })
       .then(() => {
-        notification["success"]({
-          message: type === "updateBadge" ? "修改成功" : "新建成功!",
-          duration: 2
+        let message = '新建成功';
+        type === 'updateBadge'
+          ? (message = '修改成功')
+          : (message = '新建成功!');
+        successNotification(message, function() {
+          props.dispatch(routerRedux.push('/badge/list'));
+          if (type === 'updateBadge') {
+            localStorage.removeItem('badgeParams');
+            localStorage.setItem('isEditBadge', 'false');
+          }
         });
-        if (type === "updateBadge") {
-          localStorage.removeItem("badgeParams");
-          localStorage.setItem("isEditBadge", "false");
-        }
-        this.props.dispatch(routerRedux.push("/badge/list"));
       })
       .catch(err => {});
   };
@@ -97,11 +100,11 @@ export default class NewBadge extends PureComponent {
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem("badgeParams")).record;
+      values = JSON.parse(localStorage.getItem('badgeParams')).record;
     } else {
       // 有 query
       localStorage.setItem(
-        "badgeParams",
+        'badgeParams',
         JSON.stringify(this.props.location.query)
       );
       values = this.props.location.query.record;
@@ -123,17 +126,17 @@ export default class NewBadge extends PureComponent {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        if (localStorage.getItem("badgeParams")) {
-          let _bid = JSON.parse(localStorage.getItem("badgeParams")).record.bid;
-          values["bid"] = _bid;
+        if (localStorage.getItem('badgeParams')) {
+          let _bid = JSON.parse(localStorage.getItem('badgeParams')).record.bid;
+          values['bid'] = _bid;
         } else {
-          let _uid = localStorage.getItem("uid");
-          values["uid"] = _uid;
+          let _uid = localStorage.getItem('uid');
+          values['uid'] = _uid;
         }
-        console.log("values==>", values);
-        localStorage.getItem("badgeParams")
-          ? this.submitBadge(values, "updateBadge")
-          : this.submitBadge(values, "createBadge");
+        console.log('values==>', values);
+        localStorage.getItem('badgeParams')
+          ? this.submitBadge(values, 'updateBadge')
+          : this.submitBadge(values, 'createBadge');
       }
     });
   };
@@ -142,7 +145,7 @@ export default class NewBadge extends PureComponent {
   renderToolTipTitle = () => {
     return (
       <div>
-        <h3 style={{ color: "#fff" }}>输入格式参考:</h3>
+        <h3 style={{ color: '#fff' }}>输入格式参考:</h3>
         <p>1. 加强组织性 纪律性和整体观念;</p>
         <p>2. 提高团队合作意识;</p>
       </div>
@@ -154,14 +157,28 @@ export default class NewBadge extends PureComponent {
   }
 
   componentDidMount() {
-    console.log("isEditBadge ==>", localStorage.getItem("isEditBadge"));
-    if (localStorage.getItem("isEditBadge") === "true") {
-      console.log("读取参数");
+    console.log('isEditBadge ==>', localStorage.getItem('isEditBadge'));
+    if (localStorage.getItem('isEditBadge') === 'true') {
+      console.log('读取参数');
       this.getBadgeParams();
     }
   }
 
   render() {
+    let _title = '新建证章';
+    localStorage.getItem('isEditBadge') === 'true'
+      ? (_title = '编辑证章')
+      : (_title = '新建证章');
+    const breadcrumbList = [
+      {
+        title: '首页',
+        href: '/'
+      },
+      {
+        title: _title,
+        href: '/badge/new'
+      }
+    ];
     const {
       getFieldDecorator,
       getFieldsError,
@@ -169,7 +186,7 @@ export default class NewBadge extends PureComponent {
       isFieldTouched
     } = this.props.form;
     const { normalImg, grayImg } = this.state;
-    const badgeNameError = isFieldTouched("name") && getFieldError("name");
+    const badgeNameError = isFieldTouched('name') && getFieldError('name');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -188,7 +205,11 @@ export default class NewBadge extends PureComponent {
       }
     };
     return (
-      <PageHeaderLayout title={null} content={null}>
+      <PageHeaderLayout
+        title={null}
+        content={null}
+        breadcrumbList={breadcrumbList}
+      >
         <Card bordered={false}>
           <Form
             onSubmit={this.handleSubmit}
@@ -197,26 +218,26 @@ export default class NewBadge extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              validateStatus={badgeNameError ? "error" : ""}
-              help={badgeNameError || ""}
+              validateStatus={badgeNameError ? 'error' : ''}
+              help={badgeNameError || ''}
               label="证章名称"
             >
-              {getFieldDecorator("name", {
+              {getFieldDecorator('name', {
                 rules: [
                   {
                     required: true,
-                    message: "请输入证章名称"
+                    message: '请输入证章名称'
                   }
                 ]
               })(<Input placeholder="证章名称" />)}
             </FormItem>
             <FormItem {...formItemLayout} label="证章级别">
-              {getFieldDecorator("level", {
-                initialValue: "level1",
+              {getFieldDecorator('level', {
+                initialValue: 'level1',
                 rules: [
                   {
                     required: true,
-                    message: "请输入证章级别"
+                    message: '请输入证章级别'
                   }
                 ]
               })(
@@ -229,12 +250,12 @@ export default class NewBadge extends PureComponent {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="证章阶段">
-              {getFieldDecorator("stage", {
-                initialValue: "stage1",
+              {getFieldDecorator('stage', {
+                initialValue: 'stage1',
                 rules: [
                   {
                     required: true,
-                    message: "请输入证章阶段"
+                    message: '请输入证章阶段'
                   }
                 ]
               })(
@@ -247,12 +268,12 @@ export default class NewBadge extends PureComponent {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="证章分类">
-              {getFieldDecorator("class", {
-                initialValue: "class1",
+              {getFieldDecorator('class', {
+                initialValue: 'class1',
                 rules: [
                   {
                     required: true,
-                    message: "请输入证章分类"
+                    message: '请输入证章分类'
                   }
                 ]
               })(
@@ -266,31 +287,31 @@ export default class NewBadge extends PureComponent {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="证章简介">
-              {getFieldDecorator("description", {
+              {getFieldDecorator('description', {
                 rules: [
                   {
                     required: true,
-                    message: "请输入证章简介"
+                    message: '请输入证章简介'
                   }
                 ]
               })(<TextArea rows={4} />)}
             </FormItem>
             <FormItem {...formItemLayout} label="证章意义">
               <Tooltip
-                trigger={["focus"]}
+                trigger={['focus']}
                 title={() => this.renderToolTipTitle()}
                 placement="topLeft"
                 overlayClassName="numeric-input"
               >
-                {getFieldDecorator("significance")(<TextArea rows={4} />)}
+                {getFieldDecorator('significance')(<TextArea rows={4} />)}
               </Tooltip>
             </FormItem>
             <FormItem {...formItemLayout} label="正常证章图片">
-              {getFieldDecorator("normalImg", {
+              {getFieldDecorator('normalImg', {
                 rules: [
                   {
                     required: true,
-                    message: "正常证章图片不能够为空"
+                    message: '正常证章图片不能够为空'
                   }
                 ]
               })(
@@ -312,8 +333,8 @@ export default class NewBadge extends PureComponent {
                       <div className={styles.delete_upload_mask}>
                         <Popconfirm
                           placement="top"
-                          title={"你确定删除该图片?"}
-                          onConfirm={() => this.deleteUpload("normalImg")}
+                          title={'你确定删除该图片?'}
+                          onConfirm={() => this.deleteUpload('normalImg')}
                           okText="确定"
                           cancelText="取消"
                         >
@@ -331,18 +352,18 @@ export default class NewBadge extends PureComponent {
                     type="file"
                     name="img"
                     onChange={() =>
-                      this.uploadImage("upload-img-normal", "normalImg")
+                      this.uploadImage('upload-img-normal', 'normalImg')
                     }
                   />
                 </div>
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="灰色证章图片">
-              {getFieldDecorator("grayImg", {
+              {getFieldDecorator('grayImg', {
                 rules: [
                   {
                     required: true,
-                    message: "灰色证章图片不能够为空"
+                    message: '灰色证章图片不能够为空'
                   }
                 ]
               })(
@@ -364,8 +385,8 @@ export default class NewBadge extends PureComponent {
                       <div className={styles.delete_upload_mask}>
                         <Popconfirm
                           placement="top"
-                          title={"你确定删除该图片?"}
-                          onConfirm={() => this.deleteUpload("grayImg")}
+                          title={'你确定删除该图片?'}
+                          onConfirm={() => this.deleteUpload('grayImg')}
                           okText="确定"
                           cancelText="取消"
                         >
@@ -383,7 +404,7 @@ export default class NewBadge extends PureComponent {
                     type="file"
                     name="img"
                     onChange={() =>
-                      this.uploadImage("upload-img-gray", "grayImg")
+                      this.uploadImage('upload-img-gray', 'grayImg')
                     }
                   />
                 </div>

@@ -172,6 +172,9 @@ export const getRouterData = (app) => {
     '/student-manage': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/Student/StudentManage'))
     },
+    '/student-detail/:id' : {
+      component: dynamicWrapper(app, ['student'], () => import('../routes/Student/StudentDetail'))
+    },
     '/team/new': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/NewTeam')),
     },

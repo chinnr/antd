@@ -28,9 +28,19 @@ export default class PostDetail extends Component {
     }
   }
   render() {
+    const breadcrumbList = [{
+      title: '首页',
+      href: '/',
+    }, {
+      title: '文章列表',
+      href: '/post/list',
+    }, {
+      title: '文章详情',
+      href: '/post/detail',
+    }];
     const {post} = this.props.post;
     return (
-      <PageHeaderLayout>
+      <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card bordered={false} title="文章详情">
           <h3 style={{textAlign: 'center'}}>{post.title}</h3>
           <p style={{textAlign: 'center'}}>{moment(post.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>

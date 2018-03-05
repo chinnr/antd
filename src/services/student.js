@@ -8,8 +8,10 @@ export function studentList(v) {
           data {
             uid
             base {
-              username
-              nickname
+              phone
+              profile {
+                name
+              }
             }
             number
             level
@@ -27,6 +29,51 @@ export function studentList(v) {
         }
       }
     }
-  `
+  `;
   return graphRequest(query, { v }, 'young-admin');
+}
+
+export function studentDetail(uid) {
+  const query = `
+    query getStudentDetail($uid: String!) {
+      me {
+        userOne(uid: $uid) {
+          base {
+            profile {
+              realname
+              sex
+              birth
+              ethnic
+              religion
+              id
+              address
+            }
+          }
+          guardian {
+            relativeName1
+            relativeRelation1
+            relativePhone1
+            relativeName2
+            relativeRelation2
+            relativePhone2
+          }
+        }
+      }
+    }
+  `;
+  return graphRequest(query, { uid }, 'young-admin');
+}
+
+export function updatePassword({ uid, form }) {
+  console.log('receive data ', uid, form);
+  const mutation = `
+  mutation updatePassword($uid: String, $form: FormUser!) {
+    meExec {
+      userEdit(uid: $uid, form: $form) {
+        uid
+      }
+    }
+  }
+  `;
+  return graphRequest(mutation, { uid, form }, 'user-admin');
 }
