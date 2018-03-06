@@ -16,8 +16,18 @@ export default {
     },
   },
   effects: {
+    *createCourseTemplate({payload}, {call, put}) {
+      const {data, errors} = yield call(courseService.createCourseTemplate, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err)
+      }else {
+        console.log("createCourseTemplate==>", data);
+      }
+    },
+
     *getCourseTempList({payload}, {call, put}) {
-      const {data, errors} = yield call(courseService.getCourseTempList, payload)
+      const {data, errors} = yield call(courseService.getCourseTempList, payload);
       if(errors) {
         const err = errors[0].message;
         throw new Error(err)

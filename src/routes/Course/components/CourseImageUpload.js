@@ -1,12 +1,7 @@
-import React, {Component} from "react";
-import {
-  Icon,
-  message,
-  Popconfirm
-} from "antd";
-import {rootUrl, thumbnailPath} from "../../../utils/constant";
-import styles from '../Course.less';
-
+import React, { Component } from "react";
+import { Icon, message, Popconfirm } from "antd";
+import { rootUrl, thumbnailPath } from "../../../utils/constant";
+import styles from "../Course.less";
 
 export default class CourseImageUpload extends Component {
   constructor(props) {
@@ -15,8 +10,9 @@ export default class CourseImageUpload extends Component {
     this.postGallery = [];
     this.state = {
       gallery: [],
+      cover: null,
       per: 0
-    }
+    };
   }
 
   // 上传封面图片
@@ -25,12 +21,12 @@ export default class CourseImageUpload extends Component {
     const img = document.getElementById("upload-img").files[0];
     let formData = new FormData();
     formData.append("file", img);
-    console.log('formData ', formData, img);
+    console.log("formData ", formData, img);
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "https://api.yichui.net/api/young/post/upload/image");
     xhr.send(formData);
 
-    const hide = message.loading('正在上传图片......', 0);
+    const hide = message.loading("正在上传图片......", 0);
 
     xhr.addEventListener("load", () => {
       let _src = JSON.parse(xhr.responseText).filename;
@@ -41,31 +37,38 @@ export default class CourseImageUpload extends Component {
       this.setState({ gallery: this.srcArr }, () => {
         setTimeout(hide, 1000);
       });
-      this.props.form.setFieldsValue({
-        gallery: this.postGallery
-      });
+      const type = this.props.uploadType;
+      if (type === "cover") {
+        console.log("上传封面")
+        this.props.form.setFieldsValue({
+          [type]: _src
+        });
+      } else {
+        console.log("上传课程风采图片")
+        this.props.form.setFieldsValue({
+          [type]: this.postGallery
+        });
+      }
     });
 
     xhr.addEventListener("error", () => {
-      notification['error']({
-        message: '错误警告',
+      notification["error"]({
+        message: "错误警告",
         description: "图片上传失败",
         duration: 2
       });
       console.error("上传失败：", JSON.parse(xhr.responseText));
     });
 
-    xhr.addEventListener("progress", (evt) => {
-      console.log(evt)
-      var loaded = evt.loaded;//已经上传大小情况
-      var tot = evt.total;  //附件总大小
-      var per = Math.floor(100*loaded/tot);  //已经上传的百分比
+    xhr.addEventListener("progress", evt => {
+      console.log(evt);
+      var loaded = evt.loaded; //已经上传大小情况
+      var tot = evt.total; //附件总大小
+      var per = Math.floor(100 * loaded / tot); //已经上传的百分比
       console.log("已经上传的百分比: ", per);
-      this.setState({per: per});
+      this.setState({ per: per });
     });
-
   }
-
 
   /**
    * 删除上传的图片
@@ -89,23 +92,32 @@ export default class CourseImageUpload extends Component {
     this.postGallery.remove(item);
     // console.log("删除后: ", this.postGallery);
     this.setState({ gallery: this.postGallery });
-    this.props.form.setFieldsValue({
-      gallery: this.postGallery
-    });
+    const type = this.props.uploadType;
+    if (type === "cover") {
+      this.props.form.setFieldsValue({
+        [type]: null
+      });
+    } else {
+      this.props.form.setFieldsValue({
+        [type]: this.postGallery
+      });
+    }
   };
 
   render() {
-    return(
+    const { uploadType } = this.props;
+    const { cover, gallery } = this.state;
+    return (
       <div>
         {/*<div className={styles.upload_preview}>*/}
-          {/*<div className={styles.upload_progress}>*/}
-            {/*<Progress type="circle" percent={this.state.per} width={80}/>*/}
-          {/*</div>*/}
+        {/*<div className={styles.upload_progress}>*/}
+        {/*<Progress type="circle" percent={this.state.per} width={80}/>*/}
+        {/*</div>*/}
         {/*</div>*/}
         <label className={styles.upload_img_label} htmlFor="upload-img">
           <Icon type="plus" className={styles.upload_icon} />
         </label>
-        {this.state.gallery.length > 0 &&
+        {(uploadType === 'gallery' && this.state.gallery.length > 0) &&
           this.state.gallery.map(item => {
             return (
               <div key={item} className={styles.upload_list_item}>
@@ -127,6 +139,25 @@ export default class CourseImageUpload extends Component {
               </div>
             );
           })}
+        {uploadType === 'cover' &&
+          <div className={styles.upload_list_item}>
+            <img
+              className={styles.upload_list_img}
+              src={rootUrl + thumbnailPath + cover}
+            />
+            <div className={styles.delete_upload_mask}>
+              <Popconfirm
+                placement="top"
+                title={"你确定删除该图片?"}
+                onConfirm={() => this.deleteUpload(cover)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Icon type="delete" className={styles.delete_upload} />
+              </Popconfirm>
+            </div>
+          </div>
+        }
         <input
           className={styles.upload_img}
           id="upload-img"
@@ -136,6 +167,6 @@ export default class CourseImageUpload extends Component {
           onChange={file => this.uploadCover(file)}
         />
       </div>
-    )
+    );
   }
 }
