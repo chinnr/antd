@@ -47,7 +47,7 @@ export default class TeamList extends Component {
         title: '团类型',
         dataIndex: 'type',
         key: 'type',
-        render: (text, record) => (record.type === '' ? '普通管' : '临时团')
+        render: (text, record) => (record.type === '' ? '普通团' : '临时团')
       },
       {
         title: '已加入人数',
