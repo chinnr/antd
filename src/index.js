@@ -18,7 +18,7 @@ const app = dva({
   history: createHistory(),
   onError(e) {
     e.preventDefault();
-    if( e.message === "rest136|会话已过期" || e.message === 'Token is expired' || e.message === 'TokenExpiredError: jwt expired') {
+    if( e.message === "rest136|会话已过期" || e.message.toLocaleLowerCase() === 'token is expired' || e.message === 'TokenExpiredError: jwt expired') {
       notification['error']({
         message: '错误警告',
         description: "会话已过期, 请重新登录",
