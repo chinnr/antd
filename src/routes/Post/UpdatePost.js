@@ -218,6 +218,14 @@ export default class UpdatePost extends Component {
     });
   };
 
+  // 首行缩进
+  textIndent = () => {
+    // text-indent: 2em
+    const html = this.editorInstance.getContent('html');
+    this.editorInstance.insertText("        ",false);
+    // console.log("html==>", html);
+  };
+
   componentWillMount() {
     this.props
       .dispatch({
@@ -340,6 +348,17 @@ export default class UpdatePost extends Component {
                   image: true,
                   uploadFn: param => this.uploadFn(param)
                 }}
+                extendControls={[
+                  {
+                    type: 'split'
+                  },
+                  {
+                    type: 'button',
+                    text: '首行缩进',
+                    className: 'preview-button',
+                    onClick: () => this.textIndent()
+                  }
+                ]}
               />
             )}
           </div>

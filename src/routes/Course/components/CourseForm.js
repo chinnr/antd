@@ -70,7 +70,6 @@ export default class CourseForm extends PureComponent {
     });
   }
 
-
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }

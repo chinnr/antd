@@ -149,6 +149,14 @@ export default class NewPost extends Component {
       .catch(err => {});
   };
 
+  // 首行缩进
+  textIndent = () => {
+    // text-indent: 2em
+    const html = this.editorInstance.getContent('html');
+    this.editorInstance.insertText("        ",false);
+    // console.log("html==>", html);
+  };
+
   // 提交文章
   submitPost = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -288,6 +296,17 @@ export default class NewPost extends Component {
                   image: true,
                   uploadFn: param => this.uploadFn(param)
                 }}
+                extendControls={[
+                  {
+                    type: 'split'
+                  },
+                  {
+                    type: 'button',
+                    text: '首行缩进',
+                    className: 'preview-button',
+                    onClick: () => this.textIndent()
+                  }
+                ]}
               />
             )}
           </div>
