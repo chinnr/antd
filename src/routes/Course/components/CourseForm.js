@@ -13,7 +13,7 @@ import {
 } from "antd";
 import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
-import CourseImageUpload from "./CourseImageUpload";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import {successNotification} from "../../../utils/utils";
 import {routerRedux} from "dva/router";
 
@@ -31,7 +31,10 @@ export default class CourseForm extends PureComponent {
     this.state={
       level: 1,
       stage: 1,
+      cover: '',
+      gallery: [],
     };
+    this.gallery = [];
   }
   handleCreate = (e) => {
     e.preventDefault();
@@ -88,11 +91,46 @@ export default class CourseForm extends PureComponent {
 
   componentDidMount() {
     this.props.form.validateFields();
-    this.getAllBadges();
+    // this.getAllBadges();
   }
+
+  // 图片上传
+  uploadImage = (filename, type) => {
+    console.log("uploadImage==>", type);
+    if(type === 'cover'){
+      this.setState({cover : filename})
+    }
+    if(type === 'gallery') {
+      this.gallery.push(filename);
+      this.setState({gallery : [...this.gallery]});
+    }
+  };
+  // 删除上传的图片
+  deleteUpload = (filename, type) => {
+    if(type === 'cover'){
+      this.setState({cover : null})
+    }
+    if(type === 'gallery') {
+      Array.prototype.indexOf = function(val) {
+        for (let i = 0; i < this.length; i++) {
+          if (this[i] === val) return i;
+        }
+        return -1;
+      };
+      Array.prototype.remove = function(val) {
+        let index = this.indexOf(val);
+        if (index > -1) {
+          this.splice(index, 1);
+        }
+      };
+      this.gallery.remove(filename);
+      this.setState({gallery : [...this.gallery]});
+    }
+  };
 
   render() {
     const { badges } = this.props.badge;
+    console.log("state gallery==>", this.state.gallery);
     const {
       getFieldDecorator,
       getFieldsError,
@@ -250,12 +288,25 @@ export default class CourseForm extends PureComponent {
         </FormItem>
         <FormItem {...formItemLayout} label="课程封面">
           {getFieldDecorator("cover")(
-            <CourseImageUpload form={this.props.form} uploadType={"cover"}/>
+            <ImageUpload
+              uploadRef={"cover"}
+              uploadNum={1}
+              onUpload={filename => this.uploadImage(filename, "cover")}
+              ondelete={filename => this.deleteUpload(filename, "cover")}
+              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
+            />
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="课程风采">
           {getFieldDecorator("gallery")(
-            <CourseImageUpload form={this.props.form} uploadType={"gallery"}/>
+            <ImageUpload
+              mode={"multiple"}
+              uploadNum={10}
+              uploadRef={"gallery"}
+              onUpload={filename => this.uploadImage(filename, "gallery")}
+              ondelete={filename => this.deleteUpload(filename, "gallery")}
+              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
+            />
           )}
         </FormItem>
         <FormItem style={{ marginTop: 32 }}>
