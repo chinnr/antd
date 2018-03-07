@@ -83,7 +83,7 @@ export default class CourseForm extends PureComponent {
         type: "badge/getAllBadges",
         payload: {
           query: { limit: 10, page: p },
-          queryOption: {stage: _this.state.stage, level:_this.state.level}
+          queryOption: {stage: 'stage'+_this.state.stage, level:'level'+_this.state.level}
         }
       })
       .catch(err => err);
@@ -91,7 +91,7 @@ export default class CourseForm extends PureComponent {
 
   componentDidMount() {
     this.props.form.validateFields();
-    // this.getAllBadges();
+    this.getAllBadges();
   }
 
   // 图片上传
@@ -99,16 +99,25 @@ export default class CourseForm extends PureComponent {
     console.log("uploadImage==>", type);
     if(type === 'cover'){
       this.setState({cover : filename})
+      this.props.form.setFieldsValue({
+        [type]: filename
+      });
     }
     if(type === 'gallery') {
       this.gallery.push(filename);
       this.setState({gallery : [...this.gallery]});
+      this.props.form.setFieldsValue({
+        [type]: this.gallery
+      });
     }
   };
   // 删除上传的图片
   deleteUpload = (filename, type) => {
     if(type === 'cover'){
       this.setState({cover : null})
+      this.props.form.setFieldsValue({
+        [type]: null
+      });
     }
     if(type === 'gallery') {
       Array.prototype.indexOf = function(val) {
@@ -125,6 +134,9 @@ export default class CourseForm extends PureComponent {
       };
       this.gallery.remove(filename);
       this.setState({gallery : [...this.gallery]});
+      this.props.form.setFieldsValue({
+        [type]: this.gallery
+      });
     }
   };
 
@@ -175,8 +187,19 @@ export default class CourseForm extends PureComponent {
             rules: [{ required: true, message: "请输入课程主题!" }]
           })(<Input />)}
         </FormItem>
-        {/*<FormItem {...formItemLayout} label="课程类型">
-          {getFieldDecorator("type1", {
+        <FormItem {...formItemLayout} label="课程封面">
+          {getFieldDecorator("cover")(
+            <ImageUpload
+              uploadRef={"cover"}
+              uploadNum={1}
+              onUpload={filename => this.uploadImage(filename, "cover")}
+              ondelete={filename => this.deleteUpload(filename, "cover")}
+              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
+            />
+          )}
+        </FormItem>
+        <FormItem {...formItemLayout} label="课程类型">
+          {getFieldDecorator("type", {
             initialValue: 0,
             rules: [{ required: true, message: "请选择课程类型!" }]
           })(
@@ -186,48 +209,24 @@ export default class CourseForm extends PureComponent {
               <Radio value={2}>兴趣课</Radio>
             </RadioGroup>
           )}
-        </FormItem>*/}
-        <FormItem {...formItemLayout} label="开课方式">
-          {getFieldDecorator("type", {
-            initialValue: 0,
-            rules: [{ required: true, message: "请选择课程类型!" }]
-          })(
-            <RadioGroup>
-              <Radio value={0}>普通课</Radio>
-              <Radio value={1}>常驻课</Radio>
-              <Radio value={2}>夏令营</Radio>
-            </RadioGroup>
-          )}
         </FormItem>
         <FormItem {...formItemLayout} label="服务范围">
           {getFieldDecorator("score", {
             initialValue: "",
             rules: [{ required: true, message: "请输入服务范围!" }]
           })(
-            <TextArea rows={4} />
+            <Input />
           )}
         </FormItem>
-        <FormItem {...formItemLayout} label="课时">
-          {getFieldDecorator("lesson", {
-            initialValue: 1,
-            rules: [{ required: true, message: "请选择课时!" }]
-          })(
-            <Select placeholder="请选择课时">
-              {lessons.map((item, i) => {
-                return (
-                  <Option value={item.lesson} key={i}>{item.value}</Option>
-                )
-              })}
-            </Select>
-          )}
+        <FormItem {...formItemLayout} label="课程内容">
+          {getFieldDecorator("content", {
+            rules: [{ required: true, message: "请输入课程内容!" }]
+          })(<TextArea rows={4} />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="课程人数">
-          {getFieldDecorator("capacity", {
-            initialValue: 0,
-            rules: [{ required: true, message: "请输入课程人数!" }]
-          })(
-            <InputNumber min={0} max={300} style={{width: '100%'}}/>
-          )}
+        <FormItem {...formItemLayout} label="培养能力">
+          {getFieldDecorator("skills", {
+            rules: [{ required: true, message: "请输入课程内容!" }]
+          })(<TextArea rows={4} />)}
         </FormItem>
         <FormItem {...formItemLayout} label="课程级别">
           {getFieldDecorator("level", {
@@ -258,44 +257,63 @@ export default class CourseForm extends PureComponent {
             </Select>
           )}
         </FormItem>
-        {/*<FormItem {...formItemLayout} label="课程证章">*/}
-          {/*{getFieldDecorator("badge", {*/}
-            {/*rules: [{ required: true, message: "请选择课程对应的证章!" }]*/}
-          {/*})(*/}
-            {/*<Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>*/}
-              {/*{badges.map((item, i) => {*/}
-                  {/*return (*/}
-                    {/*<Option*/}
-                      {/*key={i}*/}
-                      {/*value={item.bid}*/}
-                    {/*>*/}
-                      {/*{item.name}*/}
-                    {/*</Option>*/}
-                  {/*)*/}
-              {/*})}*/}
-            {/*</Select>*/}
-          {/*)}*/}
-        {/*</FormItem>*/}
-        <FormItem {...formItemLayout} label="课程内容">
-          {getFieldDecorator("content", {
-            rules: [{ required: true, message: "请输入课程内容!" }]
-          })(<TextArea rows={4} />)}
+        <FormItem {...formItemLayout} label="课程证章">
+          {getFieldDecorator("badge", {
+            rules: [{ required: true, message: "请选择课程对应的证章!" }]
+          })(
+            <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
+              {badges.map((item, i) => {
+                return (
+                  <Option
+                    key={i}
+                    value={item.bid}
+                  >
+                    {item.name}
+                  </Option>
+                )
+              })}
+            </Select>
+          )}
         </FormItem>
+        {/*<FormItem {...formItemLayout} label="开课方式">
+          {getFieldDecorator("method", {
+            initialValue: 0,
+            rules: [{ required: true, message: "请选择开课方式!" }]
+          })(
+            <RadioGroup>
+              <Radio value={0}>普通课</Radio>
+              <Radio value={1}>常驻课</Radio>
+              <Radio value={2}>夏令营</Radio>
+            </RadioGroup>
+          )}
+        </FormItem>*/}
+        {/*<FormItem {...formItemLayout} label="课时">
+          {getFieldDecorator("lesson", {
+            initialValue: 1,
+            rules: [{ required: true, message: "请选择课时!" }]
+          })(
+            <Select placeholder="请选择课时">
+              {lessons.map((item, i) => {
+                return (
+                  <Option value={item.lesson} key={i}>{item.value}</Option>
+                )
+              })}
+            </Select>
+          )}
+        </FormItem>*/}
+        {/*<FormItem {...formItemLayout} label="课程人数">
+          {getFieldDecorator("capacity", {
+            initialValue: 0,
+            rules: [{ required: true, message: "请输入课程人数!" }]
+          })(
+            <InputNumber min={0} max={300} style={{width: '100%'}}/>
+          )}
+        </FormItem>*/}
+
         <FormItem {...formItemLayout} label="报名须知">
           {getFieldDecorator("note", {
             rules: [{ required: true, message: "请输入报名须知!" }]
           })(<TextArea rows={4} />)}
-        </FormItem>
-        <FormItem {...formItemLayout} label="课程封面">
-          {getFieldDecorator("cover")(
-            <ImageUpload
-              uploadRef={"cover"}
-              uploadNum={1}
-              onUpload={filename => this.uploadImage(filename, "cover")}
-              ondelete={filename => this.deleteUpload(filename, "cover")}
-              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
-            />
-          )}
         </FormItem>
         <FormItem {...formItemLayout} label="课程风采">
           {getFieldDecorator("gallery")(

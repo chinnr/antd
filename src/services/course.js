@@ -1,4 +1,4 @@
-import graphRequest from "../utils/graphRequest";
+import graphRequest from '../utils/graphRequest';
 
 // 创建课程
 export function createCourseTemplate(argv) {
@@ -9,29 +9,75 @@ export function createCourseTemplate(argv) {
       }
     }
   }`;
-  return graphRequest(mutation, {argv}, 'course-admin')
+  return graphRequest(mutation, { argv }, 'course-admin');
 }
 
-
 // 获取课程模板列表
-export function getCourseTempList(query) {
-  const courseTemplateList = `query courseTemplateList($query:FormQuery!){
+export function courseTemplatePubList(payload) {
+  const courseTemplatePubList = `query courseTemplatePubList($tempQuery:FormQuery, $badgeQuery:FormQuery!){
     me {
-      courseTemplateList(query: $query) {
+      courseTemplatePubList(query: $tempQuery) {
         data{
-          id
-          title
-          score
-          type
-          stage
+        id
+        oid
+        title
+        description
+        content
+        skills
+        score
+        type
+        stage
+        level
+        capacity
+        lesson
+        payExpCoupons
+        payClassCoupons
+        instructors
+        state
+        cover
+        gallery
+        note
+        createdAt
+        badge(query: $badgeQuery){
+          data{
+            id
+            name
+          }
+          meta{
+            limit
+            count
+            page
+          }
+        }
+      }
+      meta {
+        limit
+        count
+        page
+      }
+      }
+    }
+  }`;
+  return graphRequest(courseTemplatePubList, payload, 'course-admin');
+}
+
+// 开课记录
+
+export function classList(query) {
+  const classList = `query classList($query: FormQuery!) {
+    me{
+      classList(query: $query) {
+        data {
+          eid
+          username
         }
         meta {
-          page
-          count
           limit
+          count
+          page
         }
       }
     }
   }`;
-  return graphRequest(courseTemplateList, {query}, 'course-admin')
+  return graphRequest(classList, {query}, 'course-admin')
 }

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Card,
   Table,
@@ -8,11 +8,16 @@ import {
   Select,
   Button,
   Input
-} from "antd";
-import { connect } from "dva";
-import {routerRedux} from "dva/router";
-import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import {handleLevel, handleSore, handleStage} from "../../utils/utils";
+} from 'antd';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import {
+  handleLevel,
+  handleSore,
+  handleStage,
+  handleType
+} from '../../utils/utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -24,34 +29,37 @@ export default class CourseTempalteList extends Component {
     super(props);
     this.columns = [
       {
-        title: "课程类型",
-        dataIndex: "type",
-        key: "type"
+        title: '课程类型',
+        dataIndex: 'type',
+        key: 'type',
+        render: (text, record) => <span>{handleType(record.type)}</span>
       },
       {
-        title: "课程级别",
-        dataIndex: "level",
-        key: "level",
+        title: '课程级别',
+        dataIndex: 'level',
+        key: 'level',
+        render: (text, record) => <span>{handleLevel(record.level)}</span>
       },
       {
-        title: "课程阶段",
-        dataIndex: "stage",
-        key: "stage",
+        title: '课程阶段',
+        dataIndex: 'stage',
+        key: 'stage',
+        render: (text, record) => <span>{handleStage(record.stage)}</span>
       },
       {
-        title: "课程主题",
-        dataIndex: "title",
-        key: "title",
+        title: '课程主题',
+        dataIndex: 'title',
+        key: 'title'
       },
       {
-        title: "服务范围",
-        dataIndex: "score",
-        key: "score",
+        title: '服务范围',
+        dataIndex: 'score',
+        key: 'score'
       },
       {
-        title: "操作",
-        dataIndex: "option",
-        key: "option",
+        title: '操作',
+        dataIndex: 'option',
+        key: 'option',
         render: (text, record) => (
           <span>
             <a onClick={() => this.goToPage(record)}>编辑</a>
@@ -73,12 +81,12 @@ export default class CourseTempalteList extends Component {
       data: [],
       visible: false,
       username: '',
-      filterValue: 1,
+      filterValue: 1
     };
   }
 
   // 跳转到修改编辑页面
-  goToPage = (record) => {
+  goToPage = record => {
     // this.props.dispatch(
     //   routerRedux.push({
     //     pathname: "/team/"+path,
@@ -90,7 +98,7 @@ export default class CourseTempalteList extends Component {
   };
 
   // 确认删除该模板
-  confirmDelete = (record) => {
+  confirmDelete = record => {
     // this.props.dispatch({
     //   type: "post/updatePost",
     //   payload: {
@@ -109,18 +117,20 @@ export default class CourseTempalteList extends Component {
 
   // 处理翻页
   onPagination = p => {
-    console.log("处理翻页==>", p);
+    console.log('处理翻页==>', p.current);
+    const page = p.current;
+    this.getTempList(page - 1);
   };
 
   // 筛选
-  onChange = (e) => {
+  onChange = e => {
     // console.log('radio checked', e.target.value);
     // this.setState({
     //   filterValue: e.target.value,
     // });
   };
 
-  filter = (e) => {
+  filter = e => {
     e.preventDefault();
     const form = this.props.form;
     form.validateFields((err, values) => {
@@ -135,37 +145,65 @@ export default class CourseTempalteList extends Component {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
 
+  // 获取课程模板列表
+  getTempList = (p = 0) => {
+    console.log("获取课程模板列表==>", Number(p));
+    this.props
+      .dispatch({
+        type: 'course/courseTemplatePubList',
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p
+          },
+          badgeQuery: {
+            limit: 10,
+            page: p
+          }
+        }
+      })
+      .catch(err => err);
+  };
+
+  componentWillMount() {
+    // this.getTempList();
+  }
+
   componentDidMount() {
-    this.props.form.validateFields();
+    // this.props.form.validateFields();
   }
 
   render() {
-    const pagination = {
-      total: 26,
-      pageSize: 10,
-      current: 1
-    };
     const {
       getFieldDecorator,
       getFieldsError,
       getFieldError,
       isFieldTouched
     } = this.props.form;
-    const {filterValue} = this.state;
-    // const { courseTempList, courseTempListMeta } = this.props.course;
+    const { filterValue } = this.state;
+    const {
+      courseTemplatePubList,
+      courseTemplatePubListMeta
+    } = this.props.course;
+
+    let pagination = {
+      total: courseTemplatePubListMeta.count,
+      pageSize: 10,
+      current: courseTemplatePubListMeta.page + 1
+    };
+
+    console.log('courseTemplatePubList==>', courseTemplatePubList);
 
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
           <div>
-            <Form layout={"inline"} onSubmit={this.filter}>
+            <Form layout={'inline'} onSubmit={this.filter}>
               <FormItem label="课程主题">
-                {getFieldDecorator("title")(
-                  <Input />
-                )}
+                {getFieldDecorator('title')(<Input />)}
               </FormItem>
               <FormItem label="类型">
-                {getFieldDecorator("type", {
+                {getFieldDecorator('type', {
                   initialValue: '0'
                 })(
                   <Select placeholder="请选择课程类型">
@@ -176,8 +214,8 @@ export default class CourseTempalteList extends Component {
                 )}
               </FormItem>
               <FormItem label="课程级别">
-                {getFieldDecorator("level", {
-                  initialValue: "level1",
+                {getFieldDecorator('level', {
+                  initialValue: 'level1'
                 })(
                   <Select placeholder="请选择课程级别">
                     <Option value="level1">海狸</Option>
@@ -188,8 +226,8 @@ export default class CourseTempalteList extends Component {
                 )}
               </FormItem>
               <FormItem label="课程阶段">
-                {getFieldDecorator("stage", {
-                  initialValue: "stage1"
+                {getFieldDecorator('stage', {
+                  initialValue: 'stage1'
                 })(
                   <Select placeholder="请选择课程阶段">
                     <Option value="stage1">阶段1</Option>
@@ -200,8 +238,8 @@ export default class CourseTempalteList extends Component {
                 )}
               </FormItem>
               <FormItem label="服务范围">
-                {getFieldDecorator("score", {
-                  initialValue: "public"
+                {getFieldDecorator('score', {
+                  initialValue: 'public'
                 })(
                   <Select placeholder="请选择课程服务范围">
                     <Option value="public">公开</Option>
@@ -224,8 +262,8 @@ export default class CourseTempalteList extends Component {
           </div>
           <Table
             bordered
-            rowKey={record => record.gid}
-            dataSource={[]}
+            rowKey={record => record.id}
+            dataSource={courseTemplatePubList}
             columns={this.columns}
             pagination={pagination}
             onChange={p => this.onPagination(p)}

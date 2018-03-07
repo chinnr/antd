@@ -202,23 +202,55 @@ export const handleSore = (score) => {
 
 // level
 export const handleLevel = (level) => {
-  const levelObj = {
-    "level1":"海狸",
-    "level2":"小狼",
-    "level3":"探索",
-    "level4":"乐扶"
-  };
+  let levelObj = {};
+  if(isNaN(level) === true){
+    levelObj = {
+      "level1":"海狸",
+      "level2":"小狼",
+      "level3":"探索",
+      "level4":"乐扶"
+    };
+  }else {
+    levelObj = {
+      1:"海狸",
+      2:"小狼",
+      3:"探索",
+      4:"乐扶"
+    };
+  }
+
   return levelObj[level];
 };
 
 // stage
 export const handleStage = (stage) => {
-  const stageObj = {
-    "stage1":"阶段一",
-    "stage2":"阶段二",
-    "stage3":"阶段三",
-    "stage4":"阶段四",
-    "stage5":"阶段五"
-  };
+  let stageObj = {};
+  if(isNaN(stage) === true) {
+    stageObj = {
+      "stage1": "阶段一",
+      "stage2": "阶段二",
+      "stage3": "阶段三",
+      "stage4": "阶段四",
+      "stage5": "阶段五"
+    };
+  }else{
+    stageObj = {
+      1: "阶段一",
+      2: "阶段二",
+      3: "阶段三",
+      4: "阶段四",
+      5: "阶段五"
+    };
+  }
   return stageObj[stage];
+};
+
+// 课程类型返回处理 type  课程类型 0:团集会 1:活动 2:兴趣课
+export const handleType = (type) => {
+  const typeObj = {
+    0:"团集会",
+    1:"活动课",
+    2:"兴趣课",
+  };
+  return typeObj[type];
 };

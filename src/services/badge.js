@@ -46,7 +46,7 @@ export function deleteBadge(bid) {
 // 证章列表
 export function getAllBadges(payload) {
   console.log("证章列表==>", payload);
-  const badgeList = `query badgeList($queryOption: QueryOption, $query: FormQuery) {
+  const badgeList = `query badgeList($queryOption: QueryOption, $query: FormQuery!) {
     me{
       badge {
         getAllBadge(queryOption:$queryOption, query: $query) {

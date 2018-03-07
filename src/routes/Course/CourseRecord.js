@@ -1,90 +1,135 @@
-import React, { Component } from "react";
-import { Card, Table, Divider, Form, Popconfirm } from "antd";
-import { connect } from "dva";
-import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import {routerRedux} from "dva/router";
+import React, { PureComponent } from 'react';
+import moment from 'moment';
+import { connect } from 'dva';
+import { List, Card, Row, Col, Radio, Input, Progress, Button, Icon, Dropdown, Menu, Avatar } from 'antd';
 
-@connect(({ course }) => ({ course }))
-@Form.create()
-export default class CourseRecord extends Component {
-  constructor(props) {
-    super(props);
-    this.columns = [
-      {
-        title: "开课时间",
-        dataIndex: "createdAt",
-        key: "createdAt"
-      },
-      {
-        title: "团名称",
-        dataIndex: "name",
-        key: "name",
-      },
-      {
-        title: "类型",
-        dataIndex: "type",
-        key: "type",
-      },
-      {
-        title: "课程主题",
-        dataIndex: "title",
-        key: "title",
-      },
-      {
-        title: "服务范围",
-        dataIndex: "score",
-        key: "score",
-      },
-      {
-        title: "状态",
-        dataIndex: "status",
-        key: "status",
-      }
-    ];
-    this.state = {
-      data: [],
-      visible: false,
-      username: ''
-    };
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+
+import styles from './Course.less';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
+const { Search } = Input;
+
+@connect(({course}) => ({course}))
+export default class BasicList extends PureComponent {
+  componentDidMount() {
+    // this.props.dispatch({
+    //   type: 'list/fetch',
+    //   payload: {
+    //     count: 5,
+    //   },
+    // });
   }
 
-  // 跳转到修改编辑页面
-  goToPage = (record, path) => {
-    // this.props.dispatch(
-    //   routerRedux.push({
-    //     pathname: "/team/"+path,
-    //     query: {
-    //       record: record
-    //     }
-    //   })
-    // );
-  };
-
-  // 处理翻页
-  onPagination = p => {
-    console.log("处理翻页==>", p);
-  };
-
   render() {
-    const pagination = {
-      total: 26,
-      pageSize: 10,
-      current: 1
+    // const { list: { list }, loading } = this.props;
+    const list = [{
+      owner: "第一次吐纳机会",
+      createdAt: "2018-05-05",
+      percent: 50,
+      status: '进行中',
+      logo: "",
+      title: "title",
+      href: "www.baidu.com",
+      subDescription: "培养能力",
+      teamname: '1003团',
+      method: '普通课',
+      type: '团集会'
+    }];
+
+    const extraContent = (
+      <div className={styles.extraContent}>
+        <RadioGroup defaultValue="all">
+          <RadioButton value="all">全部</RadioButton>
+          <RadioButton value="progress">进行中</RadioButton>
+          <RadioButton value="waiting">等待中</RadioButton>
+        </RadioGroup>
+        <Search
+          className={styles.extraContentSearch}
+          placeholder="请输入"
+          onSearch={() => ({})}
+        />
+      </div>
+    );
+
+    const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      pageSize: 5,
+      total: 50,
     };
-    // const { courseTempList, courseTempListMeta } = this.props.course;
+
+    const ListContent = ({ data: { owner, createdAt, percent, status, teamname, method, type } }) => (
+      <div className={styles.listContent}>
+        <div className={styles.listContentItem}>
+          <span>{teamname}</span>
+          <p>{method +" " +type}</p>
+        </div>
+        <div className={styles.listContentItem}>
+          <span>开始时间</span>
+          <p>{moment(createdAt).format('YYYY-MM-DD hh:mm')}</p>
+        </div>
+        <div className={styles.listContentItem}>
+          <span>报名中</span>
+        </div>
+        <div className={styles.listContentItem}>
+          <Button>预览</Button>
+        </div>
+      </div>
+    );
+
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          <a>编辑</a>
+        </Menu.Item>
+        <Menu.Item>
+          <a>删除</a>
+        </Menu.Item>
+      </Menu>
+    );
+
+    const MoreBtn = () => (
+      <Dropdown overlay={menu}>
+        <a>
+          更多 <Icon type="down" />
+        </a>
+      </Dropdown>
+    );
 
     return (
-      <PageHeaderLayout title={null} content={null}>
-        <Card bordered={false}>
-          <Table
-            bordered
-            rowKey={record => record.gid}
-            dataSource={[]}
-            columns={this.columns}
-            pagination={pagination}
-            onChange={p => this.onPagination(p)}
-          />
-        </Card>
+      <PageHeaderLayout>
+        <div className={styles.standardList}>
+          <Card
+            className={styles.listCard}
+            bordered={false}
+            title="标准列表"
+            style={{ marginTop: 24 }}
+            bodyStyle={{ padding: '0 32px 40px 32px' }}
+            extra={extraContent}
+          >
+            <List
+              size="large"
+              rowKey="id"
+              // loading={loading}
+              pagination={paginationProps}
+              dataSource={list}
+              renderItem={item => (
+                <List.Item
+                  actions={null}
+                >
+                  <List.Item.Meta
+                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
+                    title={<a href={item.href}>{item.title}</a>}
+                    description={item.subDescription}
+                  />
+                  <ListContent data={item} />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </div>
       </PageHeaderLayout>
     );
   }
