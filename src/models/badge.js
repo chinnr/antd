@@ -49,6 +49,7 @@ export default {
         const err = errors[0].message;
         throw new Error(err);
       } else {
+        console.log("getAllBadges ==>  ", data);
         const badges = data.me.badge.getAllBadge.data;
         const badgesMeta = data.me.badge.getAllBadge.meta;
         yield put({
