@@ -1,17 +1,29 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { List, Card, Row, Col, Radio, Input, Progress, Button, Icon, Dropdown, Menu, Avatar } from 'antd';
+import {
+  List,
+  Card,
+  Row,
+  Col,
+  Radio,
+  Input,
+  Progress,
+  Button,
+  Icon,
+  Dropdown,
+  Menu,
+  Avatar
+} from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-
 import styles from './Course.less';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
 
-@connect(({course}) => ({course}))
+@connect(({ course }) => ({ course }))
 export default class BasicList extends PureComponent {
   componentDidMount() {
     // this.props.dispatch({
@@ -23,21 +35,8 @@ export default class BasicList extends PureComponent {
   }
 
   render() {
-    // const { list: { list }, loading } = this.props;
-    const list = [{
-      owner: "第一次吐纳机会",
-      createdAt: "2018-05-05",
-      percent: 50,
-      status: '进行中',
-      logo: "",
-      title: "title",
-      href: "www.baidu.com",
-      subDescription: "培养能力",
-      teamname: '1003团',
-      method: '普通课',
-      type: '团集会'
-    }];
-
+    const { course: { courseList, courseListMeta } } = this.props;
+    //
     const extraContent = (
       <div className={styles.extraContent}>
         <RadioGroup defaultValue="all">
@@ -57,14 +56,16 @@ export default class BasicList extends PureComponent {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: 5,
-      total: 50,
+      total: 50
     };
 
-    const ListContent = ({ data: { owner, createdAt, percent, status, teamname, method, type } }) => (
+    const ListContent = ({
+      data: { owner, createdAt, percent, status, teamname, method, type }
+    }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
           <span>{teamname}</span>
-          <p>{method +" " +type}</p>
+          <p>{method + ' ' + type}</p>
         </div>
         <div className={styles.listContentItem}>
           <span>开始时间</span>
@@ -114,13 +115,13 @@ export default class BasicList extends PureComponent {
               rowKey="id"
               // loading={loading}
               pagination={paginationProps}
-              dataSource={list}
+              dataSource={courseList}
               renderItem={item => (
-                <List.Item
-                  actions={null}
-                >
+                <List.Item actions={null}>
                   <List.Item.Meta
-                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
+                    avatar={
+                      <Avatar src={item.logo} shape="square" size="large" />
+                    }
                     title={<a href={item.href}>{item.title}</a>}
                     description={item.subDescription}
                   />

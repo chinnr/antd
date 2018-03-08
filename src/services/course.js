@@ -28,7 +28,6 @@ export function courseTemplatePubList(payload) {
         type
         stage
         level
-        capacity
         lesson
         payExpCoupons
         payClassCoupons
@@ -62,14 +61,19 @@ export function courseTemplatePubList(payload) {
 }
 
 // 开课记录
-
-export function classList(query) {
-  const classList = `query classList($query: FormQuery!) {
+export function courseList(query) {
+  const courseList = `query courseList($query: FormQuery!) {
     me{
-      classList(query: $query) {
+      courseList(query: $query) {
         data {
-          eid
-          username
+          id
+          title
+          skills
+          type
+          method
+          state
+          status
+          createdAt
         }
         meta {
           limit
@@ -79,5 +83,5 @@ export function classList(query) {
       }
     }
   }`;
-  return graphRequest(classList, {query}, 'course-admin')
+  return graphRequest(courseList, {query}, 'course-admin')
 }
