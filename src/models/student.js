@@ -35,7 +35,7 @@ export default {
     },
     *getStudentDetail({ payload: uid }, { call, put }) {
       const { data, error } = yield call(studentService.studentDetail, uid);
-      console.log('data 334 4 ', data)
+      // console.log('data 334 4 ', data)
       if(error) {
         throw new Error(errors);
       }
@@ -43,7 +43,13 @@ export default {
       if(data.me) {
         const studentDetail = {
           ...data.me.userOne.base.profile,
-          ...data.me.userOne.guardian
+          ...data.me.userOne.guardian,
+          group: data.me.userOne.group.name,
+          isLead: data.me.userOne.isLead,
+          leadList: data.me.userOne.leadList,
+          level: data.me.userOne.level,
+          number: data.me.userOne.number,
+          classNameAlias: data.me.userOne.classNameAlias
         };
 
         yield put({

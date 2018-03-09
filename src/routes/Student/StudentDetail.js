@@ -14,6 +14,13 @@ class StudentDetail extends PureComponent {
   render() {
     const { loading, mallLoading, studentDetail, myVirtualGoods } = this.props;
     console.log('list ', studentDetail);
+    const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
+    const levelObj = {
+      "level1": "海狸",
+      "level2": "小狼",
+      "level3": "探索",
+      "level4": "乐扶"
+    };
     const gridStyle = {
       width: '33%',
       textAlign: 'left'
@@ -42,7 +49,32 @@ class StudentDetail extends PureComponent {
 
     return (
       <PageHeaderLayout title="学员详情">
-        <Card title="基本信息" bordered={false} loading={loading}>
+        <Card title="入团信息" bordered={false} loading={loading}>
+          <Row>
+            <Col span={16}>
+              <Row>
+                <Col span={6}>
+                  <span>编号:&nbsp;&nbsp;{ studentDetail.number }</span>
+                </Col>
+                <Col span={6}>
+                  <span>阶段:&nbsp;&nbsp;{ levelObj[studentDetail.level] }</span>
+                </Col>
+                <Col span={6}>
+                  <span>团属:&nbsp;&nbsp;{ studentDetail.group }</span>
+                </Col>
+              </Row>
+              <Row style={{marginTop: 10}}>
+                <Col span={6}>
+                  <span>所在组:&nbsp;&nbsp;{ studentDetail.classNameAlias }</span>
+                </Col>
+                <Col span={6}>
+                  <span>职务:&nbsp;&nbsp;{ duty }</span>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
+        <Card style={{marginTop: 10}} title="基本信息" bordered={false} loading={loading}>
           <Row>
             <Col span={16}>
               <Row>

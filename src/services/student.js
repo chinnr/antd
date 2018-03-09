@@ -49,6 +49,14 @@ export function studentDetail(uid) {
               address
             }
           }
+          group {
+            name
+          }
+          number
+          isLead
+          leadList
+          classNameAlias
+          level
           guardian {
             relativeName1
             relativeRelation1
