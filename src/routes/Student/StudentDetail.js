@@ -51,7 +51,7 @@ class StudentDetail extends PureComponent {
       <PageHeaderLayout title="学员详情">
         <Card title="入团信息" bordered={false} loading={loading}>
           <Row>
-            <Col span={16}>
+            <Col span={20}>
               <Row>
                 <Col span={6}>
                   <span>编号:&nbsp;&nbsp;{ studentDetail.number }</span>
@@ -76,13 +76,13 @@ class StudentDetail extends PureComponent {
         </Card>
         <Card style={{marginTop: 10}} title="基本信息" bordered={false} loading={loading}>
           <Row>
-            <Col span={16}>
+            <Col span={20}>
               <Row>
                 <Col span={6}>
                   <span>姓名:&nbsp;&nbsp;{ studentDetail.realName }</span>
                 </Col>
                 <Col span={6}>
-                  <span>性别:&nbsp;&nbsp;{ studentDetail.sex }</span>
+                  <span>性别:&nbsp;&nbsp;{ studentDetail.sex === "1" ? "男" : "女" }</span>
                 </Col>
                 <Col span={6}>
                   <span>生日:&nbsp;&nbsp;{ studentDetail.birth }</span>
@@ -99,7 +99,10 @@ class StudentDetail extends PureComponent {
                   <span>身份证号:&nbsp;&nbsp;{ studentDetail.id }</span>
                 </Col>
                 <Col span={6}>
-                  <span>家庭住址:&nbsp;&nbsp;{ studentDetail.address }</span>
+                  <span>家庭住址:&nbsp;&nbsp;{studentDetail.province}{studentDetail.city}{ studentDetail.address }</span>
+                </Col>
+                <Col span={6}>
+                  <span>电话号码:&nbsp;&nbsp;{ studentDetail.phone }</span>
                 </Col>
               </Row>
             </Col>
@@ -107,7 +110,7 @@ class StudentDetail extends PureComponent {
         </Card>
         <Card style={{marginTop: 10}} title="监护人信息" bordered={false} loading={loading}>
           <Row>
-            <Col span={16}>
+            <Col span={20}>
               <Row>
                 <Col span={6}>
                   <span>监护人:&nbsp;&nbsp;{ studentDetail.relativeName1 }</span>

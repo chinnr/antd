@@ -47,6 +47,9 @@ export function studentDetail(uid) {
               religion
               id
               address
+              phone
+              province
+              city
             }
           }
           group {
