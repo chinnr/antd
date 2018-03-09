@@ -25,7 +25,8 @@ class StudentManage extends PureComponent {
       type: 'student/getStudentList',
       payload: {
         page: current - 1,
-        limit: pageSize
+        limit: pageSize,
+        sort:["-createdAt"]
       }
     });
   };
@@ -104,7 +105,6 @@ class StudentManage extends PureComponent {
     const { loading, student } = this.props;
     const { modalVisible } = this.state;
     const { getFieldDecorator } = this.props.form;
-    console.log('list ', student.studentList);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
@@ -118,26 +118,32 @@ class StudentManage extends PureComponent {
     const columns = [
       {
         title: '用户名',
+        key: 'username',
         render: (record) => (<span>{record.base.phone}</span>)
       },
       {
         title: '姓名',
-        render: (record) => (<span>{record.base.profile.name}</span>)
+        key: 'name',
+        render: (record) => (<span>{record.base.profile.realName}</span>)
       },
       {
         title: '编号',
+        key: 'num',
         dataIndex: 'number',
       },
       {
         title: '阶段',
+        key: 'level',
         render: (record) => (<span>{ levelObj[record.level] }</span>)
       },
       {
         title: '团属',
+        key: 'belong',
         render: (record) => (record.group && <span>{record.group.name}</span>)
       },
       {
         title: '职务',
+        key: 'duty',
         render: (record) => (
           record.isLead ?
           <span>{ record.leadList.join(',') }</span> : '-'
@@ -145,6 +151,7 @@ class StudentManage extends PureComponent {
       },
       {
         title: '操作',
+        key: 'x',
         render: (record) => (
           <Fragment>
             <a onClick={this.showModal.bind(this, record.uid)}>重置密码</a>

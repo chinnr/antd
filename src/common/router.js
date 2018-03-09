@@ -172,11 +172,11 @@ export const getRouterData = (app) => {
     '/course/course-review': {
       component: dynamicWrapper(app, ['course'], () => import('../routes/Course/CourseReview')),
     },
-    '/student-manage': {
+    '/student': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/Student/StudentManage'))
     },
-    '/student-detail/:id' : {
-      component: dynamicWrapper(app, ['student'], () => import('../routes/Student/StudentDetail'))
+    '/student-detail/:id': {
+      component: dynamicWrapper(app, ['student', 'mall'], () => import('../routes/Student/StudentDetail'))
     },
     '/team/new': {
       component: dynamicWrapper(app, ['team'], () => import('../routes/Team/NewTeam')),

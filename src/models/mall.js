@@ -5,6 +5,7 @@ export default {
   state: {
   	goodsType: [],
     goodsList: [],
+    myVirtualGoods: [],
     count: 0,
     limit: 0,
     page: 0
@@ -34,9 +35,11 @@ export default {
     },
     *getGoodsList({ payload }, { call, put }) {
       const { data, errors } = yield call(mallService.goodsList);
+      console.log('goods ', data)
       if(errors) {
         throw new Error(errors);
       }
+
       if(data.me) {
         yield put({
           type: 'updateState',
@@ -45,6 +48,21 @@ export default {
             count: data.me.goods.getAll.meta.count,
             limit: data.me.goods.getAll.meta.limit,
             page: data.me.goods.getAll.meta.page
+          }
+        })
+      }
+    },
+    *getUserVirtualGoods({ payload: uid }, { call, put }) {
+      const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
+      console.log('virtualGoods222333 ', data);
+      if(errors) {
+        throw new Error(errors);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            myVirtualGoods: data.me.virtualGoods.getOneUserVirtualGoods.data
           }
         })
       }

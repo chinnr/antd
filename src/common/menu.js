@@ -69,7 +69,7 @@ const menuData = [
   {
     name: '学员管理',
     icon: 'idcard',
-    path: 'student-manage'
+    path: 'student',
   },
   {
     name: '证章管理',

@@ -17,6 +17,7 @@ export default {
   effects: {
     *getStudentList({ payload: v }, { call, put }) {
       const { data, error } = yield call(studentService.studentList, v);
+      console.log('student list  data ', data)
       if(error) {
         throw new Error(errors);
       }
@@ -34,6 +35,7 @@ export default {
     },
     *getStudentDetail({ payload: uid }, { call, put }) {
       const { data, error } = yield call(studentService.studentDetail, uid);
+      console.log('data 334 4 ', data)
       if(error) {
         throw new Error(errors);
       }
@@ -57,25 +59,29 @@ export default {
       if(error) {
         throw new Error(errors);
       }
-      console.log('data pwd ', data)
     }
   },
   subscriptions: {
     setup({dispatch, history}) {
       history.listen(({pathname}) => {
         const reg = /\/student-detail\/(.+)/;
-        if(pathname === '/student-manage' || pathname === '/team/list') {
+        if(pathname === '/student' || pathname === '/team/list') {
           dispatch({
             type: 'getStudentList',
             payload: {
               page: 0,
-              limit: 10
+              limit: 10,
+              sort:["-createdAt"]
             }
           })
         }
         if(pathname.match(reg)) {
           const uid = pathname.match(reg)[1];
           if(uid.length > 0) {
+            dispatch({
+              type: 'mall/getUserVirtualGoods',
+              payload: uid
+            });
             dispatch({
               type: 'getStudentDetail',
               payload: uid
