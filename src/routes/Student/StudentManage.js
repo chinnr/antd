@@ -1,10 +1,12 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Card, Table, Divider, Form, Input, Modal } from 'antd';
+import { Row, Col, Card, Table, Divider, Form, Input, Select, Modal, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { successNotification } from '../../utils/utils';
 const FormItem = Form.Item;
+const { Option } = Select;
+const level = ['海狸', '小狼', '探索', '乐扶'];
 
 @connect(({ student, loading }) => ({
   student,
@@ -101,6 +103,52 @@ class StudentManage extends PureComponent {
     })
   };
 
+  handleFormReset = () => {
+
+  };
+
+  renderForm() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form layout="inline">
+        <Row gutter={{md: 8, lg: 24, xl: 48}}>
+          <Col md={8} sm={24}>
+            <FormItem label="编号">
+              {getFieldDecorator('phone')(
+                <Input placeholder="请输入编号" />
+              )}
+            </FormItem>   
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="团属">
+              {getFieldDecorator('gid')(
+                <Input placeholder="请输入团属" />
+              )}
+            </FormItem>   
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="阶段">
+              {getFieldDecorator('level')(
+                <Select placeholder="请选择" style={{ width: 180 }}>
+                  <Option value="level1">海狸</Option>
+                  <Option value="level2">小狼</Option>
+                  <Option value="level3">探索</Option>
+                  <Option value="level4">乐扶</Option>
+                </Select>
+              )}
+            </FormItem>   
+          </Col>
+          <Col md={8} sm={24} style={{ marginTop: '10px' }}>
+            <span>
+              <Button type="primary" htmlType="submit">查询</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+            </span>
+          </Col>
+        </Row> 
+      </Form>
+    )
+  }
+
   render() {
     const { loading, student } = this.props;
     const { modalVisible } = this.state;
@@ -117,8 +165,8 @@ class StudentManage extends PureComponent {
     };
     const columns = [
       {
-        title: '用户名',
-        key: 'username',
+        title: '电话号码',
+        key: 'phone',
         render: (record) => (<span>{record.base.phone}</span>)
       },
       {
@@ -142,14 +190,6 @@ class StudentManage extends PureComponent {
         render: (record) => (record.group && <span>{record.group.name}</span>)
       },
       {
-        title: '职务',
-        key: 'duty',
-        render: (record) => (
-          record.isLead ?
-          <span>{ record.leadList.join(',') }</span> : '-'
-        )
-      },
-      {
         title: '操作',
         key: 'x',
         render: (record) => (
@@ -169,6 +209,7 @@ class StudentManage extends PureComponent {
     return (
       <PageHeaderLayout title="学员管理">
         <Card bordered={false}>
+          <div style={{marginBottom: '10px'}}>{ this.renderForm() }</div>
           <div>
             <Table
               loading={loading}
