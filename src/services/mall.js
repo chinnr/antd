@@ -67,3 +67,25 @@ export function goodsList() {
   `;
   return graphRequest(query, {}, 'mall-admin')
 }
+
+export function virtualGoods(query , adminVirtual) {
+  console.log('ss111222 ', query, adminVirtual)
+  const virtualGoodsQuery = `
+    query getUserVirtualGoods($query: FormQuery!, $adminVirtual: AdminVirtualQuery) {
+      me {
+        virtualGoods {
+          getOneUserVirtualGoods(query: $query, adminVirtual: $adminVirtual) {
+            data {
+              count
+              status
+              cardType
+              value
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  `;
+  return graphRequest(virtualGoodsQuery, { query, adminVirtual }, 'mall-admin');
+}

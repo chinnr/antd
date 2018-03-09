@@ -10,7 +10,7 @@ export function studentList(v) {
             base {
               phone
               profile {
-                name
+                realName
               }
             }
             number
@@ -40,7 +40,7 @@ export function studentDetail(uid) {
         userOne(uid: $uid) {
           base {
             profile {
-              realname
+              realName
               sex
               birth
               ethnic

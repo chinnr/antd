@@ -96,7 +96,7 @@ const CreateForm = Form.create()((props) => {
           })(
             <Upload>
               <Button>
-                <Icon type="upload" /> Click to upload
+                <Icon type="upload" /> 点击上传图片
               </Button>
             </Upload>
           )}
