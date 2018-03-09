@@ -5,8 +5,8 @@ export default {
   state: {
     courseTemplatePubList: [],
     courseTemplatePubListMeta: {},
-    classList: [],
-    classListMeta: {}
+    courseList: [],
+    courseListMeta: {}
   },
   reducers:{
     // 存储模板列表信息到 store
@@ -18,7 +18,7 @@ export default {
     },
 
     // 存储上课列表信息到 store
-    storeClassList(state, {payload}) {
+    storeCourseList(state, {payload}) {
       return {
         ...state,
         ...payload
@@ -52,18 +52,18 @@ export default {
       }
     },
 
-    *classList({payload}, {call, put}) {
-      const {data, errors} = yield call(courseService.classList, payload);
+    *courseList({payload}, {call, put}) {
+      const {data, errors} = yield call(courseService.courseList, payload);
       if(errors) {
         const err = errors[0].message;
         throw new Error(err);
       }else{
-        console.log("classList-->", classList);
-        const classList = data.me.classList.data;
-        const classListMeta = data.me.classList.meta;
+        console.log("courseList-->", data);
+        const courseList = data.me.courseList.data;
+        const courseListMeta = data.me.courseList.meta;
         yield put({
-          type: "storeClassList",
-          payload: {classList, classListMeta}
+          type: "storeCourseList",
+          payload: {courseList, courseListMeta}
         })
       }
     }
@@ -88,7 +88,7 @@ export default {
         }
         if(pathname === '/course/course-record') {
           dispatch({
-            type: 'classList',
+            type: 'courseList',
             payload: {
               page: 0,
               limit: 10

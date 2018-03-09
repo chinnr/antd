@@ -52,11 +52,7 @@ export default class GlobalHeader extends PureComponent {
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
   }
-  logout = () => {
-    this.props.dispatch({
-      type: 'login/logout',
-    });
-  };
+
   render() {
     const {
       currentUser, collapsed, fetchingNotices, isMobile, logo,
@@ -97,7 +93,7 @@ export default class GlobalHeader extends PureComponent {
                 <span className={styles.name}>{currentUser.username}</span>
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8 }} />}
+          ) : <a onClick={() => this.props.onMenuClick()}><Icon type="logout" />退出登录</a>}
           {/*{currentUser.username && <span className={styles.name}>{currentUser.username}</span>}*/}
           {/*<a onClick={() => this.props.onMenuClick()}><Icon type="logout" />退出登录</a>*/}
         </div>

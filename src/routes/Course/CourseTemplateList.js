@@ -136,7 +136,9 @@ export default class CourseTempalteList extends Component {
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        // form.resetFields();
+        const {course: {courseTemplatePubListMeta}} = this.props;
+        this.getTempList(courseTemplatePubListMeta.p, values);
+        form.resetFields();
       }
     });
   };
@@ -146,15 +148,16 @@ export default class CourseTempalteList extends Component {
   }
 
   // 获取课程模板列表
-  getTempList = (p = 0) => {
-    console.log("获取课程模板列表==>", Number(p));
+  getTempList = (p = 0, keyJson = {}) => {
+    console.log("获取课程模板列表==>", Number(p), keyJson);
     this.props
       .dispatch({
         type: 'course/courseTemplatePubList',
         payload: {
           tempQuery: {
             limit: 10,
-            page: p
+            page: p,
+            keyJson: JSON.stringify(keyJson)
           },
           badgeQuery: {
             limit: 10,
@@ -204,36 +207,36 @@ export default class CourseTempalteList extends Component {
               </FormItem>
               <FormItem label="类型">
                 {getFieldDecorator('type', {
-                  initialValue: '0'
+                  initialValue: 0
                 })(
                   <Select placeholder="请选择课程类型">
-                    <Option value="0">团集会</Option>
-                    <Option value="1">活动</Option>
-                    <Option value="2">兴趣课</Option>
+                    <Option value={0}>团集会</Option>
+                    <Option value={1}>活动</Option>
+                    <Option value={2}>兴趣课</Option>
                   </Select>
                 )}
               </FormItem>
               <FormItem label="课程级别">
                 {getFieldDecorator('level', {
-                  initialValue: 'level1'
+                  initialValue: 1
                 })(
                   <Select placeholder="请选择课程级别">
-                    <Option value="level1">海狸</Option>
-                    <Option value="level2">小狼</Option>
-                    <Option value="level3">探索</Option>
-                    <Option value="level4">乐扶</Option>
+                    <Option value={1}>海狸</Option>
+                    <Option value={2}>小狼</Option>
+                    <Option value={3}>探索</Option>
+                    <Option value={4}>乐扶</Option>
                   </Select>
                 )}
               </FormItem>
               <FormItem label="课程阶段">
                 {getFieldDecorator('stage', {
-                  initialValue: 'stage1'
+                  initialValue: 1
                 })(
                   <Select placeholder="请选择课程阶段">
-                    <Option value="stage1">阶段1</Option>
-                    <Option value="stage2">阶段2</Option>
-                    <Option value="stage3">阶段3</Option>
-                    <Option value="stage4">阶段4</Option>
+                    <Option value={1}>阶段1</Option>
+                    <Option value={2}>阶段2</Option>
+                    <Option value={3}>阶段3</Option>
+                    <Option value={4}>阶段4</Option>
                   </Select>
                 )}
               </FormItem>
