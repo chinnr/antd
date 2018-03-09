@@ -1,14 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import {
-  List,
-  Card,
-  Radio,
-  Input,
-  Button,
-  Avatar
-} from 'antd';
+import { List, Card, Radio, Input, Button, Avatar } from 'antd';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './Course.less';
@@ -19,8 +12,7 @@ const RadioGroup = Radio.Group;
 const { Search } = Input;
 
 @connect(({ course }) => ({ course }))
-export default class BasicList extends PureComponent {
-
+export default class CourseRecord extends PureComponent {
   /**
    * 处理课程类型
    * @param method  课程类型 0:普通课 1:常驻课 2:夏令营
@@ -80,12 +72,60 @@ export default class BasicList extends PureComponent {
     );
   };
 
+  /**
+   * 获取开课列表
+   * @param p
+   * @param keyJson  // 查询关键词
+   */
+  courseList = (p, keyJson = {}) => {
+    this.props
+      .dispatch({
+        type: 'course/courseList',
+        payload: {
+          page: p - 1,
+          limit: 10,
+          keyJson: JSON.stringify(keyJson)
+        }
+      })
+      .catch(err => err);
+  };
+
+  /**
+   * 翻页
+   * @param p
+   */
+  onPagination = p => {
+    console.log('onPagination ==> ', p - 2);
+    this.courseList(p);
+  };
+
+  /**
+   * 处理用户筛选
+   * @param v  筛选的纸
+   * @param p  当前页码
+   * @param type  筛选类型
+   */
+  handleSearch = (v, p, type) => {
+    console.log('handleSearch ==> ', v.target.value);
+    let keyJson = {};
+    if (type === 'state' && v !== 'all') {
+      keyJson = { state: v.target.value };
+    }
+    if (type === 'state' && v === 'all') {
+      keyJson = {};
+    }
+    this.courseList(p + 1, keyJson);
+  };
+
   render() {
     const { course: { courseList, courseListMeta } } = this.props;
-
+    const page = courseListMeta.page;
     const extraContent = (
       <div className={styles.extraContent}>
-        <RadioGroup defaultValue="all">
+        <RadioGroup
+          defaultValue="all"
+          onChange={v => this.handleSearch(v, page, 'state')}
+        >
           <RadioButton value="all">全部</RadioButton>
           <RadioButton value={-2}>审核失败</RadioButton>
           <RadioButton value={-1}>草稿</RadioButton>
@@ -106,7 +146,8 @@ export default class BasicList extends PureComponent {
       showSizeChanger: false,
       showQuickJumper: false,
       pageSize: 10,
-      total: courseListMeta.count
+      total: courseListMeta.count,
+      onChange: p => this.onPagination(p)
     };
 
     const ListContent = ({
@@ -158,7 +199,7 @@ export default class BasicList extends PureComponent {
                       <Avatar src={item.logo} shape="square" size="large" />
                     }
                     title={<a href={item.href}>{item.title}</a>}
-                    description={item.skills}
+                    description={'培养能力: ' + item.skills}
                   />
                   <ListContent data={item} />
                 </List.Item>
