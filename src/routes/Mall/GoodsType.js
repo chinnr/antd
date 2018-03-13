@@ -1,35 +1,10 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { List, Card, Row, Col, Modal, Form, Radio, Input, DatePicker, Upload, Progress, Button, Icon, Dropdown, Menu, Avatar, Select } from 'antd';
-import StandardTable from '../../components/StandardTable';
+import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select } from 'antd';
+import GoodsTypeTable from './GoodsTypeTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
 const Option = Select.Option;
-const { Search } = Input;
-const columns = [
-  {
-    title: '类型名称',
-    dataIndex: 'name'
-  },
-  {
-    title: '排序',
-    dataIndex: 'level'
-  },
-  {
-    title: '类型图片',
-    render: (record) => (
-      <span><img src={record.typeImg} /></span>
-    )
-  },
-  {
-    title: '操作',
-    render: () => (
-    	<Fragment>
-        <a href="">编辑</a>
-      </Fragment>
-    )
-  }
-];
 
 const CreateForm = Form.create()((props) => {
   const { visible, form, handleAdd, handleCancel } = props;
@@ -41,24 +16,24 @@ const CreateForm = Form.create()((props) => {
   const handleOk = () => {
     validateFields((err, values) => {
       if(!err) {
-        console.log('form 111 ', values)
+        // console.log('form 111 ', values);
         const formData = {
           ...values,
           expireTime: values['expireTime'].format('YYYY-MM-DD'),
           level: 1
         };
 
-        console.log('formData ', formData)
+        // console.log('formData ', formData)
       }
     });
   };
 
   return (
-    <Modal 
-      title="添加商品类型" 
+    <Modal
+      title="添加商品类型"
       maskClosable={true}
-      visible={visible} 
-      onOk={handleOk} 
+      visible={visible}
+      onOk={handleOk}
       onCancel={() => handleCancel()}>
       <Form>
         <FormItem
@@ -87,8 +62,8 @@ const CreateForm = Form.create()((props) => {
             </Select>
           )}
         </FormItem>
-        <FormItem 
-          {...formItemLayout} 
+        <FormItem
+          {...formItemLayout}
           label="类型图片"
         >
           {getFieldDecorator('typeImg', {
@@ -161,15 +136,51 @@ class GoodsType extends PureComponent {
       visible: false
     })
   };
-  
+
   /* 添加类型 */
   handleAdd = (fields) => {
 
   };
 
+  handleTableChange = (n) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/getGoodsType',
+      payload: {
+        page: n - 1,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    })
+  };
+
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
+    const columns = [
+      {
+        title: '类型名称',
+        dataIndex: 'name'
+      },
+      {
+        title: '排序',
+        dataIndex: 'level'
+      },
+      {
+        title: '类型图片',
+        render: (record) => (
+          <span><img src={record.typeImg} /></span>
+        )
+      },
+      {
+        title: '操作',
+        render: () => (
+          <Fragment>
+            <a href="">编辑</a>
+          </Fragment>
+        )
+      }
+    ];
     const list = mall.goodsType;
     const pagination = {
       current: mall.page + 1,
@@ -191,17 +202,18 @@ class GoodsType extends PureComponent {
                 )
               }
             </div>
-            <StandardTable
+            <GoodsTypeTable
               loading={loading}
               selectedRows={selectedRows}
               onSelectRow={this.handleSelectRows}
               columns={columns}
               data={data}
+              onChange={this.handleTableChange}
             />
           </div>
-          <CreateForm 
-            visible={visible} 
-            handleCancel={this.handleCancel} 
+          <CreateForm
+            visible={visible}
+            handleCancel={this.handleCancel}
             handleAdd = {this.handleAdd}
           />
         </Card>

@@ -6,9 +6,9 @@ export default {
   	goodsType: [],
     goodsList: [],
     myVirtualGoods: [],
-    count: 0,
-    limit: 0,
-    page: 0
+    count: null,
+    limit: null,
+    page: null
   },
   reducers: {
     updateState(state, { payload }) {
@@ -16,8 +16,8 @@ export default {
     }
   },
   effects: {
-    *getGoodsType({ payload }, { call, put }) {
-      const { data, errors } = yield call(mallService.goodsType);
+    *getGoodsType({ payload: query }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsType, query);
       if(errors) {
         throw new Error(errors);
       }
@@ -33,8 +33,8 @@ export default {
         })
       }
     },
-    *getGoodsList({ payload }, { call, put }) {
-      const { data, errors } = yield call(mallService.goodsList);
+    *getGoodsList({ payload: v }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsList, v);
       console.log('goods ', data)
       if(errors) {
         throw new Error(errors);
@@ -72,10 +72,24 @@ export default {
   	setup({ dispatch, history }) {
   		history.listen(({ pathname }) => {
         if(pathname === '/mall/goods-type') {
-          dispatch({type: 'getGoodsType'})
+          dispatch({
+            type: 'getGoodsType',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"]
+            }
+          })
         }
         if(pathname === '/mall/goods-list') {
-          dispatch({type: 'getGoodsList'})
+          dispatch({
+            type: 'getGoodsList',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort:["-createdAt"]
+            }
+          })
         }
       })
   	}
