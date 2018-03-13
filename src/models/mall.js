@@ -13,6 +13,11 @@ export default {
   reducers: {
     updateState(state, { payload }) {
       return { ...state, ...payload }
+    },
+    add(state, { payload: goods }) {
+      const goodsType = state.goodsType.concat();
+      goodsType.unshift(goods);
+      return { ...state, goodsType };
     }
   },
   effects: {
@@ -54,7 +59,6 @@ export default {
     },
     *getUserVirtualGoods({ payload: uid }, { call, put }) {
       const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
-      console.log('virtualGoods222333 ', data);
       if(errors) {
         throw new Error(errors);
       }
@@ -66,6 +70,21 @@ export default {
           }
         })
       }
+    },
+    *addGoodsType({ payload: formData }, { call, put }) {
+      const { data, errors } = yield call(mallService.addGoodsType, formData);
+      if(errors) {
+        throw new Error(errors);
+      }
+      if(data.me) {
+        yield put({
+          type: 'add',
+          payload: data.me.goodsType.createGoodsType
+        })
+      }
+    },
+    *delGoodsType({ payload }, { call, put }) {
+      
     }
   },
   subscriptions: {

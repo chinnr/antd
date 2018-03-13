@@ -39,7 +39,20 @@ export function addGoodsType(formData) {
       }
     }
   }`;
-  return graphRequest(mutation, formData, 'mall-admin')
+  return graphRequest(mutation, { formData }, 'mall-admin')
+}
+
+export function delGoodsType() {
+  const mutation = `
+    mutation delGoodsType {
+      me {
+        goodsType {
+          deleteGoodsType 
+        }
+      }
+    }
+  `;
+  return graphRequest(mutation, {  }, 'mall-admin')
 }
 
 export function goodsList(v) {
@@ -49,7 +62,6 @@ export function goodsList(v) {
         goods {
           getAll(query: $v) {
             data {
-              gid
               name
               sku
               originalPrice

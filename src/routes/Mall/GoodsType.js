@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select } from 'antd';
+import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message } from 'antd';
+import { thumbnailPath, rootUrl } from "../../utils/constant";
 import GoodsTypeTable from './GoodsTypeTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
@@ -13,17 +14,33 @@ const CreateForm = Form.create()((props) => {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 }
   };
+  const propsObj = {
+    name: 'file',
+    action: 'https://api.yichui.net/api/young/post/upload/image',
+    onChange(info) {
+      if(info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if(info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    }
+  };
   const handleOk = () => {
     validateFields((err, values) => {
       if(!err) {
-        // console.log('form 111 ', values);
+        console.log('form 111 ', values);
+        const typeImg = `${rootUrl}${thumbnailPath}${values.typeImg.file.response.filename}`;
         const formData = {
           ...values,
+          type: +values.type,
+          priority: +values.priority,
           expireTime: values['expireTime'].format('YYYY-MM-DD'),
-          level: 1
+          level: 1,
+          typeImg
         };
 
-        // console.log('formData ', formData)
+        console.log('formData ', formData)
+        handleAdd(formData);
       }
     });
   };
@@ -41,9 +58,19 @@ const CreateForm = Form.create()((props) => {
           label="类型名称"
         >
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: 'Please input name...' }],
+            rules: [{ required: true, message: '请输入类型名称' }],
           })(
             <Input placeholder="请输入类型名称" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="类型标记前缀"
+        >
+          {getFieldDecorator('skuPrefix', {
+            rules: [{ required: true, message: '类型标记标记前缀' }],
+          })(
+            <Input placeholder="请输入类型标记前缀" />
           )}
         </FormItem>
         <FormItem
@@ -69,7 +96,7 @@ const CreateForm = Form.create()((props) => {
           {getFieldDecorator('typeImg', {
             rules: [{ required: true }]
           })(
-            <Upload>
+            <Upload {...propsObj}>
               <Button>
                 <Icon type="upload" /> 点击上传图片
               </Button>
@@ -93,7 +120,7 @@ const CreateForm = Form.create()((props) => {
           {getFieldDecorator('priority', {
             rules: [{ required: true, message: 'Please input name...' }],
           })(
-            <Input placeholder="请输入排序" />
+            <Input type="number" min="0" placeholder="请输入排序" />
           )}
         </FormItem>
       </Form>
@@ -114,6 +141,7 @@ class GoodsType extends PureComponent {
   };
 
   handleSelectRows = (rows) => {
+    console.log('rrrr 33333 ', rows)
     this.setState({
       selectedRows: rows
     });
@@ -138,8 +166,15 @@ class GoodsType extends PureComponent {
   };
 
   /* 添加类型 */
-  handleAdd = (fields) => {
-
+  handleAdd = (formData) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/addGoodsType',
+      payload: formData
+    })
+    .then(() => {
+      this.handleCancel();
+    })
   };
 
   handleTableChange = (n) => {
@@ -147,7 +182,7 @@ class GoodsType extends PureComponent {
     dispatch({
       type: 'mall/getGoodsType',
       payload: {
-        page: n - 1,
+        page: n.current - 1,
         limit: 10,
         sort:["-createdAt"]
       }
@@ -157,6 +192,7 @@ class GoodsType extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
+    console.log('selectedRows111111 ', selectedRows)
     const columns = [
       {
         title: '类型名称',
@@ -169,7 +205,7 @@ class GoodsType extends PureComponent {
       {
         title: '类型图片',
         render: (record) => (
-          <span><img src={record.typeImg} /></span>
+          <span><img style={{ width: 100, height: 100 }} src={record.typeImg} /></span>
         )
       },
       {
