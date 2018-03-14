@@ -196,6 +196,9 @@ export const getRouterData = (app) => {
     '/mall/goods-list': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsManage')),
     },
+    '/mall/goods-add': {
+      component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsAdd')),
+    },
     '/badge/new': {
       component: dynamicWrapper(app, ['badge'], () => import('../routes/Badge/NewBadge')),
     },

@@ -100,6 +100,10 @@ const menuData = [
         path: 'goods-list'
       },
       {
+        name: '商品添加',
+        path: 'goods-add'
+      },
+      {
         name: '广告位',
         path: 'ad'
       },
