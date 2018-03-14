@@ -1,10 +1,10 @@
 import graphRequest from '../utils/graphRequest';
 
-export function goodsType() {
-  const query = `query getGoodsType {
+export function goodsType(q) {
+  const query = `query getGoodsType($q: FormQuery) {
     me {
       goodsType {
-        getGoodsTypes {
+        getGoodsTypes(query: $q) {
           meta {
             count
             limit
@@ -21,7 +21,7 @@ export function goodsType() {
       } 
     }
   }`;
-  return graphRequest(query, {}, 'mall-admin')
+  return graphRequest(query, { q }, 'mall-admin')
 }
 
 export function addGoodsType(formData) {
@@ -39,15 +39,28 @@ export function addGoodsType(formData) {
       }
     }
   }`;
-  return graphRequest(mutation, formData, 'mall-admin')
+  return graphRequest(mutation, { formData }, 'mall-admin')
 }
 
-export function goodsList() {
+export function delGoodsType() {
+  const mutation = `
+    mutation delGoodsType {
+      me {
+        goodsType {
+          deleteGoodsType 
+        }
+      }
+    }
+  `;
+  return graphRequest(mutation, {  }, 'mall-admin')
+}
+
+export function goodsList(v) {
   const query = `
-    query getGoodsList {
+    query getGoodsList($v: FormQuery) {
       me {
         goods {
-          getAll {
+          getAll(query: $v) {
             data {
               name
               sku
@@ -65,7 +78,7 @@ export function goodsList() {
       }
     }
   `;
-  return graphRequest(query, {}, 'mall-admin')
+  return graphRequest(query, { v }, 'mall-admin')
 }
 
 export function virtualGoods(query , adminVirtual) {

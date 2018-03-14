@@ -1,38 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Card, Input, Button } from 'antd';
-import StandardTable from '../../components/StandardTable';
+import GoodsManageTable from './GoodsManageTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-
-const columns = [
-  {
-    title: '商品名称',
-    dataIndex: 'name'
-  },
-  {
-    title: '原价',
-    dataIndex: 'originalPrice'
-  },
-  {
-    title: '折后价',
-    dataIndex: 'price'
-  },
-  {
-    title: '库存',
-    dataIndex: 'stock'
-  },
-  {
-    title: '销量'
-  },
-  {
-    title: '操作',
-    render: () => (
-    	<Fragment>
-        <a href="">编辑</a>
-      </Fragment>
-    )
-  }
-];
 
 @connect(({ mall, loading }) => ({
   mall,
@@ -50,10 +20,52 @@ class GoodsManage extends PureComponent {
     });
   };
 
+  handleTableChange = (n) => {
+    console.log('n is ', n)
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/getGoodsList',
+      payload: {
+        page: n.current - 1,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    })
+  };
+
   render() {
     const { mall, loading } = this.props;
     const { selectedRows } = this.state;
     const list = mall.goodsList;
+    const columns = [
+      {
+        title: '商品名称',
+        dataIndex: 'name'
+      },
+      {
+        title: '原价',
+        dataIndex: 'originalPrice'
+      },
+      {
+        title: '折后价',
+        dataIndex: 'price'
+      },
+      {
+        title: '库存',
+        dataIndex: 'stock'
+      },
+      {
+        title: '销量'
+      },
+      {
+        title: '操作',
+        render: () => (
+          <Fragment>
+            <a href="">编辑</a>
+          </Fragment>
+        )
+      }
+    ];
     const pagination = {
       current: mall.page + 1,
       pageSize: mall.limit,
@@ -74,12 +86,13 @@ class GoodsManage extends PureComponent {
                 )
               }
             </div>
-            <StandardTable
+            <GoodsManageTable
               loading={loading}
               selectedRows={selectedRows}
               columns={columns}
               data={data}
               onSelectRow={this.handleSelectRows}
+              onChange={this.handleTableChange}
             />
           </div>
         </Card>

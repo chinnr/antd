@@ -8,6 +8,62 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const level = ['海狸', '小狼', '探索', '乐扶'];
 
+const ResetPasswordForm = Form.create()((props) => {
+  const { modalVisible, form, handleCancel, handleOk } = props;
+  const { getFieldDecorator } = form;
+  const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 }
+  };
+  function resetInput() {
+    form.resetFields();
+  }
+
+  const okHandle = () => {
+    form.validateFields((err, values) => {
+      if(!err) {
+        handleOk(values, resetInput)
+      }
+    })
+  };
+  return (
+    <Modal
+      title="重置密码"
+      visible={modalVisible}
+      onCancel={handleCancel}
+      onOk={okHandle}
+    >
+      <Form>
+        <FormItem
+          {...formItemLayout}
+          label="新密码"
+        >
+          {getFieldDecorator('password', {
+            rules: [{ required: true, message: '请输入密码' },
+            ]
+          })(
+            <Input type="password" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="确认新密码"
+        >
+          {getFieldDecorator('confirm', {
+            rules: [{
+              required: true, message: '请确认新密码',
+            }, {
+              validator: this.checkPassword
+            }]
+          })(
+            <Input type="password" />
+          )}
+        </FormItem>
+      </Form>
+    </Modal>
+  );
+});
+
 @connect(({ student, loading }) => ({
   student,
   loading: loading.models.student,
@@ -18,23 +74,26 @@ class StudentManage extends PureComponent {
   state = {
     modalVisible: false,
     confirmDirty: false,
-    uid: null
+    uid: null,
+    filterObj: {}
   };
 
   handleTableChange = ({current, pageSize}) => {
     const { dispatch } = this.props;
+    const { filterObj } = this.state;
     dispatch({
       type: 'student/getStudentList',
       payload: {
         page: current - 1,
         limit: pageSize,
-        sort:["-createdAt"]
+        sort:["-createdAt"],
+        keyJson: JSON.stringify(filterObj)
       }
     });
   };
 
   goToDetail = (uid) => {
-    console.log('uid ', uid)
+    // console.log('uid ', uid);
     const { dispatch } = this.props;
     dispatch(routerRedux.push({
       pathname: `/student-detail/${uid}`,
@@ -46,7 +105,7 @@ class StudentManage extends PureComponent {
     this.setState({
       confirmDirty: this.state.confirmDirty || !!value
     })
-  }; 
+  };
 
   checkPassword = (rule, value, callback) => {
     const form = this.props.form;
@@ -61,7 +120,7 @@ class StudentManage extends PureComponent {
     const form = this.props.form;
     if(value && this.state.confirmDirty) {
       form.validateFields(['confirm'], { force: true });
-    } 
+    }
     callback();
   };
 
@@ -72,59 +131,98 @@ class StudentManage extends PureComponent {
     })
   };
 
-  handleOk = (e) => {
+  handleOk = (values, callback) => {
     const { uid } = this.state;
-    this.props.form.validateFields((err, values) => {
+    const payload = {
+      uid,
+      form: {
+        password: {
+          password: values.password
+        }
+      }
+    };
+    this.props.dispatch({
+      type: 'student/updateUserPassword',
+      payload: payload
+    })
+    .then(() => {
+      successNotification('修改成功', this.handleCancel.bind(this, callback))
+    })
+    .catch((err) => {
+      throw new Error(err);
+    })
+  };
+
+  handleCancel = (callback) => {
+    this.setState({
+      modalVisible: false
+    }, () => {
+      if(callback !== undefined && typeof(callback) === "function") {
+        callback();
+      }
+    })
+  };
+
+  handleSearch = (e) => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+    const { filterObj } = this.state;
+    form.validateFields((err, values) => {
       if(!err) {
-        this.props.dispatch({
-          type: 'student/updateUserPassword',
+        const obj = {
+          ...filterObj,
+          ...values
+        };
+        this.setState({
+          filterObj: obj
+        });
+        dispatch({
+          type: 'student/getStudentList',
           payload: {
-            uid,
-            form: { 
-              password: {
-                password: values.password
-              }
-            }
+            page: 0,
+            limit: 10,
+            sort: ["-createdAt"],
+            keyJson: JSON.stringify(obj)
           }
-        })
-        .then((res) => {
-          successNotification('修改成功', this.handleCancel)
-        })
-        .catch((err) => {
-          throw new Error(err);
         })
       }
     })
   };
 
-  handleCancel = (e) => {
-    this.setState({
-      modalVisible: false
-    })
-  };
-
   handleFormReset = () => {
-
+    const { form, dispatch } = this.props;
+    form.resetFields();
+    this.setState({
+      filterObj: {}
+    });
+    dispatch({
+      type: 'student/getStudentList',
+      payload: {
+        page: 0,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    })
   };
 
   renderForm() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form layout="inline">
+      <Form layout="inline" onSubmit={this.handleSearch}>
         <Row gutter={{md: 8, lg: 24, xl: 48}}>
           <Col md={8} sm={24}>
             <FormItem label="编号">
-              {getFieldDecorator('phone')(
+              {getFieldDecorator('number')(
                 <Input placeholder="请输入编号" />
               )}
-            </FormItem>   
+            </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="团属">
-              {getFieldDecorator('gid')(
+              {getFieldDecorator('groupName')(
                 <Input placeholder="请输入团属" />
               )}
-            </FormItem>   
+            </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="阶段">
@@ -136,7 +234,7 @@ class StudentManage extends PureComponent {
                   <Option value="level4">乐扶</Option>
                 </Select>
               )}
-            </FormItem>   
+            </FormItem>
           </Col>
           <Col md={8} sm={24} style={{ marginTop: '10px' }}>
             <span>
@@ -144,7 +242,7 @@ class StudentManage extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
             </span>
           </Col>
-        </Row> 
+        </Row>
       </Form>
     )
   }
@@ -152,11 +250,6 @@ class StudentManage extends PureComponent {
   render() {
     const { loading, student } = this.props;
     const { modalVisible } = this.state;
-    const { getFieldDecorator } = this.props.form;
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 }
-    };
     const levelObj = {
       "level1": "海狸",
       "level2": "小狼",
@@ -220,40 +313,11 @@ class StudentManage extends PureComponent {
               onChange={this.handleTableChange}
             />
           </div>
-          <Modal 
-            title="重置密码"
-            visible={modalVisible}
-            onCancel={this.handleCancel}
-            onOk={this.handleOk}
-          >
-            <Form>
-              <FormItem
-                {...formItemLayout}
-                label="新密码"
-              >
-                {getFieldDecorator('password', {
-                  rules: [{ required: true, message: '请输入密码' },
-                  ]
-                })(
-                  <Input type="password" />
-                )}
-              </FormItem>
-              <FormItem
-                {...formItemLayout}
-                label="确认新密码"
-              >
-                {getFieldDecorator('confirm', {
-                  rules: [{ 
-                    required: true, message: '请确认新密码',
-                  }, {
-                    validator: this.checkPassword
-                  }]
-                })(
-                  <Input type="password" />
-                )}
-              </FormItem>
-            </Form>
-          </Modal>
+          <ResetPasswordForm
+            modalVisible={modalVisible}
+            handleOk={this.handleOk}
+            handleCancel={this.handleCancel}
+          />
         </Card>
       </PageHeaderLayout>
     )
