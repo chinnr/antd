@@ -181,12 +181,19 @@ export default class TeamList extends Component {
   // 处理教官列表翻页
   handleTableChange = p => {
     console.log('page ', p);
+    this.getAllCoach(p-1);
+  };
+
+  // 获取教官列表
+  getAllCoach = (p=0) => {
+    console.log('page ', p);
     const { dispatch } = this.props;
     dispatch({
       type: 'student/getStudentList',
       payload: {
-        page: p - 1,
-        limit: 10
+        page: p,
+        limit: 10,
+        keyJson: JSON.stringify({'level': 'level4'})
       }
     });
   };
@@ -205,12 +212,12 @@ export default class TeamList extends Component {
 
   componentWillMount() {
     this.getAllTeams();
+    this.getAllCoach();
   }
 
   render() {
     const { teams, teamsMeta } = this.props.team;
     const { studentList, page, count } = this.props.student;
-    console.log('studentList==>', studentList);
     const { visible, coachFormVisible } = this.state;
 
     return (
