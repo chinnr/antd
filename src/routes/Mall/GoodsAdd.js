@@ -1,7 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Card, Input, Button, Form, Upload, Icon, Radio } from 'antd';
+import { Card, Input, Button, Form, Upload, Icon, Radio, Modal } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { thumbnailPath, rootUrl } from "../../utils/constant";
 import {message} from "antd/lib/index";
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -10,13 +11,25 @@ const RadioGroup = Radio.Group;
   loading: loading.models.mall
 }))
 @Form.create()
-class GoodsAdd extends PureComponent {
+class GoodsAdd extends Component {
 
   state = {
+    previewVisible: false,
+    previewImage: '',
+    fileList:[]
   };
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
+  }
+
+  handleCancel = () => this.setState({ previewVisible: false })
+
+  handlePreview = (file) => {
+    this.setState({
+      previewImage: rootUrl + thumbnailPath + file.response.filename,
+      previewVisible: true,
+    });
   }
 
   handleSubmit = e => {
@@ -27,26 +40,51 @@ class GoodsAdd extends PureComponent {
       }
     })
   };
-  propsObj = {
-    name: 'file',
-    action: 'https://api.yichui.net/api/young/post/upload/image',
-    onChange(info) {
-      if(info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if(info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+
+  handleChange = (info) => {
+    let fileList = info.fileList;
+    // 1. Limit the number of uploaded files
+    //    Only to show two recent uploaded files, and old ones will be replaced by the new
+    // fileList = fileList.slice(-2);
+
+    // 2. read from response and show file link
+    fileList = fileList.map((file) => {
+      // console.log("file==>", file);
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = rootUrl + thumbnailPath + file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+        file.status = file.response.status;
       }
-    }
+      return file;
+    });
+    console.log("fileList map: ", fileList);
+    this.setState({ fileList });
   };
 
-
   render() {
+    const {fileList, previewVisible, previewImage} = this.state;
     const {
       getFieldDecorator,
       getFieldsError,
       getFieldError,
       isFieldTouched
     } = this.props.form;
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
+
+    const propsObj = {
+      name: 'file',
+      action: 'https://api.yichui.net/api/young/post/upload/image',
+      onChange: this.handleChange,
+      multiple: true,
+    };
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -65,16 +103,20 @@ class GoodsAdd extends PureComponent {
       }
     };
     const { mall } = this.props;
-    const breadcrumbList = [{
-      title: '首页',
-      href: '/',
-    }, {
-      title: '商品管理',
-      href: '/mall/goods-list',
-    }, {
-      title: '添加商品',
-      href: '/mall/goods-add',
-    }];
+    const breadcrumbList = [
+      {
+        title: '首页',
+        href: '/',
+      },
+      {
+        title: '商品管理',
+        href: '/mall/goods-list',
+      },
+      {
+        title: '添加商品',
+        href: '/mall/goods-add',
+      }
+    ];
 
     const badgeNameError = isFieldTouched('name') && getFieldError('name');
 
@@ -138,10 +180,13 @@ class GoodsAdd extends PureComponent {
               {getFieldDecorator('imgs', {
                 rules: [{ required: true }]
               })(
-                <Upload {...this.propsObj}>
-                  <Button>
-                    <Icon type="upload" /> 点击上传图片
-                  </Button>
+                <Upload
+                  {...propsObj}
+                  fileList={fileList}
+                  listType="picture-card"
+                  onPreview={this.handlePreview}
+                >
+                  {fileList.length >= 3 ? null : uploadButton}
                 </Upload>
               )}
             </FormItem>
@@ -247,8 +292,21 @@ class GoodsAdd extends PureComponent {
                 <Input />
               )}
             </FormItem>
+            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={this.hasErrors(getFieldsError())}
+              >
+                提交
+              </Button>
+              {/*<Button style={{ marginLeft: 8 }}>保存</Button>*/}
+            </FormItem>
           </Form>
         </Card>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
       </PageHeaderLayout>
     )
   }
