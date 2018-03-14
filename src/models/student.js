@@ -71,7 +71,7 @@ export default {
     setup({dispatch, history}) {
       history.listen(({pathname}) => {
         const reg = /\/student-detail\/(.+)/;
-        if(pathname === '/student' || pathname === '/team/list') {
+        if(pathname === '/student') {
           dispatch({
             type: 'getStudentList',
             payload: {

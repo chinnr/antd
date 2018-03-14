@@ -30,7 +30,7 @@ const CoachForm = Form.create()(props => {
             <CheckboxGroup>
               {coach.map(item => (
                 <Checkbox key={item.uid} value={item.uid}>
-                  {item.base.profile.name}
+                  {item.base.profile.realName}
                 </Checkbox>
               ))}
             </CheckboxGroup>

@@ -51,6 +51,7 @@ export default class CourseReview extends Component {
 
   // 审核逻辑
   handleReview = (type, id, note = '') => {
+    console.log("审核逻辑:")
     const props = this.props;
     let _argv = {};
     type === 'resolve'
@@ -97,7 +98,7 @@ export default class CourseReview extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('values==>', values);
-        this.handleReview('reject', _id, values);
+        this.handleReview('reject', _id, values.note);
       }
     });
   };
@@ -117,7 +118,7 @@ export default class CourseReview extends Component {
       },
       {
         title: '开课列表',
-        href: '/course/course-list'
+        href: '/course/course-record'
       },
       {
         title: '课程审核',
