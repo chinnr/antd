@@ -275,7 +275,7 @@ export const doExchange = (arr) => {
     // 2层嵌套循环,将组合放到新数组中
     for(let i=0; i<len1; i++){
       for(let j=0; j<len2; j++){
-        items[index] = arr[0][i] +"-"+ arr[1][j];
+        items[index] = arr[1][j] +"-"+ arr[0][i];
         index++;
       }
     }

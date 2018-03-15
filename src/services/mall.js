@@ -102,3 +102,18 @@ export function virtualGoods(query , adminVirtual) {
   `;
   return graphRequest(virtualGoodsQuery, { query, adminVirtual }, 'mall-admin');
 }
+
+// 添加商品
+export function goodsAdd(form) {
+  const goodsAdd = `mutation goodsAdd($form: CreateGoodsInput){
+    me {
+      goods {
+        createGoods(form:$form){
+          gid
+          name
+        }
+      }
+    }
+  }`;
+  return graphRequest(goodsAdd, {form}, 'mall-admin')
+}

@@ -1,4 +1,5 @@
 import * as mallService from '../services/mall';
+import * as badgeService from "../services/badge";
 
 export default {
   namespace: 'mall',
@@ -24,7 +25,7 @@ export default {
     *getGoodsType({ payload: query }, { call, put }) {
       const { data, errors } = yield call(mallService.goodsType, query);
       if(errors) {
-        throw new Error(errors);
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
@@ -42,7 +43,7 @@ export default {
       const { data, errors } = yield call(mallService.goodsList, v);
       console.log('goods ', data)
       if(errors) {
-        throw new Error(errors);
+        throw new Error(errors[0].message);
       }
 
       if(data.me) {
@@ -60,7 +61,7 @@ export default {
     *getUserVirtualGoods({ payload: uid }, { call, put }) {
       const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
       if(errors) {
-        throw new Error(errors);
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
@@ -74,7 +75,7 @@ export default {
     *addGoodsType({ payload: formData }, { call, put }) {
       const { data, errors } = yield call(mallService.addGoodsType, formData);
       if(errors) {
-        throw new Error(errors);
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
@@ -84,7 +85,16 @@ export default {
       }
     },
     *delGoodsType({ payload }, { call, put }) {
-      
+
+    },
+    *addGoods({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsAdd, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log("addGoods ==> ", data);
+      }
     }
   },
   subscriptions: {

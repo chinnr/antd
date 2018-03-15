@@ -19,13 +19,14 @@ import {
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { thumbnailPath, rootUrl } from '../../utils/constant';
-import options from '../../utils/sell-address-options';
+import options from '../../utils/cascader-address-options';
 import styles from './index.less';
-import {doExchange} from '../../utils/utils';
+import {doExchange, successNotification} from '../../utils/utils';
 import colors from '../../static/colors';
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor';
 import 'braft-editor/dist/braft.css';
+import {routerRedux} from "dva/router";
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -50,7 +51,8 @@ class GoodsAdd extends Component {
   state = {
     previewVisible: false,
     previewImage: '',
-    fileList: []
+    fileList: [],
+    showSku: false,
   };
 
   hasErrors(fieldsError) {
@@ -81,7 +83,28 @@ class GoodsAdd extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        let images = [], skuSize = [];
+        values.imgs.fileList.map(item => {
+          images.push(item.name)
+        });
+        values.imgs = images;
+        // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
+        // goodsJson 格式 data:[{gid,count}]
+        values.downTime = values.downTime.toISOString();
+        values.expireTime  = values.expireTime.toISOString();
+        values.upTime = values.upTime.toISOString();
+        skuSize = [values.color, values.size];
+        values.sku = 'BLD-'+values.sku;
+        // values.skuSize = doExchange(skuSize);
+        values.skuSize = "L-#ffffff";
+        values.province = values.address[0];
+        values.city = values.address[1];
         console.log('添加商品参数: ', values);
+        delete values.color;
+        delete values.size;
+        delete values.address;
+        delete values.goodsJson;
+        this.addGoods(values);
       }
     });
   };
@@ -92,15 +115,8 @@ class GoodsAdd extends Component {
    */
   handleChange = info => {
     let fileList = info.fileList;
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
-    // fileList = fileList.slice(-2);
-
-    // 2. read from response and show file link
     fileList = fileList.map(file => {
-      // console.log("file==>", file);
       if (file.response) {
-        // Component will show file.url as link
         file.url = rootUrl + thumbnailPath + file.response.filename;
         file.uid = file.response.filename;
         file.name = file.response.filename;
@@ -108,7 +124,7 @@ class GoodsAdd extends Component {
       }
       return file;
     });
-    console.log('fileList map: ', fileList);
+    console.log("商品图片上传: ",fileList);
     this.setState({ fileList });
   };
 
@@ -149,16 +165,29 @@ class GoodsAdd extends Component {
     xhr.send(fd);
   };
 
-  permuteAndCombine = () => {
-    const arr = [
-      ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-      ['Red', 'Blue', 'Green']
-    ];
-    console.log(doExchange(arr));
+  /**
+   * 添加商品规格
+   * */
+  showSku = (v) => {
+    console.log("添加商品规格: ", v.target.value);
+    this.setState({showSku:v.target.value})
   };
 
+  addGoods = (values) => {
+    const props = this.props;
+    props.dispatch({
+      type: 'mall/addGoods',
+      payload: values
+    }).then(() => {
+      successNotification('添加商品成功', function() {
+        // props.dispatch(routerRedux.push('/badge/list'));
+      });
+    }).catch(err=>err)
+  };
+
+
   render() {
-    const { fileList, previewVisible, previewImage } = this.state;
+    const { fileList, previewVisible, previewImage, showSku } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -218,7 +247,6 @@ class GoodsAdd extends Component {
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
-          <Button onClick={() => this.permuteAndCombine()}>测试排列组合</Button>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem
               {...formItemLayout}
@@ -244,7 +272,7 @@ class GoodsAdd extends Component {
               {getFieldDecorator('name', {
                 rules: [
                   {
-                    required: false,
+                    required: true,
                     message: '请输入商品名称'
                   }
                 ]
@@ -259,7 +287,7 @@ class GoodsAdd extends Component {
               {getFieldDecorator('sku', {
                 rules: [
                   {
-                    required: false,
+                    required: true,
                     message: '请输入商品编号'
                   }
                 ]
@@ -267,7 +295,12 @@ class GoodsAdd extends Component {
             </FormItem>
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {
-                rules: [{ required: false }]
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品图片'
+                  }
+                 ]
               })(
                 <Upload {...propsObj} fileList={fileList} listType="picture-card" onPreview={this.handlePreview}>
                   {fileList.length >= 3 ? null : uploadButton}
@@ -275,41 +308,112 @@ class GoodsAdd extends Component {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="商品规格">
-              {getFieldDecorator('skuSize')(
-                <RadioGroup>
-                  <Radio value="a">没有规格</Radio>
-                  <Radio value="b">有规格</Radio> {/*  ['XXL-red','XXL-blue']  */}
+              {getFieldDecorator('skuSize',{
+                initialValue: false,
+              })(
+                <RadioGroup onChange={(v) => this.showSku(v)}>
+                  <Radio value={false}>没有规格</Radio>
+                  <Radio value={true}>有规格</Radio> {/*  ['XXL-red','XXL-blue']  */}
                 </RadioGroup>
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="颜色">
-              {getFieldDecorator('color')(
-                <CheckboxGroup options={colors} />
-              )}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="尺寸">
-              {getFieldDecorator('size')(<CheckboxGroup options={sizeOptions} />)}
-            </FormItem>
+            {showSku &&
+              <FormItem {...formItemLayout} label="颜色">
+                {getFieldDecorator('color', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择颜色'
+                    }
+                  ]
+                })(
+                  <CheckboxGroup options={colors}/>
+                )}
+              </FormItem>
+            }
+            {showSku &&
+              <FormItem {...formItemLayout} label="尺寸">
+                {getFieldDecorator('size', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择尺寸'
+                    }
+                  ]
+                })(<CheckboxGroup options={sizeOptions} />)}
+              </FormItem>
+            }
 
             <FormItem {...formItemLayout} label="出售区域">
-              {getFieldDecorator('address')(<Cascader options={options} changeOnSelect={true} />)}
+              {getFieldDecorator('address',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择出售区域'
+                  }
+                ]
+              })(
+                <Cascader options={options} changeOnSelect={true} placeholder="请选择销售区域" />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="库存">
-              {getFieldDecorator('stock')(<InputNumber min={0} max={10000000} style={{ width: '100%' }} />)}
+              {getFieldDecorator('stock',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入库存'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="原价">
-              {getFieldDecorator('originalPrice')(<InputNumber min={0} max={10000000} style={{ width: '100%' }} />)}
+              {getFieldDecorator('originalPrice',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入原价'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="折扣">
-              {getFieldDecorator('discount')(<InputNumber min={0} max={10000000} style={{ width: '100%' }} />)}
+              {getFieldDecorator('discount',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入折扣'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="折后价">
-              {getFieldDecorator('price')(<InputNumber min={0} max={10000000} style={{ width: '100%' }} />)}
+              {getFieldDecorator('price',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入折后价'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
+              )}
             </FormItem>
             <FormItem label="产品描述">
               <div className={styles.editorWrap}>
-                {getFieldDecorator('description')(
+                {getFieldDecorator('description',{
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入产品描述'
+                    }
+                  ]
+                })(
                   <BraftEditor
                     {...editorProps}
                     ref={instance => (this.editorInstance = instance)}
@@ -322,23 +426,67 @@ class GoodsAdd extends Component {
               </div>
             </FormItem>
             <FormItem {...formItemLayout} label="邮费">
-              {getFieldDecorator('postPrice')(<InputNumber min={0} max={10000000} style={{ width: '100%' }} />)}
+              {getFieldDecorator('postPrice',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入邮费'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="赠品">
-              {getFieldDecorator('goodsJson')(<Input />)}
+              {getFieldDecorator('goodsJson',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择赠品'
+                  }
+                ]
+              })(
+                <Input />
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="上架时间">
-              {getFieldDecorator('upTime')(<DatePicker style={{ width: '100%' }} />)}
+              {getFieldDecorator('upTime',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择上架时间'
+                  }
+                ]
+              })(
+                <DatePicker style={{ width: '100%' }} />
+              )}
               <span>不需要显示的商品填写 2999-12-30</span>
             </FormItem>
             <FormItem {...formItemLayout} label="下架时间">
-              {getFieldDecorator('downTime')(<DatePicker style={{ width: '100%' }} />)}
+              {getFieldDecorator('downTime',{
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择下架时间'
+                  }
+                ]
+              })(<DatePicker style={{ width: '100%' }} />)}
+            </FormItem>
+            <FormItem {...formItemLayout} label="过期时间">
+              {getFieldDecorator('expireTime',{
+                rules: [
+                  {
+                    required: true,
+                    message: '过期时间'
+                  }
+                ]
+              })(<DatePicker style={{ width: '100%' }} />)}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"
                 htmlType="submit"
-                // disabled={this.hasErrors(getFieldsError())}
+                disabled={this.hasErrors(getFieldsError())}
               >
                 提交
               </Button>
