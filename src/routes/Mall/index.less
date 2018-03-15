@@ -1,4 +1,4 @@
-@import "~antd/lib/style/themes/default.less";
+@import '~antd/lib/style/themes/default.less';
 
 .standardTable {
   :global {
@@ -10,4 +10,23 @@
   .tableAlert {
     margin-bottom: 16px;
   }
+}
+.editorWrap {
+  border: 1px solid #999;
+}
+
+.dynamic_delete_button {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+.dynamic_delete_button:hover {
+  color: #777;
+}
+.dynamic_delete_button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
