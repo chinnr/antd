@@ -2,6 +2,8 @@ import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 import pathToRegexp from 'path-to-regexp';
 import { getMenuData } from './menu';
+import MallAdvertising from "../routes/Mall/MallAdvertising";
+import OrderList from "../routes/Mall/OrderList";
 
 let routerDataCache;
 
@@ -195,6 +197,12 @@ export const getRouterData = (app) => {
     },
     '/mall/goods-list': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsManage')),
+    },
+    '/mall/advertising': {
+      component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/MallAdvertising')),
+    },
+    '/mall/order-list': {
+      component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/OrderList')),
     },
     '/mall/goods-add': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsAdd')),

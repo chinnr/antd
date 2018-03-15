@@ -105,11 +105,11 @@ const menuData = [
       },
       {
         name: '广告位',
-        path: 'ad'
+        path: 'advertising'
       },
       {
         name: '订单管理',
-        path: 'order'
+        path: 'order-list'
       }
     ]
   },
