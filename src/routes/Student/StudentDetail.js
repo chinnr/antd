@@ -11,9 +11,21 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 }))
 class StudentDetail extends PureComponent {
 
+  componentDidMount() {
+    console.log("StudentDetail componentDidMount");
+    this.props.dispatch({
+      type: 'student/getUserVirtualGoods',
+      payload: {
+        page: 0,
+        limit: 10,
+      }
+    })
+  }
+
   render() {
     const { loading, mallLoading, studentDetail, myVirtualGoods } = this.props;
     console.log('list ', studentDetail);
+    console.log('myVirtualGoods ', myVirtualGoods);
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
     const levelObj = {
       "level1": "海狸",

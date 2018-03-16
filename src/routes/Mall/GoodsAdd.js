@@ -15,7 +15,8 @@ import {
   InputNumber,
   Cascader,
   Select,
-  Checkbox
+  Checkbox,
+  Pagination
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { thumbnailPath, rootUrl } from '../../utils/constant';
@@ -53,6 +54,7 @@ class GoodsAdd extends Component {
     previewImage: '',
     fileList: [],
     showSku: false,
+    goodsTypesVisible: false,
   };
 
   hasErrors(fieldsError) {
@@ -62,7 +64,7 @@ class GoodsAdd extends Component {
   /**
    * 取消预览
    */
-  handleCancel = () => this.setState({ previewVisible: false });
+  handleCancelPreview = () => this.setState({ previewVisible: false });
 
   /**
    * 上传图片的预览
@@ -76,30 +78,33 @@ class GoodsAdd extends Component {
   };
 
   /**
-   * 提交商品新建
+   * 提交新建商品
    * @param e
    */
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        let images = [], skuSize = [];
+        let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.name)
         });
         values.imgs = images;
         // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
         // goodsJson 格式 data:[{gid,count}]
+        // sku=skuPrefix+skuPure+skuSize
         values.downTime = values.downTime.toISOString();
         values.expireTime  = values.expireTime.toISOString();
         values.upTime = values.upTime.toISOString();
-        skuSize = [values.color, values.size];
-        values.sku = 'BLD-'+values.sku;
+        skuSizeList = [values.color, values.size];
+        // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
-        values.skuSize = "L-#ffffff";
+        values.skuSizeList = doExchange(skuSizeList);
+        values.skuPrefix = "BLD-"+values.skuPrefix;
+        values.skuPure = values.skuPrefix;
         values.province = values.address[0];
         values.city = values.address[1];
-        console.log('添加商品参数: ', values);
+        console.log('添加商品参数 -->: ', values);
         delete values.color;
         delete values.size;
         delete values.address;
@@ -185,8 +190,41 @@ class GoodsAdd extends Component {
     }).catch(err=>err)
   };
 
+  /**
+   * 获取商品类型列表
+   * */
+  onPagination = (p) => {
+    const { dispatch, mall } = this.props;
+    dispatch({
+      type: 'mall/getGoodsType',
+      payload: {
+        page:  p-1,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    })
+  };
+
+  showGoodTypes = () => {
+    this.setState({
+      goodsTypesVisible: true
+    })
+  };
+  handleOk = () => {
+    this.setState({
+      goodsTypesVisible: false
+    })
+  };
+  handleCancel = () => {
+    this.setState({
+      goodsTypesVisible: false
+    })
+  };
+
 
   render() {
+    const { mall, loading } = this.props;
+    console.log("mall ===> ", mall);
     const { fileList, previewVisible, previewImage, showSku } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
@@ -226,7 +264,6 @@ class GoodsAdd extends Component {
         sm: { span: 10, offset: 7 }
       }
     };
-    const { mall } = this.props;
     const breadcrumbList = [
       {
         title: '首页',
@@ -247,6 +284,26 @@ class GoodsAdd extends Component {
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
+          <Modal
+            title="Basic Modal"
+            visible={this.state.goodsTypesVisible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}>
+            <Row>
+              {getFieldDecorator('skuPrefix', {
+                initialValue: null
+              })(
+                <RadioGroup>
+                  {mall.goodsType.map((item, i) => {
+                    return (
+                      <Col span={8} key={i}><Radio value={item.skuPrefix}>{item.name}</Radio></Col>
+                    )
+                  })}
+                </RadioGroup>
+              )}
+            </Row>
+            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.count} onChange={(p)=>this.onPagination(p)}/>
+          </Modal>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem
               {...formItemLayout}
@@ -254,14 +311,7 @@ class GoodsAdd extends Component {
               help={badgeNameError || ''}
               label="商品类型"
             >
-              {getFieldDecorator('type', {
-                initialValue: 0
-              })(
-                <Select>
-                  <Option value={0}>普通商品</Option>
-                  <Option value={1}>虚拟商品</Option>
-                </Select>
-              )}
+                <Button onClick={() => this.showGoodTypes()}>选择</Button>
             </FormItem>
             <FormItem
               {...formItemLayout}
@@ -284,7 +334,7 @@ class GoodsAdd extends Component {
               help={badgeNameError || ''}
               label="商品编号"
             >
-              {getFieldDecorator('sku', {
+              {getFieldDecorator('skuPure', {
                 rules: [
                   {
                     required: true,
@@ -308,7 +358,7 @@ class GoodsAdd extends Component {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="商品规格">
-              {getFieldDecorator('skuSize',{
+              {getFieldDecorator('skuSizeList',{
                 initialValue: false,
               })(
                 <RadioGroup onChange={(v) => this.showSku(v)}>
@@ -380,7 +430,7 @@ class GoodsAdd extends Component {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="折扣">
+            {/*<FormItem {...formItemLayout} label="折扣">
               {getFieldDecorator('discount',{
                 rules: [
                   {
@@ -391,7 +441,7 @@ class GoodsAdd extends Component {
               })(
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
-            </FormItem>
+            </FormItem>*/}
             <FormItem {...formItemLayout} label="折后价">
               {getFieldDecorator('price',{
                 rules: [
@@ -493,7 +543,7 @@ class GoodsAdd extends Component {
             </FormItem>
           </Form>
         </Card>
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancelPreview}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </PageHeaderLayout>

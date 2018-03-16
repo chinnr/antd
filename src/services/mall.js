@@ -16,6 +16,7 @@ export function goodsType(q) {
             type
             level
             typeImg
+            skuPrefix
           }
         }
       } 
@@ -105,15 +106,41 @@ export function virtualGoods(query , adminVirtual) {
 
 // 添加商品
 export function goodsAdd(form) {
-  const goodsAdd = `mutation goodsAdd($form: CreateGoodsInput){
+  const goodsAdd = `mutation goodsAdd($form: CreateGoods){
     me {
       goods {
-        createGoods(form:$form){
-          gid
-          name
-        }
+        createMutiGoods(form:$form)
       }
     }
   }`;
   return graphRequest(goodsAdd, {form}, 'mall-admin')
+}
+
+// 订单列表管理
+export function orderList(query,queryOption) {
+  const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder) {
+    me{
+      order{
+        getAll(query: $query, queryOption: $queryOption){
+          data{
+            sku
+            payTime
+            consignee
+            status
+            totalMoney
+            gidJson{
+              count
+              name
+            }
+          }
+          meta{
+            limit
+            page
+            count
+          }
+        }
+      }
+    }
+  }`;
+  return graphRequest(orderList, {query,queryOption}, 'mall-admin')
 }

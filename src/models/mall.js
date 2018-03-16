@@ -39,6 +39,7 @@ export default {
         })
       }
     },
+
     *getGoodsList({ payload: v }, { call, put }) {
       const { data, errors } = yield call(mallService.goodsList, v);
       console.log('goods ', data)
@@ -58,6 +59,7 @@ export default {
         })
       }
     },
+
     *getUserVirtualGoods({ payload: uid }, { call, put }) {
       const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
       if(errors) {
@@ -72,6 +74,7 @@ export default {
         })
       }
     },
+
     *addGoodsType({ payload: formData }, { call, put }) {
       const { data, errors } = yield call(mallService.addGoodsType, formData);
       if(errors) {
@@ -84,9 +87,11 @@ export default {
         })
       }
     },
+
     *delGoodsType({ payload }, { call, put }) {
 
     },
+
     *addGoods({ payload }, { call, put }) {
       const { data, errors } = yield call(mallService.goodsAdd, payload);
       if (errors) {
@@ -95,12 +100,22 @@ export default {
       } else {
         console.log("addGoods ==> ", data);
       }
+    },
+
+    *orderList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.orderList, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log("orderList ==> ", data);
+      }
     }
   },
   subscriptions: {
   	setup({ dispatch, history }) {
   		history.listen(({ pathname }) => {
-        if(pathname === '/mall/goods-type') {
+        if(pathname === '/mall/goods-type' || pathname === '/mall/goods-add') {
           dispatch({
             type: 'getGoodsType',
             payload: {
@@ -113,6 +128,16 @@ export default {
         if(pathname === '/mall/goods-list') {
           dispatch({
             type: 'getGoodsList',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort:["-createdAt"]
+            }
+          })
+        }
+        if(pathname === '/mall/order-list') {
+          dispatch({
+            type: 'orderList',
             payload: {
               page: 0,
               limit: 10,

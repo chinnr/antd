@@ -33,6 +33,7 @@ const CreateForm = Form.create()((props) => {
         const formData = {
           ...values,
           type: +values.type,
+          skuPrefix: 'BLD-'+values.skuPrefix,
           priority: +values.priority,
           expireTime: values['expireTime'].format('YYYY-MM-DD'),
           level: 1,
@@ -192,7 +193,7 @@ class GoodsType extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
-    console.log('selectedRows111111 ', selectedRows)
+    // console.log('selectedRows111111 ', selectedRows)
     const columns = [
       {
         title: '类型名称',

@@ -27,6 +27,7 @@ export default class PostDetail extends Component {
       // console.log("有 query id", this.props.location.query.id)
     }
   }
+
   render() {
     const breadcrumbList = [{
       title: '首页',
