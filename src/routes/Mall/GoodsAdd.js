@@ -342,6 +342,7 @@ class GoodsAdd extends Component {
                   }
                 ]
               })(<Input placeholder="商品编号" />)}
+              <span>字符长度不要超过4个</span>
             </FormItem>
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {

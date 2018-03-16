@@ -22,6 +22,28 @@ class StudentDetail extends PureComponent {
     })
   }
 
+  /**
+   * 赠送卡券
+   */
+  donateVirtualGoods = (v) => {
+    console.log("record: ", v)
+    /*this.props.donateVirtualGoods({
+      type: 'mall/donateVirtualGoods',
+      payload: {
+        num: 1,
+        donate: {
+          uid: "31c42b66-26b1-4a82-af98-7ec0cba60ecc", // 用户id
+          cardType: '课时券', // 卡券类型，如果不是卡券则为空(课时券、体验券、优惠券)
+          cardBag: '',  // 卡包图片地址
+          status: '',  // 商品状态 0:持有 1:已消耗 2:冻结中
+          value: '',  // 商品价值，如充值卡面额
+          cardExpireTime:'',  // 卡券过期时间
+          isDonate:true,  // 是否是赠送
+        }
+      },
+    }).catch(err => err)*/
+  };
+
   render() {
     const { loading, mallLoading, studentDetail, myVirtualGoods } = this.props;
     console.log('list ', studentDetail);
@@ -53,7 +75,8 @@ class StudentDetail extends PureComponent {
         key: 'action',
         render: (record) => (
           <Fragment>
-            <a>修改余额</a>
+            {/*<a>修改余额</a>*/}
+            <a onClick={() => this.donateVirtualGoods(record)}>赠送</a>
           </Fragment>
         ),
       },

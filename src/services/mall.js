@@ -83,7 +83,6 @@ export function goodsList(v) {
 }
 
 export function virtualGoods(query , adminVirtual) {
-  console.log('ss111222 ', query, adminVirtual)
   const virtualGoodsQuery = `
     query getUserVirtualGoods($query: FormQuery!, $adminVirtual: AdminVirtualQuery) {
       me {
@@ -94,7 +93,10 @@ export function virtualGoods(query , adminVirtual) {
               status
               cardType
               value
-              createdAt
+              createdAt,
+              cardExpireTime,
+              cardBag
+              isDonate
             }
           }
         }
@@ -143,4 +145,16 @@ export function orderList(query,queryOption) {
     }
   }`;
   return graphRequest(orderList, {query,queryOption}, 'mall-admin')
+}
+
+// 赠送卡券
+export function donateVirtualGoods(form) {
+  const donate = `mutation donate($form: donateUserModel) {
+    me{
+      virtualGoods{
+        donate(form: $form)
+      }
+    }
+  }`;
+  return graphRequest(donate, {form}, 'mall-admin')
 }

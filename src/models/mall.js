@@ -61,6 +61,7 @@ export default {
     },
 
     *getUserVirtualGoods({ payload: uid }, { call, put }) {
+      console.log("modal getUserVirtualGoods: ", uid);
       const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
       if(errors) {
         throw new Error(errors[0].message);
@@ -109,6 +110,16 @@ export default {
         throw new Error(err);
       } else {
         console.log("orderList ==> ", data);
+      }
+    },
+
+    *donateVirtualGoods({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.donateVirtualGoods, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log("donateVirtualGoods ==> ", data);
       }
     }
   },
