@@ -70,7 +70,7 @@ class AdvertisingForm extends PureComponent {
           rowSelection={rowSelection}
           dataSource={list}
           columns={columns}
-          pagination={paginationProps}
+          pagination={false}
           onChange={this.handleTableChange}
         />
       </div>

@@ -37,6 +37,7 @@ const CheckboxGroup = Checkbox.Group;
 const sizeOptions = [
   { label: 'S', value: 'S' },
   { label: 'M', value: 'M' },
+  { label: 'L', value: 'L' },
   { label: 'XL', value: 'XL' },
   { label: 'XXL', value: 'XXL' },
   { label: 'XXXL', value: 'XXXL' }
@@ -90,18 +91,19 @@ class GoodsAdd extends Component {
           images.push(item.name)
         });
         values.imgs = images;
+        values.listImg = images[0];
         // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
         // goodsJson 格式 data:[{gid,count}]
         // sku=skuPrefix+skuPure+skuSize
-        values.downTime = values.downTime.toISOString();
-        values.expireTime  = values.expireTime.toISOString();
+        values.expireTime  = values.downTime.toISOString();
         values.upTime = values.upTime.toISOString();
+        values.downTime = values.downTime.toISOString();
         skuSizeList = [values.color, values.size];
         // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
         values.skuSizeList = doExchange(skuSizeList);
-        values.skuPrefix = "BLD-"+values.skuPrefix;
-        values.skuPure = values.skuPrefix;
+        // values.skuPrefix = "BLD-"+values.skuPrefix;
+        values.skuPure = values.name;
         values.province = values.address[0];
         values.city = values.address[1];
         console.log('添加商品参数 -->: ', values);
@@ -307,8 +309,6 @@ class GoodsAdd extends Component {
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem
               {...formItemLayout}
-              validateStatus={badgeNameError ? 'error' : ''}
-              help={badgeNameError || ''}
               label="商品类型"
             >
                 <Button onClick={() => this.showGoodTypes()}>选择</Button>
@@ -324,14 +324,16 @@ class GoodsAdd extends Component {
                   {
                     required: true,
                     message: '请输入商品名称'
+                  },
+                  {
+                    max: 8,
+                    message: '名称不能够过长'
                   }
                 ]
               })(<Input placeholder="商品名称" />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={badgeNameError ? 'error' : ''}
-              help={badgeNameError || ''}
               label="商品编号"
             >
               {getFieldDecorator('skuPure', {
@@ -342,7 +344,6 @@ class GoodsAdd extends Component {
                   }
                 ]
               })(<Input placeholder="商品编号" />)}
-              <span>字符长度不要超过4个</span>
             </FormItem>
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {
@@ -523,7 +524,7 @@ class GoodsAdd extends Component {
                 ]
               })(<DatePicker style={{ width: '100%' }} />)}
             </FormItem>
-            <FormItem {...formItemLayout} label="过期时间">
+            {/*<FormItem {...formItemLayout} label="过期时间">
               {getFieldDecorator('expireTime',{
                 rules: [
                   {
@@ -532,7 +533,7 @@ class GoodsAdd extends Component {
                   }
                 ]
               })(<DatePicker style={{ width: '100%' }} />)}
-            </FormItem>
+            </FormItem>*/}
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"

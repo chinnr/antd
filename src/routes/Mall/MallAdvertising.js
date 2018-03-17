@@ -193,20 +193,16 @@ class MallAdvertising extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
-    console.log('selectedRows111111 ', selectedRows)
+    console.log('advertiseList ', mall.advertiseList);
     const columns = [
       {
-        title: '类型名称',
-        dataIndex: 'name'
-      },
-      {
-        title: '排序',
-        dataIndex: 'level'
+        title: '商品id',
+        dataIndex: 'gid'
       },
       {
         title: '类型图片',
         render: (record) => (
-          <span><img style={{ width: 100, height: 100 }} src={record.typeImg} /></span>
+          <span><img style={{ width: 100, height: 100 }} src={record.img} /></span>
         )
       },
       {
@@ -218,12 +214,8 @@ class MallAdvertising extends PureComponent {
         )
       }
     ];
-    const list = mall.goodsType;
-    const pagination = {
-      current: mall.page + 1,
-      pageSize: mall.limit,
-      total: mall.count
-    };
+    const list = mall.advertiseList;
+    const pagination = {};
     const data = { list, pagination };
     return (
       <PageHeaderLayout>

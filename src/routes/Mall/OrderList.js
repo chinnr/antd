@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message } from 'antd';
+import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Divider } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -40,10 +40,7 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ rule, loading }) => ({
-  rule,
-  loading: loading.models.rule,
-}))
+@connect(({ mall }) => ({ mall }))
 @Form.create()
 export default class OrderList extends PureComponent {
   state = {
@@ -71,17 +68,15 @@ export default class OrderList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
+      page: pagination.current-1,
+      limit: 10
     };
     if (sorter.field) {
       params.sorter = `${sorter.field}_${sorter.order}`;
     }
 
     dispatch({
-      type: 'rule/fetch',
+      type: 'mall/orderList',
       payload: params,
     });
   }
@@ -291,37 +286,81 @@ export default class OrderList extends PureComponent {
     return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
 
+  // 订单状态 0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消
+  handleOrderStatus = (status) => {
+    const orderStatus = {
+      0:'已下单',
+      1:'已完成',
+      2:'已付款',
+      3:'已确认',
+      4:'已取消',
+    };
+    return orderStatus[status];
+  };
+
   render() {
-    // const { rule: { data }, loading } = this.props;
+    const { mall:{orderList, orderListMeta}, loading } = this.props;
+    console.log("mall: ", this.props.mall.orderList);
+    const data = {
+      list: orderList,
+      pagination: {
+        currentPage: orderListMeta.page+1,
+        pageSize: 10,
+        total: orderListMeta.count,
+      }
+    };
     const { selectedRows, modalVisible } = this.state;
     const columns = [
       {
         title: '订单号',
-        dataIndex: 'no1',
+        dataIndex: 'sku',
       },
       {
         title: '下单时间',
-        dataIndex: 'no2',
+        dataIndex: 'payTime',
       },
       {
         title: '商品',
-        dataIndex: 'name',
+        // dataIndex: 'gidJson',
+        render: (record) => {
+          return (
+            <div>
+              {record.gidJson.map((item,i) => {
+                return (
+                  <p key={i}>{item.name} x {item.count}</p>
+                )
+              })}
+            </div>
+          )
+        }
       },
       {
         title: '买家',
-        dataIndex: 'no4',
+        dataIndex: 'uid',
       },
       {
         title: '交易状态',
-        dataIndex: 'no5',
+        // dataIndex: 'status',
+        render: (record) => {
+          return <span>{this.handleOrderStatus(record.status)}</span>
+        }
       },
       {
         title: '实收款',
-        dataIndex: 'no6',
+        dataIndex: 'totalMoney',
       },
       {
         title: '操作',
-        dataIndex: 'no7',
+        dataIndex: 'option',
+        render: () => {
+          return (
+            <div>
+              <a>详情</a>
+              <Divider type="vertical" />
+              <a>发货</a>
+            </div>
+          )
+        }
       },
     ];
 
@@ -363,8 +402,7 @@ export default class OrderList extends PureComponent {
             </div>
             <StandardTable
               selectedRows={selectedRows}
-              // loading={loading}
-              data={[]}
+              data={data}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

@@ -5,11 +5,13 @@ export default {
   namespace: 'mall',
   state: {
   	goodsType: [],
+    goodsTypeMeta: {},
     goodsList: [],
+    goodsListMeta: {},
     myVirtualGoods: [],
-    count: null,
-    limit: null,
-    page: null
+    advertiseList: [],
+    orderList: [],
+    orderListMeta: {},
   },
   reducers: {
     updateState(state, { payload }) {
@@ -32,9 +34,7 @@ export default {
           type: 'updateState',
           payload: {
             goodsType: data.me.goodsType.getGoodsTypes.data,
-            count: data.me.goodsType.getGoodsTypes.meta.count,
-            limit: data.me.goodsType.getGoodsTypes.meta.limit,
-            page: data.me.goodsType.getGoodsTypes.meta.page
+            goodsTypeMeta: data.me.goodsType.getGoodsTypes.meta
           }
         })
       }
@@ -52,9 +52,7 @@ export default {
           type: 'updateState',
           payload: {
             goodsList: data.me.goods.getAll.data,
-            count: data.me.goods.getAll.meta.count,
-            limit: data.me.goods.getAll.meta.limit,
-            page: data.me.goods.getAll.meta.page
+            goodsListMeta: data.me.goods.getAll.meta
           }
         })
       }
@@ -109,7 +107,14 @@ export default {
         const err = errors[0].message;
         throw new Error(err);
       } else {
-        console.log("orderList ==> ", data);
+        console.log("orderList ==> ", data.me.order.getAll);
+        yield put({
+          type: 'updateState',
+          payload: {
+            orderList: data.me.order.getAll.data,
+            orderListMeta: data.me.order.getAll.meta
+          }
+        })
       }
     },
 
@@ -121,13 +126,28 @@ export default {
       } else {
         console.log("donateVirtualGoods ==> ", data);
       }
-    }
+    },
+
+    *getAdvertiseList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.getAdvertiseList);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            advertiseList: data.me.goods.getDiscovery,
+          }
+        })
+      }
+    },
   },
   subscriptions: {
   	setup({ dispatch, history }) {
       const reg = /\/student-detail\/(.+)/;
   		history.listen(({ pathname }) => {
-        if(pathname === '/mall/goods-type' || pathname === '/mall/goods-add') {
+        if(pathname === '/mall/goods-type') {
           dispatch({
             type: 'getGoodsType',
             payload: {
@@ -171,6 +191,29 @@ export default {
               payload: uid
             })
           }
+        }
+        if(pathname === '/mall/goods-add') {
+          dispatch({
+            type: 'getGoodsType',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"]
+            }
+          });
+          dispatch({
+            type: 'getGoodsList',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"]
+            }
+          })
+        }
+        if(pathname === '/mall/advertising') {
+          dispatch({
+            type: 'getAdvertiseList'
+          });
         }
       })
   	}

@@ -1,5 +1,7 @@
 import graphRequest from '../utils/graphRequest';
+import MallAdvertising from "../routes/Mall/MallAdvertising";
 
+// 获取全部商品类型
 export function goodsType(q) {
   const query = `query getGoodsType($q: FormQuery) {
     me {
@@ -25,6 +27,7 @@ export function goodsType(q) {
   return graphRequest(query, { q }, 'mall-admin')
 }
 
+// 添加商品类型
 export function addGoodsType(formData) {
   const mutation = `mutation addGoodsType($formData: GoodsTypeInputCreate) {
     me {
@@ -56,6 +59,7 @@ export function delGoodsType() {
   return graphRequest(mutation, {  }, 'mall-admin')
 }
 
+// 获取商品列表
 export function goodsList(v) {
   const query = `
     query getGoodsList($v: FormQuery) {
@@ -63,8 +67,16 @@ export function goodsList(v) {
         goods {
           getAll(query: $v) {
             data {
+              gid
               name
               sku
+              imgs{
+                url
+              }
+              listImg
+              skuPrefix
+              skuPure
+              skuSize
               originalPrice
               price
               stock
@@ -82,6 +94,7 @@ export function goodsList(v) {
   return graphRequest(query, { v }, 'mall-admin')
 }
 
+// 获取卡券列表
 export function virtualGoods(query , adminVirtual) {
   const virtualGoodsQuery = `
     query getUserVirtualGoods($query: FormQuery!, $adminVirtual: AdminVirtualQuery) {
@@ -125,11 +138,13 @@ export function orderList(query,queryOption) {
       order{
         getAll(query: $query, queryOption: $queryOption){
           data{
+            uid
             sku
             payTime
             consignee
             status
             totalMoney
+            address
             gidJson{
               count
               name
@@ -157,4 +172,19 @@ export function donateVirtualGoods(form) {
     }
   }`;
   return graphRequest(donate, {form}, 'mall-admin')
+}
+
+// 获取广告位列表
+export function getAdvertiseList() {
+  const getAdvertiseList = `query getAdvertiseList {
+    me {
+      goods {
+        getDiscovery {
+          gid
+          img
+        }
+      }
+    }
+  }`;
+  return graphRequest(getAdvertiseList, {}, 'mall-admin')
 }

@@ -35,12 +35,19 @@ class GoodsManage extends PureComponent {
 
   render() {
     const { mall, loading } = this.props;
+    console.log("goodsList==>", mall)
     const { selectedRows } = this.state;
     const list = mall.goodsList;
     const columns = [
       {
         title: '商品名称',
-        dataIndex: 'name'
+        // dataIndex: 'name',
+        render: (record) => (
+          <div>
+            <p>{record.name}</p>
+            <p>id:  {record.gid}</p>
+          </div>
+        )
       },
       {
         title: '原价',
@@ -67,9 +74,9 @@ class GoodsManage extends PureComponent {
       }
     ];
     const pagination = {
-      current: mall.page + 1,
-      pageSize: mall.limit,
-      total: mall.count
+      current: mall.goodsListMeta.page + 1,
+      pageSize: mall.goodsListMeta.limit,
+      total: mall.goodsListMeta.count
     };
     const data = { list, pagination };
     return (

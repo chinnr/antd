@@ -25,6 +25,7 @@ const CreateForm = Form.create()((props) => {
       }
     }
   };
+
   const handleOk = () => {
     validateFields((err, values) => {
       if(!err) {
@@ -193,7 +194,7 @@ class GoodsType extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
-    // console.log('selectedRows111111 ', selectedRows)
+    console.log('goodsType ', mall)
     const columns = [
       {
         title: '类型名称',
@@ -220,9 +221,9 @@ class GoodsType extends PureComponent {
     ];
     const list = mall.goodsType;
     const pagination = {
-      current: mall.page + 1,
-      pageSize: mall.limit,
-      total: mall.count
+      current: mall.goodsTypeMeta.page + 1,
+      pageSize: mall.goodsTypeMeta.limit,
+      total: mall.goodsTypeMeta.count
     };
     const data = { list, pagination };
     return (
