@@ -84,10 +84,10 @@ export default {
         if(pathname.match(reg)) {
           const uid = pathname.match(reg)[1];
           if(uid.length > 0) {
-            dispatch({
-              type: 'mall/getUserVirtualGoods',
+            /*dispatch({
+              type: 'getUserVirtualGoods',
               payload: uid
-            });
+            });*/
             dispatch({
               type: 'getStudentDetail',
               payload: uid

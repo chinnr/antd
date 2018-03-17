@@ -125,6 +125,7 @@ export default {
   },
   subscriptions: {
   	setup({ dispatch, history }) {
+      const reg = /\/student-detail\/(.+)/;
   		history.listen(({ pathname }) => {
         if(pathname === '/mall/goods-type' || pathname === '/mall/goods-add') {
           dispatch({
@@ -155,6 +156,21 @@ export default {
               sort:["-createdAt"]
             }
           })
+        }
+        if(pathname.match(reg)) {
+          const uid = pathname.match(reg)[1];
+          console.log("pathname: ", pathname);
+          if(uid.length > 0) {
+            console.log("uid.length > 0 ");
+            dispatch({
+              type: 'getUserVirtualGoods',
+              payload: uid
+            });
+            dispatch({
+              type: 'getStudentDetail',
+              payload: uid
+            })
+          }
         }
       })
   	}
