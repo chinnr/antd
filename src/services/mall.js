@@ -132,23 +132,30 @@ export function goodsAdd(form) {
 }
 
 // 订单列表管理
-export function orderList(query,queryOption) {
+export function orderList(payload) {
   const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder) {
     me{
       order{
         getAll(query: $query, queryOption: $queryOption){
           data{
-            uid
-            sku
-            payTime
-            consignee
-            status
+            id
             totalMoney
-            address
-            gidJson{
+            gidJson {
+              gid
               count
               name
+              price
+              skuSize
             }
+            sku
+            status
+            statusDelivery
+            address
+            tel
+            consignee
+            buyTime
+            payId
+            cardId
           }
           meta{
             limit
@@ -159,7 +166,7 @@ export function orderList(query,queryOption) {
       }
     }
   }`;
-  return graphRequest(orderList, {query,queryOption}, 'mall-admin')
+  return graphRequest(orderList, payload, 'mall-admin')
 }
 
 // 赠送卡券

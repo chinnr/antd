@@ -171,9 +171,10 @@ export default {
           dispatch({
             type: 'orderList',
             payload: {
-              page: 0,
-              limit: 10,
-              sort:["-createdAt"]
+              query: {
+                limit: 10,
+                page: 0
+              }
             }
           })
         }
