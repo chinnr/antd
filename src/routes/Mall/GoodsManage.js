@@ -80,19 +80,8 @@ class GoodsManage extends PureComponent {
     };
     const data = { list, pagination };
     return (
-      <PageHeaderLayout title="商品管理">
+      <PageHeaderLayout>
         <Card bordered={false}>
-          <div>
-            <div style={{marginBottom: '10px'}}>
-              <Button icon="plus" type="primary">添加商品</Button>
-              {
-                selectedRows.length > 0 && (
-                  <span style={{marginLeft: '10px'}}>
-                    <Button>删除</Button>
-                  </span>
-                )
-              }
-            </div>
             <GoodsManageTable
               loading={loading}
               selectedRows={selectedRows}
@@ -101,7 +90,6 @@ class GoodsManage extends PureComponent {
               onSelectRow={this.handleSelectRows}
               onChange={this.handleTableChange}
             />
-          </div>
         </Card>
       </PageHeaderLayout>
     )

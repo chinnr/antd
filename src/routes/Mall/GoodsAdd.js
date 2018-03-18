@@ -56,7 +56,11 @@ class GoodsAdd extends Component {
     fileList: [],
     showSku: false,
     goodsTypesVisible: false,
+    goodsListVisible: false,
+    giftList: [], // 赠品列表,
   };
+
+  goodsJson = [];
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -86,12 +90,14 @@ class GoodsAdd extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        console.log('添加商品参数 -->: ', values.goodsJson);
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.name)
         });
         values.imgs = images;
         values.listImg = images[0];
+        values.goodsJson = this.goodsJson;
         // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
         // goodsJson 格式 data:[{gid,count}]
         // sku=skuPrefix+skuPure+skuSize
@@ -106,7 +112,6 @@ class GoodsAdd extends Component {
         values.skuPure = values.name;
         values.province = values.address[0];
         values.city = values.address[1];
-        console.log('添加商品参数 -->: ', values);
         delete values.color;
         delete values.size;
         delete values.address;
@@ -188,6 +193,7 @@ class GoodsAdd extends Component {
     }).then(() => {
       successNotification('添加商品成功', function() {
         // props.dispatch(routerRedux.push('/badge/list'));
+        this.goodsJson = [];
       });
     }).catch(err=>err)
   };
@@ -196,7 +202,7 @@ class GoodsAdd extends Component {
    * 获取商品类型列表
    * */
   onPagination = (p) => {
-    const { dispatch, mall } = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'mall/getGoodsType',
       payload: {
@@ -204,30 +210,57 @@ class GoodsAdd extends Component {
         limit: 10,
         sort:["-createdAt"]
       }
+    }).catch(err => err)
+  };
+
+  onGoodsListPagination = (p) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/getGoodsList',
+      payload: {
+        page:  p-1,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    }).catch(err => err)
+  };
+
+  showModal = (type) => {
+    console.log("showModal", type)
+    this.setState({
+      [type]: true
+    })
+  };
+  handleOk = (type) => {
+    if(type === "goodsListVisible") {
+      this.setState({
+        giftList: this.props.form.getFieldValue("goodsJson")
+      })
+    }
+    console.log("goodsJson ==> ", this.props.form.getFieldValue("goodsJson"))
+    this.setState({
+      [type]: false
+    })
+  };
+  handleCancel = (type) => {
+    this.setState({
+      [type]: false
     })
   };
 
-  showGoodTypes = () => {
-    this.setState({
-      goodsTypesVisible: true
-    })
+  addGiftCount = (v, gid) => {
+    console.log("onSelectGift: ", v, gid)
+    const goodsObj = {
+      count: v,
+      gid: gid
+    };
+    this.goodsJson.push(goodsObj);
   };
-  handleOk = () => {
-    this.setState({
-      goodsTypesVisible: false
-    })
-  };
-  handleCancel = () => {
-    this.setState({
-      goodsTypesVisible: false
-    })
-  };
-
 
   render() {
     const { mall, loading } = this.props;
-    console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, showSku } = this.state;
+    // console.log("mall ===> ", mall);
+    const { fileList, previewVisible, previewImage, showSku, giftList } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -287,10 +320,10 @@ class GoodsAdd extends Component {
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <Modal
-            title="Basic Modal"
+            title="选择商品类新"
             visible={this.state.goodsTypesVisible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}>
+            onOk={() => this.handleOk("goodsTypesVisible")}
+            onCancel={() => this.handleCancel("goodsTypesVisible")}>
             <Row>
               {getFieldDecorator('skuPrefix', {
                 initialValue: null
@@ -304,14 +337,38 @@ class GoodsAdd extends Component {
                 </RadioGroup>
               )}
             </Row>
-            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.count} onChange={(p)=>this.onPagination(p)}/>
+            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.goodsTypeMeta.count} onChange={(p)=>this.onPagination(p)}/>
           </Modal>
+
+          <Modal
+            title="选择赠品"
+            visible={this.state.goodsListVisible}
+            onOk={() => this.handleOk("goodsListVisible")}
+            onCancel={() => this.handleCancel("goodsListVisible")}>
+            <Row>
+              {getFieldDecorator('goodsJson', {
+                initialValue: null
+              })(
+                <CheckboxGroup>
+                  {mall.goodsList.map((item, i) => {
+                    return (
+                      <Col span={12} key={i}>
+                        <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
+                      </Col>
+                    )
+                  })}
+                </CheckboxGroup>
+              )}
+            </Row>
+            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.goodsListMeta.count} onChange={(p)=>this.onGoodsListPagination(p)}/>
+          </Modal>
+
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem
               {...formItemLayout}
               label="商品类型"
             >
-                <Button onClick={() => this.showGoodTypes()}>选择</Button>
+                <Button onClick={() => this.showModal("goodsTypesVisible")}>选择</Button>
             </FormItem>
             <FormItem
               {...formItemLayout}
@@ -490,16 +547,27 @@ class GoodsAdd extends Component {
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="赠品">
-              {getFieldDecorator('goodsJson',{
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择赠品'
-                  }
-                ]
-              })(
-                <Input />
-              )}
+              <Button onClick={() => this.showModal("goodsListVisible")}>选择</Button>
+              {giftList.length > 0 && giftList.map((item, i) =>{
+                return (
+                  <Row key={i}>
+                    <Col span={12}>
+                      <span>{item.split("|")[1]}</span>
+                    </Col>
+                    <Col span={12}>
+                      <Row>
+                        <Col span={8}>
+                          <span>数量: </span>
+                        </Col>
+                        <Col span={16}>
+                          <InputNumber min={0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                )
+              })}
+
             </FormItem>
             <FormItem {...formItemLayout} label="上架时间">
               {getFieldDecorator('upTime',{

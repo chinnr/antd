@@ -94,6 +94,40 @@ export function goodsList(v) {
   return graphRequest(query, { v }, 'mall-admin')
 }
 
+// 获取单个商品详情
+export function getGoodsDetail(gid) {
+  const getGoodsDetail = `query goodsDetail($gid: String) {
+    me {
+      goods {
+        getGoodsById(gid: $gid) {
+          name
+          sku
+          skuPrefix
+          skuSize
+          description
+          upTime
+          downTime
+          stock
+          price
+          goodsJson {
+            gid
+            count
+            name
+          }
+          imgs {
+            url
+          }
+          province
+          city
+          originalPrice
+          postPrice
+        }
+      }
+    }
+  }`;
+  return graphRequest(getGoodsDetail, gid, 'mall-admin')
+}
+
 // 获取卡券列表
 export function virtualGoods(query , adminVirtual) {
   const virtualGoodsQuery = `
