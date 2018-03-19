@@ -18,7 +18,12 @@ const menuData = [
     }],
   },
   {
-    name: '团队管理',
+    name: '学员管理',
+    icon: 'idcard',
+    path: 'student',
+  },
+  {
+    name: '团部管理',
     icon: 'team',
     path: 'team',
     children: [
@@ -33,11 +38,11 @@ const menuData = [
         hideInMenu: true,
       },
       {
-        name: '新建团队',
+        name: '新建团部',
         path: 'new',
       },
       {
-        name: '团队列表',
+        name: '团部列表',
         path: 'list',
       }
      ]
@@ -65,11 +70,6 @@ const menuData = [
         hideInMenu: true,
       }
     ],
-  },
-  {
-    name: '学员管理',
-    icon: 'idcard',
-    path: 'student',
   },
   {
     name: '证章管理',

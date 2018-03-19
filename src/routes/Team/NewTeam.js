@@ -360,10 +360,10 @@ export default class NewTeam extends PureComponent {
                     message: '请选择团类型'
                   }
                 ],
-                initialValue: 'main'
+                initialValue: ''
               })(
                 <RadioGroup>
-                  <Radio value="main">普通团</Radio>
+                  <Radio value="">普通团</Radio>
                   <Radio value="temp">临时团</Radio>
                 </RadioGroup>
               )}
@@ -388,7 +388,7 @@ export default class NewTeam extends PureComponent {
               {...formItemLayout}
               validateStatus={addressError ? 'error' : ''}
               help={addressError || ''}
-              label="选择地址"
+              label="团部地址"
             >
               {getFieldDecorator('address', {
                 rules: [
@@ -410,6 +410,21 @@ export default class NewTeam extends PureComponent {
               >
                 查看地图上标记的位置
               </Button>
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              validateStatus={usernameError ? 'error' : ''}
+              help={usernameError || ''}
+              label="所属公司"
+            >
+              {getFieldDecorator('company', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入所属公司'
+                  }
+                ]
+              })(<Input placeholder="所属公司" />)}
             </FormItem>
             <FormItem
               {...formItemLayout}

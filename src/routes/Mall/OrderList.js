@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
+import moment from 'moment/moment';
 import { Row, Col, Card, Form, Input, Select, Button, Table, InputNumber, DatePicker, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -21,13 +21,18 @@ export default class OrderList extends PureComponent {
     formValues: {},
   };
   queryOption = {};
+  timeSpan = {};
 
   /**
    * 获取订单列表
-   * @param p
-   * @param queryOption
+   * @param p 页码
+   * @param queryOption 查询条件
+   * @param timeSpan 时间范围
    */
-  getOrderList = (p=0,queryOption={}) => {
+  getOrderList = (p=0,queryOption={}, timeSpan = {
+    "startTime": "2000/01/01",
+    "endTime": "2099/12/31"
+  }) => {
     this.props.dispatch({
       type: 'mall/orderList',
       payload: {
@@ -35,7 +40,8 @@ export default class OrderList extends PureComponent {
           limit: 10,
           page: p
         },
-        queryOption: queryOption
+        queryOption: queryOption,
+        timeSpan: timeSpan
       }
     }).catch(err=>err)
   };
@@ -72,13 +78,26 @@ export default class OrderList extends PureComponent {
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
       };
       console.log("fieldsValue: ", fieldsValue);
-      const queryOption ={
+      const queryOption = {
         sku: fieldsValue.sku,
         consignee: fieldsValue.consignee,
-        status: fieldsValue.status
+        status: fieldsValue.status,
       };
       this.queryOption = queryOption;
-      this.getOrderList(orderListMeta.page, queryOption)
+      if(fieldsValue.timeSpan === undefined){
+        this.timeSpan = {
+          "startTime": "2000/01/01",
+          "endTime": "2099/12/31"
+        };
+      }else {
+        const timeSpan = {
+          startTime: moment(fieldsValue.timeSpan[0]).format("YYYY/MM/DD"),
+          endTime: moment(fieldsValue.timeSpan[1]).format("YYYY/MM/DD")
+        };
+        this.timeSpan = timeSpan;
+      }
+
+      this.getOrderList(orderListMeta.page, queryOption, this.timeSpan)
     });
   };
 
@@ -100,7 +119,7 @@ export default class OrderList extends PureComponent {
           </Col>
           <Col md={12} sm={24}>
             <FormItem label="成交时间">
-              {getFieldDecorator('buyTime')(
+              {getFieldDecorator('timeSpan')(
                 <RangePicker />
               )}
             </FormItem>
@@ -153,10 +172,12 @@ export default class OrderList extends PureComponent {
    */
   onPagination = (p) => {
     console.log("翻页: ", p);
-    if(JSON.stringify(this.queryOption).length > 2) {
+    if(JSON.stringify(this.queryOption).length > 2 || JSON.stringify(this.timeSpan) > 0) {
       console.log("有查询条件", this.queryOption)
-      this.getOrderList(p-1, this.queryOption);
-    }else {
+      this.getOrderList(p-1, this.queryOption, this.timeSpan);
+    }
+
+    else {
       console.log("没有查询条件", this.queryOption)
       this.getOrderList(p-1);
     }
@@ -212,10 +233,12 @@ export default class OrderList extends PureComponent {
       },
       {
         title: '下单时间',
-        dataIndex: 'buyTime',
         render: (record) => {
           return (
-            <span>{moment(record.buyTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span>
+              {/*{record.buyTime}*/}
+              {moment(record.buyTime).format('YYYY-MM-DD HH:mm')}
+              </span>
           )
         }
       },
@@ -227,7 +250,7 @@ export default class OrderList extends PureComponent {
             <div>
               {record.gidJson.map((item,i) => {
                 return (
-                  <p key={i}>{item.name} x {item.count}</p>
+                  <span key={i}>{item.name} x {item.count}</span>
                 )
               })}
             </div>

@@ -42,6 +42,7 @@ export function getAllTeams(query) {
           createdAt
           numJoin
           name
+          city
           address
           groupLevel
           username

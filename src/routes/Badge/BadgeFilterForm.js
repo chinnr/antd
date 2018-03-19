@@ -154,13 +154,9 @@ export default class BadgeFilterForm extends PureComponent {
 
   render() {
     return (
-      <PageHeaderLayout title="查询表格">
-        <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           </div>
-        </Card>
-      </PageHeaderLayout>
     );
   }
 }
