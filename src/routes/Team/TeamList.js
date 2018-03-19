@@ -7,8 +7,7 @@ import PswForm from './PswForm';
 import CoachForm from './CoachForm';
 import { routerRedux } from 'dva/router';
 import { handleLevel, successNotification } from '../../utils/utils';
-import styles from './team.less'
-
+import styles from './team.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -56,8 +55,7 @@ export default class TeamList extends Component {
         title: '团长电话',
         dataIndex: 'phone',
         key: 'phone',
-        render: (text, record) =>
-          record.head.phone ? record.head.phone.replace('86-', '') : ''
+        render: (text, record) => (record.head.phone ? record.head.phone.replace('86-', '') : '')
       },
       {
         title: '人数',
@@ -72,9 +70,7 @@ export default class TeamList extends Component {
           <span>
             <a onClick={() => this.goToPage(record, 'edit-info')}>修改信息</a>
             <Divider type="vertical" />
-            <a onClick={() => this.goToPage(record, 'edit-account')}>
-              修改账号
-            </a>
+            <a onClick={() => this.goToPage(record, 'edit-account')}>修改账号</a>
             <Divider type="vertical" />
             <a onClick={() => this.modifyPsw(record)}>修改密码</a>
             <Divider type="vertical" />
@@ -84,6 +80,7 @@ export default class TeamList extends Component {
       }
     ];
     this.gid = '';
+    this.keyJson = {};
     this.state = {
       data: [],
       visible: false,
@@ -191,11 +188,11 @@ export default class TeamList extends Component {
   // 处理教官列表翻页
   handleTableChange = p => {
     console.log('page ', p);
-    this.getAllCoach(p-1);
+    this.getAllCoach(p - 1);
   };
 
   // 获取教官列表
-  getAllCoach = (p=0) => {
+  getAllCoach = (p = 0) => {
     console.log('page ', p);
     const { dispatch } = this.props;
     /*dispatch({
@@ -209,12 +206,16 @@ export default class TeamList extends Component {
   };
 
   // 获取团列表
-  getAllTeams = (p = 0) => {
+  getAllTeams = (p = 0, keyJson={}) => {
     this.props
       .dispatch({
         type: 'team/getAllTeams',
         payload: {
-          query: { limit: 10, page: p }
+          query: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          }
         }
       })
       .catch(err => err);
@@ -229,20 +230,28 @@ export default class TeamList extends Component {
   }
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
+    this.getAllTeams();
   };
 
+  /**
+   * 团列表筛选
+   * @param e
+   */
   handleSearch = e => {
     e.preventDefault();
-
-    const { dispatch, form } = this.props;
-
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
+      const { teamsMeta } = this.props.team;
       if (err) return;
-      if(!err) {
-        console.log("fieldsValue==>", fieldsValue);
-        // this.props.onSearch(fieldsValue);
+      if (!err) {
+        console.log('fieldsValue==>', fieldsValue);
+        if (fieldsValue.type === 'main') {
+          fieldsValue.type = '';
+        }
+        this.keyJson = fieldsValue;
+        this.getAllTeams(teamsMeta.page ,this.keyJson)
       }
     });
   };
@@ -275,14 +284,12 @@ export default class TeamList extends Component {
                         message: '请输入城市'
                       }
                     ]
-                  })(
-                    <Input />
-                  )}
+                  })(<Input />)}
                 </FormItem>
               </Col>
               <Col md={8} sm={24}>
                 <FormItem {...formItemLayout} label="团部级别">
-                  {getFieldDecorator('level', {
+                  {getFieldDecorator('groupLevel', {
                     initialValue: 'level1',
                     rules: [
                       {
@@ -302,8 +309,8 @@ export default class TeamList extends Component {
               </Col>
               <Col md={8} sm={24}>
                 <FormItem {...formItemLayout} label="团类型">
-                  {getFieldDecorator('level', {
-                    initialValue: 'level1',
+                  {getFieldDecorator('type', {
+                    initialValue: 'main',
                     rules: [
                       {
                         required: true,
@@ -312,7 +319,7 @@ export default class TeamList extends Component {
                     ]
                   })(
                     <Select placeholder="请选择团类型">
-                      <Option value="">普通团</Option>
+                      <Option value="main">普通团</Option>
                       <Option value="temp">临时团</Option>
                     </Select>
                   )}
@@ -321,9 +328,15 @@ export default class TeamList extends Component {
             </Row>
             <div style={{ overflow: 'hidden' }}>
               <span style={{ float: 'right', marginBottom: 24 }}>
-                <Button type="primary" htmlType="submit">查询</Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-                <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>导出数据</Button>
+                <Button type="primary" htmlType="submit">
+                  查询
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                  重置
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>
+                  导出数据
+                </Button>
               </span>
             </div>
           </Form>
@@ -340,9 +353,7 @@ export default class TeamList extends Component {
     return (
       <PageHeaderLayout title={null} content={null}>
         <Card bordered={false}>
-          <div>
-            {this.renderAdvancedForm()}
-          </div>
+          <div>{this.renderAdvancedForm()}</div>
           <Table
             // bordered
             rowKey={record => record.gid}
@@ -351,19 +362,10 @@ export default class TeamList extends Component {
             columns={this.columns}
           />
           <div style={{ marginTop: 10 }}>
-            <Pagination
-              defaultCurrent={1}
-              total={teamsMeta.count}
-              onChange={p => this.onPagination(p)}
-            />
+            <Pagination defaultCurrent={1} total={teamsMeta.count} onChange={p => this.onPagination(p)} />
           </div>
         </Card>
-        <PswForm
-          ref={this.saveFormRef}
-          visible={visible}
-          onCancel={this.hideModal}
-          onCreate={this.handleCreate}
-        />
+        <PswForm ref={this.saveFormRef} visible={visible} onCancel={this.hideModal} onCreate={this.handleCreate} />
         <CoachForm
           ref={this.saveCoachFormRef}
           coach={studentList}
