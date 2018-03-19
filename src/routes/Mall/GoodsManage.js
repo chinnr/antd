@@ -45,7 +45,7 @@ class GoodsManage extends PureComponent {
         render: (record) => (
           <div>
             <p>{record.name}</p>
-            <p>id:  {record.gid}</p>
+            <p>sku:  {record.gid}</p>
           </div>
         )
       },

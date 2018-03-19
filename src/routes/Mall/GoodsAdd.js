@@ -90,7 +90,6 @@ class GoodsAdd extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('添加商品参数 -->: ', values.goodsJson);
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.name)
@@ -104,10 +103,14 @@ class GoodsAdd extends Component {
         values.expireTime  = values.downTime.toISOString();
         values.upTime = values.upTime.toISOString();
         values.downTime = values.downTime.toISOString();
-        skuSizeList = [values.color, values.size];
         // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
-        values.skuSizeList = doExchange(skuSizeList);
+        if(values.skuSizeList === false) {
+          values.skuSizeList = []
+        }else {
+          skuSizeList = [values.color, values.size];
+          values.skuSizeList = doExchange(skuSizeList);
+        }
         // values.skuPrefix = "BLD-"+values.skuPrefix;
         values.skuPure = values.name;
         values.province = values.address[0];
@@ -117,6 +120,7 @@ class GoodsAdd extends Component {
         delete values.address;
         delete values.goodsJson;
         this.addGoods(values);
+        console.log('添加商品参数 -->: ', values);
       }
     });
   };
@@ -187,13 +191,14 @@ class GoodsAdd extends Component {
 
   addGoods = (values) => {
     const props = this.props;
+    const _this = this;
     props.dispatch({
       type: 'mall/addGoods',
       payload: values
     }).then(() => {
       successNotification('添加商品成功', function() {
         // props.dispatch(routerRedux.push('/badge/list'));
-        this.goodsJson = [];
+        _this.goodsJson = [];
       });
     }).catch(err=>err)
   };
@@ -389,7 +394,7 @@ class GoodsAdd extends Component {
                 ]
               })(<Input placeholder="商品名称" />)}
             </FormItem>
-            <FormItem
+            {/*<FormItem
               {...formItemLayout}
               label="商品编号"
             >
@@ -401,7 +406,7 @@ class GoodsAdd extends Component {
                   }
                 ]
               })(<Input placeholder="商品编号" />)}
-            </FormItem>
+            </FormItem>*/}
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {
                 rules: [
