@@ -227,6 +227,9 @@ export const getRouterData = (app) => {
     },
     '/post/edit': {
       component: dynamicWrapper(app, ['post'], () => import('../routes/Post/UpdatePost')),
+    },
+    '/Statistics/detail': {
+      component: dynamicWrapper(app, [], () => import('../routes/Statistics/Statistics')),
     }
   };
   // Get name from ./menu.js or just set it in the router data.
