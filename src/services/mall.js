@@ -167,10 +167,10 @@ export function goodsAdd(form) {
 
 // 订单列表管理
 export function orderList(payload) {
-  const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder) {
+  const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder, $timeSpan:TimeSpan!) {
     me{
       order{
-        getAll(query: $query, queryOption: $queryOption){
+        getAll(query: $query, queryOption: $queryOption, timeSpan:$timeSpan){
           data{
             id
             totalMoney
