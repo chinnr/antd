@@ -137,6 +137,17 @@ const menuData = [
         hideInMenu: true,
       }
     ]
+  },
+  {
+    name:"统计管理",
+    icon:"file",
+    path:"statistics",
+    children:[
+      {
+        name:"消费券明细",
+        path:"detail"
+      }
+    ]
   }
   ];
 
