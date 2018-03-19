@@ -237,15 +237,21 @@ class StudentManage extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24} style={{ marginTop: '10px' }}>
-            <span>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-            </span>
+              <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>导出数据</Button>
           </Col>
         </Row>
       </Form>
     )
   }
+
+  /**
+   * 导出数据
+   */
+  outPutData = () => {
+    console.log("导出数据");
+  };
 
   render() {
     const { loading, student } = this.props;
@@ -258,9 +264,14 @@ class StudentManage extends PureComponent {
     };
     const columns = [
       {
-        title: '电话号码',
-        key: 'phone',
-        render: (record) => (<span>{record.base.phone}</span>)
+        title: '童军号',
+        key: 'number',
+        dataIndex: 'number',
+      },
+      {
+        title: '级别',
+        key: 'level',
+        render: (record) => (<span>{ levelObj[record.level] }</span>)
       },
       {
         title: '姓名',
@@ -268,19 +279,14 @@ class StudentManage extends PureComponent {
         render: (record) => (<span>{record.base.profile.realName}</span>)
       },
       {
-        title: '编号',
-        key: 'num',
-        dataIndex: 'number',
-      },
-      {
-        title: '阶段',
-        key: 'level',
-        render: (record) => (<span>{ levelObj[record.level] }</span>)
-      },
-      {
         title: '团属',
         key: 'belong',
         render: (record) => (record.group && <span>{record.group.name}</span>)
+      },
+      {
+        title: '电话号码',
+        key: 'phone',
+        render: (record) => (<span>{record.base.phone}</span>)
       },
       {
         title: '操作',

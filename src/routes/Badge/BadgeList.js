@@ -201,7 +201,7 @@ export default class BadgeList extends PureComponent {
         <Card bordered={false}>
           <BadgeFilterForm onSearch={(v) => this.handleSearch(v)}/>
           <Table
-            bordered
+            // bordered
             rowKey={record => record.bid}
             pagination={false}
             dataSource={badges}
