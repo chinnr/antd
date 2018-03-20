@@ -39,7 +39,7 @@ export function getAllTeams(query) {
         data {
           gid
           uid
-          createdAt
+          createdTime
           numJoin
           name
           city

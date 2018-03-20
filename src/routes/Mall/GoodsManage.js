@@ -35,7 +35,7 @@ class GoodsManage extends PureComponent {
 
   render() {
     const { mall, loading } = this.props;
-    console.log("goodsList==>", mall)
+    // console.log("goodsList==>", mall)
     const { selectedRows } = this.state;
     const list = mall.goodsList;
     const columns = [
@@ -45,7 +45,7 @@ class GoodsManage extends PureComponent {
         render: (record) => (
           <div>
             <p>{record.name}</p>
-            <p>sku:  {record.gid}</p>
+            <p>sku:  {record.sku}</p>
           </div>
         )
       },

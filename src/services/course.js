@@ -14,7 +14,7 @@ export function createCourseTemplate(argv) {
 
 // 获取课程模板列表
 export function courseTemplatePubList(payload) {
-  const courseTemplatePubList = `query courseTemplatePubList($tempQuery:FormQuery, $badgeQuery:FormQuery!){
+  const courseTemplatePubList = `query courseTemplatePubList($tempQuery:FormQuery){
     me {
       courseTemplatePubList(query: $tempQuery) {
         data{
@@ -36,17 +36,9 @@ export function courseTemplatePubList(payload) {
         cover
         gallery
         note
-        createdAt
-        badge(query: $badgeQuery){
-          data{
-            id
-            name
-          }
-          meta{
-            limit
-            count
-            page
-          }
+        badge{
+          bid
+          name
         }
       }
       meta {
