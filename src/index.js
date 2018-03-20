@@ -44,7 +44,7 @@ const app = dva({
       });
     }
   },
-  onAction: createLogger()
+  // onAction: createLogger()
 });
 
 // 2. Plugins

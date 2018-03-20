@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import moment from 'moment';
+import { connect } from 'dva';
 import {Button, Row, Col, Icon, Steps, Card, Form, Input, Select, DatePicker, Table} from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -62,23 +64,44 @@ const sourceData = [
     couponMoney: 4,
     time: "2018-3-15"
   }
-]
-const onChange = function (date, dateString) {
-  console.log(date, dateString);
-}
+];
+
+@connect(({ statistics }) => ({ statistics }))//stateToProps:把state的staticstics映射到组件的props上
 
 @Form.create()
 class Statistics extends Component {
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        const time = {
+          startTime:moment(values.time[0]).format('YYYY/MM/DD'),
+          endTime:moment(values.time[1]).format('YYYY/MM/DD'),
+        };
+        console.log({
+          startTime:moment(values.time[0]).format('YYYY/MM/DD'),
+          endTime:moment(values.time[1]).format('YYYY/MM/DD'),
+        });
+        this.send(time);
         console.log('Received values of form: ', values);
       }
     });
+  };
+
+  send(time) {
+    this.props.dispatch({//触发异步函数:*getStatics
+      type: 'statistics/getStatics',
+      payload: {
+        "form": time,
+      }
+    })
   }
 
+
   render() {
+    const {statistics} = this.props;
+
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {span: 6},
@@ -93,37 +116,24 @@ class Statistics extends Component {
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit}>
             <Row gutter={24}>
-              <Col md={8} sm={24}>
-                <FormItem {...formItemLayout} label="所属团">
-                  {getFieldDecorator('belong')(
-                    <Input placeholder=""/>
-                  )}
-                </FormItem>
-              </Col>
+
               <Col md={8} sm={24}>
                 <FormItem {...formItemLayout} label="时间区域">
                   {getFieldDecorator('time')(
-                    <RangePicker onChange={onChange}/>
+                    <RangePicker />
                   )}
                 </FormItem>
               </Col>
-
-
             </Row>
             <Row>
               <div>
                 <span style={{float: 'right', marginBottom: 24}}>
-                  <Button type="primary" htmlType="submit">查询</Button>
-                  <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>导出</Button>
+                  <Button type="primary" htmlType="submit" style={{marginLeft: 8}}>导出</Button>
                 </span>
               </div>
             </Row>
           </Form>
-          <Table dataSource={sourceData}
-                 columns={columns}
-                 pagination={false}
-                 bordered
-          />
+
         </Card>
       </PageHeaderLayout>
     )
