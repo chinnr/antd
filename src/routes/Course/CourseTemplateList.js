@@ -264,7 +264,6 @@ export default class CourseTempalteList extends Component {
             </Form>
           </div>
           <Table
-            bordered
             rowKey={record => record.id}
             dataSource={courseTemplatePubList}
             columns={this.columns}

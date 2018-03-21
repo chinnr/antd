@@ -3,12 +3,12 @@ import graphRequest from "../utils/graphRequest";
 
 
 export function getStatics(form) {
-  const getStatics = `query generateExcelData($form: CostTime) {
+  const getStatics = `mutation generateExcel($form: CostTime) {
   me {
     virtualGoods {
-      generateExcelData(form: $form)
+      generateExcel(form: $form)
     }
   }
-}`;
+}`
   return graphRequest(getStatics, form, "mall-admin");
 }
