@@ -110,30 +110,21 @@ export default class OrderList extends PureComponent {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={12} sm={24}>
+          <Col md={8} sm={24}>
             <FormItem label="买家昵称">
               {getFieldDecorator('consignee')(
                 <Input placeholder="请输入买家昵称" />
               )}
             </FormItem>
           </Col>
-          <Col md={12} sm={24}>
-            <FormItem label="成交时间">
-              {getFieldDecorator('timeSpan')(
-                <RangePicker />
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={12} sm={24}>
+          <Col md={8} sm={24}>
             <FormItem label="订单编号">
               {getFieldDecorator('sku')(
                 <InputNumber style={{ width: '100%' }} />
               )}
             </FormItem>
           </Col>
-          <Col md={12} sm={24}>
+          <Col md={8} sm={24}>
             <FormItem label="订单状态">
               {getFieldDecorator('status')(
                 <Select>
@@ -146,6 +137,17 @@ export default class OrderList extends PureComponent {
               )}
             </FormItem>
           </Col>
+
+        </Row>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={8} sm={24}>
+            <FormItem label="成交时间">
+              {getFieldDecorator('timeSpan')(
+                <RangePicker style={{ width: '100%' }} />
+              )}
+            </FormItem>
+          </Col>
+
         </Row>
         <div style={{ overflow: 'hidden' }}>
           <span style={{ float: 'right', marginBottom: 24 }}>
