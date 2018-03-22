@@ -280,7 +280,7 @@ export default class TeamList extends Component {
                     initialValue: '',
                     rules: [
                       {
-                        required: true,
+                        required: false,
                         message: '请输入城市'
                       }
                     ]
@@ -293,7 +293,7 @@ export default class TeamList extends Component {
                     initialValue: 'level1',
                     rules: [
                       {
-                        required: true,
+                        required: false,
                         message: '请输入团部级别'
                       }
                     ]
@@ -313,7 +313,7 @@ export default class TeamList extends Component {
                     initialValue: 'main',
                     rules: [
                       {
-                        required: true,
+                        required: false,
                         message: '请输入团类型'
                       }
                     ]
