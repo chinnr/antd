@@ -45,6 +45,11 @@ export default class TeamList extends Component {
         key: 'type',
         render: (text, record) => (record.type === '' ? '普通团' : '临时团')
       },
+      {
+        title: '团长昵称',
+        dataIndex: 'otherName',
+        key: 'otherName'
+      },
       /*{
         title: '成立时间',
         dataIndex: 'createdAt',
