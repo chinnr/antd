@@ -86,7 +86,7 @@ export default class BadgeFilterForm extends PureComponent {
                 initialValue: 'level1',
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: '请输入证章级别'
                   }
                 ]
@@ -106,7 +106,7 @@ export default class BadgeFilterForm extends PureComponent {
                 initialValue: 'stage1',
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: '请输入证章阶段'
                   }
                 ]
@@ -126,7 +126,7 @@ export default class BadgeFilterForm extends PureComponent {
                 initialValue: 'class1',
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: '请输入证章分类'
                   }
                 ]
