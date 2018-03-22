@@ -294,21 +294,7 @@ export default class NewTeam extends PureComponent {
                 ]
               })(<Input placeholder="团名称" />)}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={teamNameError ? 'error' : ''}
-              help={teamNameError || ''}
-              label="团长昵称"
-            >
-              {getFieldDecorator('nickname', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入团长昵称'
-                  }
-                ]
-              })(<Input placeholder="团长昵称" />)}
-            </FormItem>
+
             <FormItem
               {...formItemLayout}
               validateStatus={groupLevelError ? 'error' : ''}
@@ -455,6 +441,21 @@ export default class NewTeam extends PureComponent {
                   }
                 ]
               })(<Input placeholder="团长密码" />)}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              validateStatus={teamNameError ? 'error' : ''}
+              help={teamNameError || ''}
+              label="团长昵称"
+            >
+              {getFieldDecorator('nickname', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入团长昵称'
+                  }
+                ]
+              })(<Input placeholder="团长昵称" />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
