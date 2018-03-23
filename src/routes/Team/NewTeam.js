@@ -183,6 +183,9 @@ export default class NewTeam extends PureComponent {
           const { addressInfo } = res;
           console.log('addressInfo==>', addressInfo);
           this.props.form.validateFieldsAndScroll((err, values) => {
+            if(err) {
+              console.log("发生错误:", err )
+            }
             if (!err) {
               console.log('values: ', values);
               this.props
@@ -211,7 +214,12 @@ export default class NewTeam extends PureComponent {
                       cityLim: values.area[1]
                     }
                   }
-                })
+                }).then(() => {
+                  console.log("新建团队成功")
+                  successNotification('新建团队成功!', function() {
+                    return false;
+                  });
+              })
                 .catch(err => err);
             }
           });
@@ -342,14 +350,14 @@ export default class NewTeam extends PureComponent {
               {getFieldDecorator('type', {
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: '请选择团类型'
                   }
                 ],
-                initialValue: ''
+                initialValue: 'main'
               })(
                 <RadioGroup>
-                  <Radio value="">普通团</Radio>
+                  <Radio value="main">普通团</Radio>
                   <Radio value="temp">临时团</Radio>
                 </RadioGroup>
               )}
@@ -477,7 +485,6 @@ export default class NewTeam extends PureComponent {
                 type="primary"
                 htmlType="submit"
                 loading={submitting}
-                disabled={this.hasErrors(getFieldsError())}
               >
                 提交
               </Button>
