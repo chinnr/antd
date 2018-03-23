@@ -59,7 +59,7 @@ export default {
       } else {
         const teams = data.me.groups.data;
         const teamsMeta = data.me.groups.meta;
-        // console.log("getAllTeams==>", teams, teamsMeta);
+        console.log("getAllTeams==>", teams, teamsMeta);
         yield put({
           type: 'storeAllTeams',
           payload: { teams, teamsMeta }
