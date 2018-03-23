@@ -140,11 +140,11 @@ const menuData = [
   },
   {
     name:"统计管理",
-    icon:"file",
+    icon:"book",
     path:"statistics",
     children:[
       {
-        name:"消费券明细",
+        name:"数据导出",
         path:"detail"
       }
     ]
