@@ -44,7 +44,7 @@ export default {
         const studentDetail = {
           ...data.me.userOne.base.profile,
           ...data.me.userOne.guardian,
-          group: data.me.userOne.group.name,
+          group: data.me.userOne.group ? data.me.userOne.group.name : '',
           isLead: data.me.userOne.isLead,
           leadList: data.me.userOne.leadList,
           level: data.me.userOne.level,

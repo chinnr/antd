@@ -16,14 +16,15 @@ class StudentDetail extends PureComponent {
    * 赠送卡券
    */
   donateVirtualGoods = record => {
-    console.log('record: ', record);
+    const hash = window.location.hash;
+    console.log("reg: ", hash.split("/")[2]);
     this.props
       .dispatch({
         type: 'mall/donateVirtualGoods',
         payload: {
           num: 1,
           donate: {
-            uid: '31c42b66-26b1-4a82-af98-7ec0cba60ecc', // 用户id
+            uid: hash.split("/")[2], // 用户id
             cardType: record.cardType, // 卡券类型，如果不是卡券则为空(课时券、体验券、优惠券)
             cardBag: record.cardBag, // 卡包图片地址
             status: record.status, // 商品状态 0:持有 1:已消耗 2:冻结中
@@ -45,6 +46,7 @@ class StudentDetail extends PureComponent {
     const { loading, mallLoading, studentDetail, myVirtualGoods } = this.props;
     console.log('list ', studentDetail);
     console.log('myVirtualGoods ', myVirtualGoods);
+    console.log('studentDetail  ', studentDetail);
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
     const levelObj = {
       level1: '海狸',
