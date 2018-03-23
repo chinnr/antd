@@ -72,11 +72,19 @@ class Statistics extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
+    const topColResponsiveProps = {
+      xs: 24,
+      sm: 12,
+      md: 12,
+      lg: 12,
+      xl: 8,
+      style: { marginBottom: 24 },
+    };
 
     return (
-      <PageHeaderLayout title={null} content={null}>
-        <Row getter={24} type="flex" justify="space-around">
-          <Col md={7} sm={24} style={{ marginTop: 5 }}>
+      <div>
+        <Row gutter={24}>
+          <Col {...topColResponsiveProps}>
             <Card bordered={false} title="消费明细表">
               <Form
                 onSubmit={this.handleSubmit}
@@ -91,7 +99,7 @@ class Statistics extends Component {
               </Form>
             </Card>
           </Col>
-          <Col md={7} sm={24} style={{ marginTop: 5 }}>
+          <Col {...topColResponsiveProps}>
             <Card bordered={false} title="团部信息统计表">
               <Form
                 onSubmit={this.handleSubmit2}
@@ -106,7 +114,7 @@ class Statistics extends Component {
               </Form>
             </Card>
           </Col>
-          <Col md={7} sm={24} style={{ marginTop: 5 }}>
+          <Col {...topColResponsiveProps}>
             <Card bordered={false} title="会员数据表">
               <Form style={{ textAlign: "center" }}>
                 <FormItem {...formItemLayout} label="注册时间">
@@ -118,8 +126,9 @@ class Statistics extends Component {
               </Form>
             </Card>
           </Col>
+
         </Row>
-      </PageHeaderLayout>
+      </div>
     );
   }
 }

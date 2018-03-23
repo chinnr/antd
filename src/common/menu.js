@@ -140,7 +140,7 @@ const menuData = [
   },
   {
     name:"统计管理",
-    icon:"book",
+    icon:"profile",
     path:"statistics",
     children:[
       {
