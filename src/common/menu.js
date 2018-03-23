@@ -1,7 +1,7 @@
 import { isUrl } from '../utils/utils';
 
 const menuData = [
-  {
+  /*{
     name: 'dashboard',
     icon: 'dashboard',
     path: 'dashboard',
@@ -16,7 +16,7 @@ const menuData = [
       path: 'workplace',
       // hideInMenu: true,
     }],
-  },
+  },*/
   {
     name: '学员管理',
     icon: 'idcard',
