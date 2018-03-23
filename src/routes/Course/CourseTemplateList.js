@@ -68,7 +68,7 @@ export default class CourseTempalteList extends Component {
             <a onClick={() => this.goToPage(record)}>编辑</a>
             <Divider type="vertical"/>
             <Popconfirm
-              title="确定删除该证章?"
+              title="确定删除?"
               onConfirm={() => this.confirmDelete(record)}
               onCancel={() => this.cancelDelete()}
               okText="确定"
@@ -183,8 +183,6 @@ export default class CourseTempalteList extends Component {
     const {
       getFieldDecorator,
       getFieldsError,
-      getFieldError,
-      isFieldTouched
     } = this.props.form;
     const {filterValue} = this.state;
     const {
