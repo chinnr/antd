@@ -16,7 +16,7 @@ const CreateForm = Form.create()((props) => {
   };
   const propsObj = {
     name: 'file',
-    action: 'https://api.yichui.net/api/young/post/upload/image',
+    action: rootUrl+'/api/young/post/upload/image',
     onChange(info) {
       if(info.file.status === 'done') {
         message.success(`${info.file.name} file uploaded successfully`);

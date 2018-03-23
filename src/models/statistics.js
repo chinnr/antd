@@ -1,5 +1,5 @@
 import * as statisticsService from "../services/statistics";
-
+import {rootUrl} from '../utils/constant';
 export default {
   namespace: "statistics",
   state: {
@@ -27,7 +27,7 @@ export default {
         const statistics = data.me.virtualGoods.generateExcel;
         console.log("请求成功后的data ---> ", statistics);
         window.open(
-          `https://api.yichui.net/download/young/mall/${statistics}.xlsx`
+          rootUrl+`/download/young/mall/${statistics}.xlsx`
         );
         // yield put({
         //   type: 'updateState',

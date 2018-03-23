@@ -15,6 +15,7 @@ import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import {successNotification} from "../../../utils/utils";
+import {rootUrl} from "../../../utils/constant";
 import {routerRedux} from "dva/router";
 
 const Option = Select.Option;
@@ -193,7 +194,7 @@ export default class CourseForm extends PureComponent {
               uploadNum={1}
               onUpload={filename => this.uploadImage(filename, "cover")}
               ondelete={filename => this.deleteUpload(filename, "cover")}
-              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
+              uploadPath={rootUrl+"/api/young/post/upload/image"}
             />
           )}
         </FormItem>
@@ -322,7 +323,7 @@ export default class CourseForm extends PureComponent {
               uploadRef={"gallery"}
               onUpload={filename => this.uploadImage(filename, "gallery")}
               ondelete={filename => this.deleteUpload(filename, "gallery")}
-              uploadPath={"https://api.yichui.net/api/young/post/upload/image"}
+              uploadPath={rootUrl+"/api/young/post/upload/image"}
             />
           )}
         </FormItem>

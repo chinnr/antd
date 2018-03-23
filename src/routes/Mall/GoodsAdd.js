@@ -157,7 +157,7 @@ class GoodsAdd extends Component {
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
-      const imgUrl = 'https://api.yichui.net/api/young/post/download/image/origin/' + fileName;
+      const imgUrl = rootUrl+'/api/young/post/download/image/origin/' + fileName;
       param.success({ url: imgUrl });
     };
 
@@ -177,7 +177,7 @@ class GoodsAdd extends Component {
     xhr.addEventListener('abort', errorFn, false);
 
     fd.append('file', param.file);
-    xhr.open('POST', 'https://api.yichui.net/api/young/post/upload/image', true);
+    xhr.open('POST', rootUrl+'/api/young/post/upload/image', true);
     xhr.send(fd);
   };
 
@@ -282,7 +282,7 @@ class GoodsAdd extends Component {
 
     const propsObj = {
       name: 'file',
-      action: 'https://api.yichui.net/api/young/post/upload/image',
+      action: rootUrl+'/api/young/post/upload/image',
       onChange: this.handleChange,
       multiple: true
     };

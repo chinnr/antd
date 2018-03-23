@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Card } from 'antd';
-
+import {rootUrl} from '../../../utils/constant';
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor';
 import 'braft-editor/dist/braft.css';
@@ -28,7 +28,7 @@ export default class CourseIntroduce extends Component {
       console.log('图片上传成功:', JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
       const imgUrl =
-        'https://api.yichui.net/api/young/post/download/image/origin/' +
+        rootUrl+'/api/young/post/download/image/origin/' +
         fileName;
       param.success({ url: imgUrl });
     };
@@ -51,7 +51,7 @@ export default class CourseIntroduce extends Component {
     fd.append('file', param.file);
     xhr.open(
       'POST',
-      'https://api.yichui.net/api/young/post/upload/image',
+      rootUrl+'/api/young/post/upload/image',
       true
     );
     xhr.send(fd);
