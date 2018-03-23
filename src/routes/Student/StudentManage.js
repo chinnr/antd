@@ -1,27 +1,30 @@
-import React, { PureComponent, Fragment } from 'react';
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
-import { Row, Col, Card, Table, Divider, Form, Input, Select, Modal, Button } from 'antd';
+import React, {PureComponent, Fragment} from 'react';
+import {connect} from 'dva';
+import {routerRedux} from 'dva/router';
+import {Row, Col, Card, Table, Divider, Form, Input, Select, Modal, Button} from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { successNotification } from '../../utils/utils';
+import {successNotification} from '../../utils/utils';
+import styles from './StudentManage.less';
+
 const FormItem = Form.Item;
-const { Option } = Select;
+const {Option} = Select;
 const level = ['海狸', '小狼', '探索', '乐扶'];
 
 const ResetPasswordForm = Form.create()((props) => {
-  const { modalVisible, form, handleCancel, handleOk } = props;
-  const { getFieldDecorator } = form;
+  const {modalVisible, form, handleCancel, handleOk} = props;
+  const {getFieldDecorator} = form;
   const formItemLayout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 }
+    labelCol: {span: 6},
+    wrapperCol: {span: 14}
   };
+
   function resetInput() {
     form.resetFields();
   }
 
   const okHandle = () => {
     form.validateFields((err, values) => {
-      if(!err) {
+      if (!err) {
         handleOk(values, resetInput)
       }
     })
@@ -39,10 +42,10 @@ const ResetPasswordForm = Form.create()((props) => {
           label="新密码"
         >
           {getFieldDecorator('password', {
-            rules: [{ required: true, message: '请输入密码' },
+            rules: [{required: true, message: '请输入密码'},
             ]
           })(
-            <Input type="password" />
+            <Input type="password"/>
           )}
         </FormItem>
         <FormItem
@@ -56,7 +59,7 @@ const ResetPasswordForm = Form.create()((props) => {
               validator: this.checkPassword
             }]
           })(
-            <Input type="password" />
+            <Input type="password"/>
           )}
         </FormItem>
       </Form>
@@ -64,7 +67,7 @@ const ResetPasswordForm = Form.create()((props) => {
   );
 });
 
-@connect(({ student, loading }) => ({
+@connect(({student, loading}) => ({
   student,
   loading: loading.models.student,
 }))
@@ -79,14 +82,14 @@ class StudentManage extends PureComponent {
   };
 
   handleTableChange = ({current, pageSize}) => {
-    const { dispatch } = this.props;
-    const { filterObj } = this.state;
+    const {dispatch} = this.props;
+    const {filterObj} = this.state;
     dispatch({
       type: 'student/getStudentList',
       payload: {
         page: current - 1,
         limit: pageSize,
-        sort:["-createdAt"],
+        sort: ["-createdAt"],
         keyJson: JSON.stringify(filterObj)
       }
     });
@@ -94,7 +97,7 @@ class StudentManage extends PureComponent {
 
   goToDetail = (uid) => {
     // console.log('uid ', uid);
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch(routerRedux.push({
       pathname: `/student-detail/${uid}`,
     }));
@@ -109,7 +112,7 @@ class StudentManage extends PureComponent {
 
   checkPassword = (rule, value, callback) => {
     const form = this.props.form;
-    if(value && value !== form.getFieldValue('password')) {
+    if (value && value !== form.getFieldValue('password')) {
       callback('密码输入不一致');
     } else {
       callback();
@@ -118,8 +121,8 @@ class StudentManage extends PureComponent {
 
   checkConfirm = (rule, value, callback) => {
     const form = this.props.form;
-    if(value && this.state.confirmDirty) {
-      form.validateFields(['confirm'], { force: true });
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['confirm'], {force: true});
     }
     callback();
   };
@@ -132,7 +135,7 @@ class StudentManage extends PureComponent {
   };
 
   handleOk = (values, callback) => {
-    const { uid } = this.state;
+    const {uid} = this.state;
     const payload = {
       uid,
       form: {
@@ -145,19 +148,19 @@ class StudentManage extends PureComponent {
       type: 'student/updateUserPassword',
       payload: payload
     })
-    .then(() => {
-      successNotification('修改成功', this.handleCancel.bind(this, callback))
-    })
-    .catch((err) => {
-      throw new Error(err);
-    })
+      .then(() => {
+        successNotification('修改成功', this.handleCancel.bind(this, callback))
+      })
+      .catch((err) => {
+        throw new Error(err);
+      })
   };
 
   handleCancel = (callback) => {
     this.setState({
       modalVisible: false
     }, () => {
-      if(callback !== undefined && typeof(callback) === "function") {
+      if (callback !== undefined && typeof(callback) === "function") {
         callback();
       }
     })
@@ -165,10 +168,10 @@ class StudentManage extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
-    const { filterObj } = this.state;
+    const {dispatch, form} = this.props;
+    const {filterObj} = this.state;
     form.validateFields((err, values) => {
-      if(!err) {
+      if (!err) {
         const obj = {
           ...filterObj,
           ...values
@@ -190,7 +193,7 @@ class StudentManage extends PureComponent {
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const {form, dispatch} = this.props;
     form.resetFields();
     this.setState({
       filterObj: {}
@@ -200,49 +203,54 @@ class StudentManage extends PureComponent {
       payload: {
         page: 0,
         limit: 10,
-        sort:["-createdAt"]
+        sort: ["-createdAt"]
       }
     })
   };
 
   renderForm() {
-    const { getFieldDecorator } = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     return (
-      <Form layout="inline" onSubmit={this.handleSearch}>
-        <Row gutter={{md: 8, lg: 24, xl: 48}}>
-          <Col md={8} sm={24}>
-            <FormItem label="编号">
-              {getFieldDecorator('number')(
-                <Input placeholder="请输入编号" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="团属">
-              {getFieldDecorator('groupName')(
-                <Input placeholder="请输入团属" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="阶段">
-              {getFieldDecorator('level')(
-                <Select placeholder="请选择" style={{ width: 180 }}>
-                  <Option value="level1">海狸</Option>
-                  <Option value="level2">小狼</Option>
-                  <Option value="level3">探索</Option>
-                  <Option value="level4">乐扶</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24} style={{ marginTop: '10px' }}>
+      <div className={styles.tableListForm}>
+        <Form layout="inline" onSubmit={this.handleSearch}>
+          <Row gutter={{md: 8, lg: 24, xl: 48}}>
+            <Col md={8} sm={24}>
+              <FormItem label="编号">
+                {getFieldDecorator('number')(
+                  <Input placeholder="请输入编号"/>
+                )}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="团属">
+                {getFieldDecorator('groupName')(
+                  <Input placeholder="请输入团属"/>
+                )}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="阶段">
+                {getFieldDecorator('level')(
+                  <Select placeholder="请选择">
+                    <Option value="level1">海狸</Option>
+                    <Option value="level2">小狼</Option>
+                    <Option value="level3">探索</Option>
+                    <Option value="level4">乐扶</Option>
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+
+          </Row>
+          <Row>
+            <Col style={{float: "right"}}>
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-              <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>导出数据</Button>
-          </Col>
-        </Row>
-      </Form>
+              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>重置</Button>
+              <Button style={{marginLeft: 8}} onClick={() => this.outPutData()}>导出数据</Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
     )
   }
 
@@ -254,8 +262,8 @@ class StudentManage extends PureComponent {
   };
 
   render() {
-    const { loading, student } = this.props;
-    const { modalVisible } = this.state;
+    const {loading, student} = this.props;
+    const {modalVisible} = this.state;
     const levelObj = {
       "level1": "海狸",
       "level2": "小狼",
@@ -271,7 +279,7 @@ class StudentManage extends PureComponent {
       {
         title: '级别',
         key: 'level',
-        render: (record) => (<span>{ levelObj[record.level] }</span>)
+        render: (record) => (<span>{levelObj[record.level]}</span>)
       },
       {
         title: '姓名',
@@ -294,7 +302,7 @@ class StudentManage extends PureComponent {
         render: (record) => (
           <Fragment>
             <a onClick={this.showModal.bind(this, record.uid)}>重置密码</a>
-            <Divider type="vertical" />
+            <Divider type="vertical"/>
             <a onClick={this.goToDetail.bind(this, record.uid)}>查看详情</a>
           </Fragment>
         ),
@@ -308,7 +316,7 @@ class StudentManage extends PureComponent {
     return (
       <PageHeaderLayout title="学员管理">
         <Card bordered={false}>
-          <div style={{marginBottom: '10px'}}>{ this.renderForm() }</div>
+          <div style={{marginBottom: '10px'}}>{this.renderForm()}</div>
           <div>
             <Table
               loading={loading}
