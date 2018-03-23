@@ -89,12 +89,14 @@ class GoodsAdd extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
+      console.log('添加商品参数 -->: ', values);
       if (!err) {
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.name)
         });
         values.imgs = images;
+        values.sizeImg = '';
         values.listImg = images[0];
         values.goodsJson = this.goodsJson;
         // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
@@ -111,16 +113,15 @@ class GoodsAdd extends Component {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
         }
-        // values.skuPrefix = "BLD-"+values.skuPrefix;
+        values.skuPrefix = "BLD-"+values.skuPrefix;
         values.skuPure = values.name;
         values.province = values.address[0];
         values.city = values.address[1];
         delete values.color;
         delete values.size;
         delete values.address;
-        delete values.goodsJson;
+        // delete values.goodsJson;
         this.addGoods(values);
-        console.log('添加商品参数 -->: ', values);
       }
     });
   };
