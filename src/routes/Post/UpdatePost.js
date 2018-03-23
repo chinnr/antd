@@ -54,7 +54,7 @@ export default class UpdatePost extends Component {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
       const imgUrl =
-        "https://api.yichui.net/api/young/post/download/image/origin/" +
+        rootUrl+"/api/young/post/download/image/origin/" +
         fileName;
       param.success({ url: imgUrl });
     };
@@ -77,7 +77,7 @@ export default class UpdatePost extends Component {
     fd.append("file", param.file);
     xhr.open(
       "POST",
-      "https://api.yichui.net/api/young/post/upload/image",
+      rootUrl+"/api/young/post/upload/image",
       true
     );
     xhr.send(fd);
@@ -90,10 +90,9 @@ export default class UpdatePost extends Component {
     let formData = new FormData();
     formData.append("file", img);
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://api.yichui.net/api/young/post/upload/image");
+    xhr.open("POST", rootUrl+"/api/young/post/upload/image");
     xhr.send(formData);
     xhr.addEventListener("load", () => {
-      // let _src = 'https://api.yichui.net/api/duomi/upload/' + JSON.parse(xhr.responseText).filename;
       let _src = JSON.parse(xhr.responseText).filename;
       this.srcArr.push(_src);
       // this.postGallery = this.srcArr;

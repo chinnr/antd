@@ -200,14 +200,14 @@ export default class TeamList extends Component {
   getAllCoach = (p = 0) => {
     console.log('page ', p);
     const { dispatch } = this.props;
-    /*dispatch({
+    dispatch({
       type: 'student/getStudentList',
       payload: {
         page: p,
         limit: 10,
         keyJson: JSON.stringify({'level': 'level4'})
       }
-    });*/
+    });
   };
 
   // 获取团列表

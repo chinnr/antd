@@ -13,7 +13,7 @@
     },
     "production": {
       "transform-remove-console": { "exclude": [ "error", "warn"] },
-      "publicPath": "https://api.yichui.net/api/young/demo/admin/"
+      "publicPath": "/"
     }
   },
   "ignoreMomentLocale": true,
