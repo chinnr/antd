@@ -325,7 +325,7 @@ class GoodsAdd extends Component {
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card bordered={false}>
           <Modal
-            title="选择商品类新"
+            title="选择商品类型"
             visible={this.state.goodsTypesVisible}
             onOk={() => this.handleOk("goodsTypesVisible")}
             onCancel={() => this.handleCancel("goodsTypesVisible")}>
