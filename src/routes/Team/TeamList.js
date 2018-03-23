@@ -77,8 +77,6 @@ export default class TeamList extends Component {
             <Divider type="vertical" />
             <a onClick={() => this.goToPage(record, 'edit-account')}>修改账号</a>
             <Divider type="vertical" />
-            <a onClick={() => this.modifyPsw(record)}>修改密码</a>
-            <Divider type="vertical" />
             <a onClick={() => this.openCoachModal(record)}>指派教官</a>
           </span>
         )
