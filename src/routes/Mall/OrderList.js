@@ -281,8 +281,8 @@ export default class OrderList extends PureComponent {
           return (
             <div>
               <a onClick={() => this.goToDetail(record)}>详情</a>
-              <Divider type="vertical" />
-              <a>发货</a>
+              {/*<Divider type="vertical" />*/}
+              {/*<a>发货</a>*/}
             </div>
           )
         }

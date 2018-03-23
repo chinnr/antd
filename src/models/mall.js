@@ -12,6 +12,8 @@ export default {
     advertiseList: [],
     orderList: [],
     orderListMeta: {},
+    allPayRecord: [],
+    allPayRecordMeta:{}
   },
   reducers: {
     updateState(state, { payload }) {
@@ -142,6 +144,22 @@ export default {
         })
       }
     },
+
+    *getAllPayRecord({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.getAllPayRecord, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            allPayRecord: data.me.payRecord.getAllPayRecord.data,
+            allPayRecordMeta: data.me.payRecord.getAllPayRecord.meta,
+          }
+        })
+      }
+    }
   },
   subscriptions: {
   	setup({ dispatch, history }) {

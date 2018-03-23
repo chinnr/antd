@@ -229,3 +229,30 @@ export function getAdvertiseList() {
   }`;
   return graphRequest(getAdvertiseList, {}, 'mall-admin')
 }
+
+// 获取支付记录
+export function getAllPayRecord(payload) {
+  const payRecord = `query getAllPayRecord($queryOption: QueryPayRecordOption,$query: FormQuery,$timeSpan: adminTimeSpan!) {
+    me{
+      payRecord {
+        getAllPayRecord(queryOption: $queryOption, query: $query, timeSpan: $timeSpan) {
+          data{
+            id
+            platformName
+            returnCode
+            uid
+            receipt_amount
+            buyer_pay_amount
+            out_trade_no
+          }
+          meta{
+            page
+            limit
+            count
+          }
+        }
+      }
+    }
+  }`;
+  return graphRequest(payRecord, payload, 'mall-admin')
+}
