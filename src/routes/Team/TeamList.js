@@ -47,8 +47,8 @@ export default class TeamList extends Component {
       },
       {
         title: '团长昵称',
-        dataIndex: 'otherName',
-        key: 'otherName'
+        dataIndex: 'nickname',
+        key: 'nickname'
       },
       /*{
         title: '成立时间',
@@ -209,7 +209,7 @@ export default class TeamList extends Component {
   };
 
   // 获取团列表
-  getAllTeams = (p = 0, keyJson={}) => {
+  getAllTeams = (p = 0, keyJson={}, groupLevel=null) => {
     this.props
       .dispatch({
         type: 'team/getAllTeams',
@@ -218,7 +218,8 @@ export default class TeamList extends Component {
             limit: 10,
             page: p,
             keyJson: JSON.stringify(keyJson)
-          }
+          },
+          groupLevel: groupLevel
         }
       })
       .catch(err => err);
@@ -253,8 +254,10 @@ export default class TeamList extends Component {
         if (fieldsValue.type === 'main') {
           fieldsValue.type = '';
         }
+        this.groupLevel = null;
+        delete fieldsValue.groupLevel;
         this.keyJson = fieldsValue;
-        this.getAllTeams(teamsMeta.page ,this.keyJson)
+        this.getAllTeams(teamsMeta.page ,this.keyJson, this.groupLevel)
       }
     });
   };
@@ -337,9 +340,9 @@ export default class TeamList extends Component {
                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>
-                  导出数据
-                </Button>
+                {/*<Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>*/}
+                  {/*导出数据*/}
+                {/*</Button>*/}
               </span>
             </div>
           </Form>

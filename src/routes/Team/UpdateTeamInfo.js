@@ -89,7 +89,7 @@ export default class UpdateTeamInfo extends PureComponent {
         const { addressInfo } = res;
         const _position = {
           longitude: addressInfo.longitude,
-          latitude: addressInfo.latitude
+          latitude: addressInfo.latitude,
         };
         this.setState(
           {
@@ -228,14 +228,23 @@ export default class UpdateTeamInfo extends PureComponent {
       values = this.props.location.query.record;
     }
     let keys = Object.keys(values);
+    console.log("values --> ", moment(new Date(values.createdTime), 'YYYY-MM-DD'))
+    console.log("keys --> ", keys)
     this.setState({
       gid: values.gid
     });
-    keys.map(item => {
+    this.props.form.setFieldsValue({
+      name: values.name,
+      groupLevel: values.groupLevel,
+      address: values.address,
+      type: values.type === "" ? "main":"temp",
+      createdTime: moment(new Date(values.createdTime), 'YYYY-MM-DD')
+    });
+    /*keys.map(item => {
       this.props.form.setFieldsValue({
         [item]: values[item]
       });
-    });
+    });*/
   };
 
   componentDidMount() {
@@ -313,7 +322,7 @@ export default class UpdateTeamInfo extends PureComponent {
               label="团名称"
             >
               {getFieldDecorator('name', {
-                initialValue: '南宁旅-航洋一团',
+                initialValue: '',
                 rules: [
                   {
                     required: true,
@@ -329,7 +338,7 @@ export default class UpdateTeamInfo extends PureComponent {
               label="团部级别"
             >
               {getFieldDecorator('groupLevel', {
-                initialValue: 'level4'
+                initialValue: ''
               })(
                 <Select placeholder="请选择团部级别" disabled={true}>
                   <Option value="level1">海狸</Option>
@@ -362,8 +371,6 @@ export default class UpdateTeamInfo extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
               label="团类型"
             >
               {getFieldDecorator('type', {
