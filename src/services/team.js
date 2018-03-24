@@ -52,6 +52,12 @@ export function getAllTeams(payload) {
           head {
             phone
             name
+          },
+          description {
+            icon
+            brief
+            company
+            mien
           }
         }
         meta {

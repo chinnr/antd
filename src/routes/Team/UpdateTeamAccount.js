@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Card } from 'antd';
+import { Form, Input, Button, Card, Upload, Icon } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { successNotification } from '../../utils/utils';
 import { routerRedux } from 'dva/router';
+import {message} from "antd/lib/index";
+import {rootUrl} from "../../utils/constant";
 
 const FormItem = Form.Item;
 
@@ -39,7 +41,8 @@ export default class UpdateTeamAccount extends PureComponent {
             payload: {
               form: {
                 nickname: values.nickname,
-                phone: '86-' + values.phone
+                phone: '86-' + values.phone,
+                icon: values.icon.file.response.filename
               },
               gid: this.state.gid
             }
@@ -139,6 +142,18 @@ export default class UpdateTeamAccount extends PureComponent {
       }
     };
 
+    const propsObj = {
+      name: 'file',
+      action: rootUrl+'/api/young/post/upload/image',
+      onChange(info) {
+        if(info.file.status === 'done') {
+          message.success(`添加头像成功`);
+        } else if(info.file.status === 'error') {
+          message.error(`添加头像失败`);
+        }
+      }
+    };
+
     return (
       <PageHeaderLayout
         title={null}
@@ -181,6 +196,20 @@ export default class UpdateTeamAccount extends PureComponent {
                   }
                 ]
               })(<Input placeholder="团长昵称" />)}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="类型图片"
+            >
+              {getFieldDecorator('icon', {
+                rules: [{ required: false }]
+              })(
+                <Upload {...propsObj}>
+                  <Button>
+                    <Icon type="upload" /> 点击上传图片
+                  </Button>
+                </Upload>
+              )}
             </FormItem>
             <FormItem
               {...formItemLayout}

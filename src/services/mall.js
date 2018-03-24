@@ -60,12 +60,12 @@ export function delGoodsType() {
 }
 
 // 获取商品列表
-export function goodsList(v) {
-  const query = `
-    query getGoodsList($v: FormQuery) {
+export function goodsList(payload) {
+  const getAllGoods = `
+    query getGoodsList($query: FormQuery, $queryOption: QueryData) {
       me {
         goods {
-          getAll(query: $v) {
+          getAll(query: $query, queryOption:$queryOption) {
             data {
               gid
               name
@@ -91,7 +91,7 @@ export function goodsList(v) {
       }
     }
   `;
-  return graphRequest(query, { v }, 'mall-admin')
+  return graphRequest(getAllGoods, payload, 'mall-admin')
 }
 
 // 获取单个商品详情

@@ -42,9 +42,9 @@ export default {
       }
     },
 
-    *getGoodsList({ payload: v }, { call, put }) {
-      const { data, errors } = yield call(mallService.goodsList, v);
-      console.log('goods ', data)
+    *getGoodsList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsList, payload);
+      console.log('goods  ====>  ', data)
       if(errors) {
         throw new Error(errors[0].message);
       }
@@ -189,9 +189,11 @@ export default {
           dispatch({
             type: 'getGoodsList',
             payload: {
-              page: 0,
-              limit: 10,
-              sort:["-createdAt"]
+              query: {
+                page: 0,
+                limit: 10,
+                sort:["-createdAt"]
+              }
             }
           })
         }
@@ -237,9 +239,11 @@ export default {
           dispatch({
             type: 'getGoodsList',
             payload: {
-              page: 0,
-              limit: 10,
-              sort: ["-createdAt"]
+              query: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"]
+              }
             }
           })
         }
