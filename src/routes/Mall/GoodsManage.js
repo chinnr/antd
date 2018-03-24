@@ -26,9 +26,11 @@ class GoodsManage extends PureComponent {
     dispatch({
       type: 'mall/getGoodsList',
       payload: {
-        page: n.current - 1,
-        limit: 10,
-        sort: ['-createdAt']
+        query: {
+          page: n.current - 1,
+          limit: 10,
+          sort: ['-createdAt']
+        }
       }
     });
   };
