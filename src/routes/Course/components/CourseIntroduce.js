@@ -4,7 +4,6 @@ import {rootUrl} from '../../../utils/constant';
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor';
 import 'braft-editor/dist/braft.css';
-
 export default class CourseIntroduce extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +11,7 @@ export default class CourseIntroduce extends Component {
       initialContent: ``,
       htmlContent: ''
     };
+    this.count = 0;
   }
 
   /**
@@ -75,7 +75,17 @@ export default class CourseIntroduce extends Component {
     // console.log("html==>", html);
   };
 
+  componentWillReceiveProps = (nextProps) => {
+    // const {description} = this.props;
+    if(nextProps.description && this.count < 2){
+      console.log("富文本编辑器: ", this.count, nextProps);
+      this.editorInstance.setContent(nextProps.description, 'html');
+    }
+    this.count ++ ;
+  };
+
   render() {
+    const {description} = this.props;
     return (
       <div style={{ paddingLeft: 50, paddingRight: 50 }}>
         <h3>课程详细信息: </h3>
@@ -88,7 +98,7 @@ export default class CourseIntroduce extends Component {
             contentFormat="html"
             tabIndents={2}
             pasteMode={'text'}
-            initialContent={this.state.initialContent}
+            initialContent={'课程内容......'}
             onChange={content => this.handleChange(content)}
             onHTMLChange={html => this.handleHTMLChange(html)}
             media={{

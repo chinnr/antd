@@ -18,7 +18,8 @@ import {
   handleLevel,
   handleSore,
   handleStage,
-  handleType
+  handleType,
+  successNotification
 } from "../../utils/utils";
 import styles from './CourseTemplateList.less';
 
@@ -65,8 +66,8 @@ export default class CourseTempalteList extends Component {
         key: "option",
         render: (text, record) => (
           <span>
-            <a onClick={() => this.goToPage(record)}>编辑</a>
-            <Divider type="vertical"/>
+            {/*<a onClick={() => this.goToPage(record)}>编辑</a>*/}
+            {/*<Divider type="vertical"/>*/}
             <Popconfirm
               title="确定删除?"
               onConfirm={() => this.confirmDelete(record)}
@@ -90,27 +91,29 @@ export default class CourseTempalteList extends Component {
 
   // 跳转到修改编辑页面
   goToPage = record => {
-    // this.props.dispatch(
-    //   routerRedux.push({
-    //     pathname: "/team/"+path,
-    //     query: {
-    //       record: record
-    //     }
-    //   })
-    // );
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: "/course/edit",
+        query: {
+          record: record
+        }
+      })
+    );
   };
 
   // 确认删除该模板
   confirmDelete = record => {
-    // this.props.dispatch({
-    //   type: "post/updatePost",
-    //   payload: {
-    //     argv: {
-    //       id: id,
-    //       isActive: false,
-    //     }
-    //   }
-    // }).catch(err => err)
+    const { courseTemplatePubListMeta } = this.props.course;
+    this.props.dispatch({
+      type: "course/deleteCourseTemplate",
+      payload: {
+        id: record.id,
+      }
+    }).then(()=>{
+      successNotification("删除成功", function () {
+        this.getTempList(courseTemplatePubListMeta.page);
+      })
+      }).catch(err => err)
   };
 
   // 取消删除

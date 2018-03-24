@@ -12,6 +12,28 @@ export function createCourseTemplate(argv) {
   return graphRequest(mutation, { argv }, 'course-admin');
 }
 
+// 编辑课程模板
+export function updateCourseTemplate(argv) {
+  const mutation = `mutation updateCourseTemplate($argv: UpdateCourseTemplateArgv!) {
+    me{
+      updateCourseTemplate(argv: $argv) {
+        title
+      }
+    }
+  }`;
+  return graphRequest(mutation, { argv }, 'course-admin');
+}
+
+// 删除课程模版
+export function deleteCourseTemplate(id) {
+  const deleteCourseTemplate = `mutation deleteCourseTemplate($id: String!) {
+    me {
+      deleteCourseTemplate(id: $id)
+    }
+  }`;
+  return graphRequest(deleteCourseTemplate, id, 'course-admin');
+}
+
 // 获取课程模板列表
 export function courseTemplatePubList(payload) {
   const courseTemplatePubList = `query courseTemplatePubList($tempQuery:FormQuery){
@@ -127,6 +149,7 @@ export function resolveCourse(argv) {
   }`;
   return graphRequest(mutation, argv, 'course-admin');
 }
+
 // 审核不通过
 export function rejectCourse(argv) {
   const mutation = `mutation rejectCourse($argv: AdminRejectCourseArgv!) {
