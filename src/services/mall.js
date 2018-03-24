@@ -165,6 +165,18 @@ export function goodsAdd(form) {
   return graphRequest(goodsAdd, {form}, 'mall-admin')
 }
 
+// 删除商品
+export function deleteGoods(gid) {
+  const deleteGoods = `mutation deleteGoods($t:String, $gid: String) {
+    me(token: $t) {
+      goods {
+        deleteGoods(gid: $gid)
+      }
+    }
+  }`;
+  return graphRequest(deleteGoods, gid, 'mall-admin')
+}
+
 // 订单列表管理
 export function orderList(payload) {
   const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder, $timeSpan:TimeSpan!) {

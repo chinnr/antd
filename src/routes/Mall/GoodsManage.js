@@ -3,34 +3,58 @@ import { connect } from 'dva';
 import { Card, Input, Button } from 'antd';
 import GoodsManageTable from './GoodsManageTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { successNotification } from '../../utils/utils';
 
 @connect(({ mall, loading }) => ({
   mall,
   loading: loading.models.mall
 }))
 class GoodsManage extends PureComponent {
-
   state = {
     selectedRows: []
   };
 
-  handleSelectRows = (rows) => {
+  handleSelectRows = rows => {
     this.setState({
       selectedRows: rows
     });
   };
 
-  handleTableChange = (n) => {
-    console.log('n is ', n)
+  handleTableChange = n => {
+    console.log('n is ', n);
     const { dispatch } = this.props;
     dispatch({
       type: 'mall/getGoodsList',
       payload: {
         page: n.current - 1,
         limit: 10,
-        sort:["-createdAt"]
+        sort: ['-createdAt']
+      }
+    });
+  };
+
+  deleteGoods = record => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/deleteGoods',
+      payload: {
+        gid: record.gid
       }
     })
+      .then(() => {
+        const { mall } = this.props;
+        successNotification('操作成功', function() {
+          dispatch({
+            type: 'mall/getGoodsList',
+            payload: {
+              page: mall.goodsListMeta.page,
+              limit: 10,
+              sort: ['-createdAt']
+            }
+          });
+        });
+      })
+      .catch(err => err);
   };
 
   render() {
@@ -42,10 +66,10 @@ class GoodsManage extends PureComponent {
       {
         title: '商品名称',
         // dataIndex: 'name',
-        render: (record) => (
+        render: record => (
           <div>
             <p>{record.name}</p>
-            <p>sku:  {record.sku}</p>
+            <p>sku: {record.sku}</p>
           </div>
         )
       },
@@ -66,9 +90,10 @@ class GoodsManage extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: record => (
           <Fragment>
-            <a href="">编辑</a>
+            {/*<a href="">编辑</a>*/}
+            <a onClick={() => this.deleteGoods(record)}>删除</a>
           </Fragment>
         )
       }
@@ -82,17 +107,17 @@ class GoodsManage extends PureComponent {
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
-            <GoodsManageTable
-              loading={loading}
-              selectedRows={selectedRows}
-              columns={columns}
-              data={data}
-              onSelectRow={this.handleSelectRows}
-              onChange={this.handleTableChange}
-            />
+          <GoodsManageTable
+            loading={loading}
+            selectedRows={selectedRows}
+            columns={columns}
+            data={data}
+            onSelectRow={this.handleSelectRows}
+            onChange={this.handleTableChange}
+          />
         </Card>
       </PageHeaderLayout>
-    )
+    );
   }
 }
 

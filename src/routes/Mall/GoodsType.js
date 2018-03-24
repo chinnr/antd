@@ -1,11 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message } from 'antd';
+import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message, Radio, notification } from 'antd';
 import { thumbnailPath, rootUrl } from "../../utils/constant";
 import GoodsTypeTable from './GoodsTypeTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+
 
 const CreateForm = Form.create()((props) => {
   const { visible, form, handleAdd, handleCancel } = props;
@@ -120,9 +122,20 @@ const CreateForm = Form.create()((props) => {
           label="排序"
         >
           {getFieldDecorator('priority', {
-            rules: [{ required: true, message: 'Please input name...' }],
+            rules: [{ required: true, message: '请输入排序' }],
           })(
             <Input type="number" min="0" placeholder="请输入排序" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="是否显示"
+        >
+          {getFieldDecorator('show')(
+            <RadioGroup>
+              <Radio value={true}>显示</Radio>
+              <Radio value={false}>不显示</Radio>
+            </RadioGroup>
           )}
         </FormItem>
       </Form>
@@ -175,7 +188,15 @@ class GoodsType extends PureComponent {
       payload: formData
     })
     .then(() => {
-      this.handleCancel();
+      this.setState({
+        visible: false
+      }, () => {
+        notification["success"]({
+          message: '操作成功',
+          duration: 2
+        });
+      })
+      // this.handleCancel();
     })
   };
 
@@ -227,7 +248,7 @@ class GoodsType extends PureComponent {
     };
     const data = { list, pagination };
     return (
-      <PageHeaderLayout title="商品类型列表">
+      <PageHeaderLayout>
         <Card bordered={false}>
           <div>
             <div style={{marginBottom: '10px'}}>
