@@ -88,3 +88,15 @@ export function updatePost(argv) {
   return graphRequest(updatePost, argv, 'post')
 }
 
+// 创建文章类型
+export function createClassses(argv) {
+  const createClasses = `mutation createClasses($argv: CreateClassesArgv!) {
+    me{
+      createClasses(argv:$argv){
+        name
+      }
+    }
+  }`;
+  return graphRequest(createClasses, argv, 'post')
+}
+
