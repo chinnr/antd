@@ -89,7 +89,7 @@ class GoodsAdd extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log('添加商品参数 -->: ', values);
+      console.log('添加商品参数 -->: ', values.address);
       if (!err) {
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
@@ -113,10 +113,18 @@ class GoodsAdd extends Component {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
         }
-        values.skuPrefix = "BLD-"+values.skuPrefix;
+        // values.skuPrefix = values.skuPrefix;
         values.skuPure = values.name;
-        values.province = values.address[0];
-        values.city = values.address[1];
+        if(values.address[0] === '全国'){
+          values.province = 'all';
+          values.city = 'all';
+        }else if(values.address[0] !== '全国' && values.address[1] === '市辖区'){
+          values.province = values.address[0];
+          values.city = 'all';
+        }else {
+          values.province = values.address[0];
+          values.city = values.address[1];
+        }
         delete values.color;
         delete values.size;
         delete values.address;
