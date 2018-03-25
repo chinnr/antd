@@ -66,8 +66,8 @@ export default class CourseTempalteList extends Component {
         key: "option",
         render: (text, record) => (
           <span>
-            {/*<a onClick={() => this.goToPage(record)}>编辑</a>*/}
-            {/*<Divider type="vertical"/>*/}
+            <a onClick={() => this.goToPage(record)}>编辑</a>
+            <Divider type="vertical"/>
             <Popconfirm
               title="确定删除?"
               onConfirm={() => this.confirmDelete(record)}
@@ -91,6 +91,7 @@ export default class CourseTempalteList extends Component {
 
   // 跳转到修改编辑页面
   goToPage = record => {
+    localStorage.setItem("courseId", record.id);
     this.props.dispatch(
       routerRedux.push({
         pathname: "/course/edit",
