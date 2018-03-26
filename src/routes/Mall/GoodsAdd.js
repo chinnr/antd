@@ -271,6 +271,41 @@ class GoodsAdd extends Component {
     this.goodsJson.push(goodsObj);
   };
 
+  /*
+  * 删除数组某一项
+  * */
+  handleDelete= (arr, item) => {
+    Array.prototype.indexOf = function(val) {
+      for (let i = 0; i < this.length; i++) {
+        if (this[i] === val) return i;
+      }
+      return -1;
+    };
+    Array.prototype.remove = function(val) {
+      const index = this.indexOf(val);
+      // console.log("remove index ", index);
+      // console.log("remove val ", val);
+      if (index > -1) {
+        this.splice(index, 1);
+      }
+    };
+    arr.remove(item);
+    return arr;
+  };
+  deleteGift = (item) => {
+    console.log("deleteGift goodsJson: ",  this.props.form.getFieldValue("goodsJson"));
+    console.log("deleteGift item : ",  item);
+    const goodsJson = this.props.form.getFieldValue("goodsJson");
+    const afterDelete = this.handleDelete(goodsJson,item);
+    console.log("afterDelete==>", afterDelete);
+    this.setState({
+      giftList: afterDelete
+    });
+    this.props.form.setFieldsValue({
+      goodsJson: afterDelete
+    })
+  };
+
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
@@ -573,8 +608,11 @@ class GoodsAdd extends Component {
                         <Col span={8}>
                           <span>数量: </span>
                         </Col>
-                        <Col span={16}>
+                        <Col span={14}>
                           <InputNumber min={0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
+                        </Col>
+                        <Col span={2}>
+                          <Button type="primary" icon="close-circle-o" size={10} onClick={() => this.deleteGift(item)}>删除</Button>
                         </Col>
                       </Row>
                     </Col>
