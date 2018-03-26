@@ -1,37 +1,147 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Table, Row, Col } from 'antd';
+import { Card, Table, Row, Col,Form, Radio, Select, Modal, Button, InputNumber } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {routerRedux} from "dva/router";
 import {successNotification} from "../../utils/utils";
+import {rootUrl, thumbnailPath} from "../../utils/constant";
+
+const FormItem = Form.Item;
+const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const CreateForm = Form.create()(props => {
+  const { visible, form, handleAdd, handleCancel, sourceData} = props;
+  const { getFieldDecorator, validateFields } = form;
+  const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 }
+  };
+
+  let cardNum = 0; // 卡券数量
+
+  const handleNumChange = (v) => {
+    console.log("handleNumChange==>", v);
+    cardNum = v;
+  };
+
+  const handleOk = () => {
+    validateFields((err, values) => {
+      if (!err) {
+        const params = {
+          gid: values.goods.split('|')[0],
+          num: cardNum
+        };
+        handleAdd(params);
+      }
+    });
+  };
+
+  return (
+    <Modal title="编辑广告位" maskClosable={true} visible={visible} onOk={handleOk} onCancel={() => handleCancel()}>
+      <Form>
+        <FormItem>
+          {getFieldDecorator('goods')(
+            <RadioGroup>
+              {sourceData.map((item, i) => {
+                return (
+                  <Radio
+                    value={item.gid + '|' + item.imgs[0].url}
+                    key={i}
+                    style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee', marginBottom: 5 }}
+                  >
+                    <img
+                      style={{ width: 60, height: 60, display: 'inline-block' }}
+                      src={rootUrl + thumbnailPath + item.imgs[0].url}
+                    />
+                    <div
+                      style={{
+                        width: 200,
+                        backgroundColor: '#fff',
+                        display: 'inline-block',
+                        position: 'relative',
+                        height: 40,
+                        marginLeft: 20
+                      }}
+                    >
+                      <p style={{ margin: 0, position: 'absolute', top: 20 }}>{item.name}</p>
+                      <p style={{ margin: 0, position: 'absolute', top: 40 }}>{item.sku}</p>
+                    </div>
+                    <span>数量: </span>
+                    <InputNumber min={0} max={100000} onChange={(v) => handleNumChange(v)}/>
+                  </Radio>
+                );
+              })}
+            </RadioGroup>
+          )}
+        </FormItem>
+      </Form>
+      {/*<Pagination defaultCurrent={1} total={dataMeta.count} onChange={p => onPagination(p)} />*/}
+    </Modal>
+  );
+});
 
 @connect(({ student, mall, loading }) => ({
   studentDetail: student.studentDetail,
   loading: loading.models.student,
   mallLoading: loading.models.mall,
-  myVirtualGoods: mall.myVirtualGoods
+  myVirtualGoods: mall.myVirtualGoods,
+  goodsList: mall.goodsList
 }))
 class StudentDetail extends PureComponent {
+  state = {
+    visible: false,
+  };
+
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  handleCancel = e => {
+    this.setState({
+      visible: false
+    });
+  };
+
+  /**
+   * 获取所有商品
+   * @param p
+   */
+  getGoodsList = (p = 0) => {
+    this.props
+      .dispatch({
+        type: 'mall/getGoodsList',
+        payload: {
+          query: {
+            page: p,
+            limit: 10,
+            sort: ['-createdAt']
+          },
+          queryOption: {
+            type: 1
+          }
+        }
+      })
+      .catch(err => err);
+  };
+
    /**
    * 赠送卡券
    */
-  donateVirtualGoods = record => {
+  donateVirtualGoods = form => {
+    this.setState({
+      visible: false
+    });
     const hash = window.location.hash;
     console.log("reg: ", hash.split("/")[2]);
+    console.log("赠送卡券: ", form);
+    form["uid"] = hash.split("/")[2];
     this.props
       .dispatch({
         type: 'mall/donateVirtualGoods',
         payload: {
-          num: 1,
-          donate: {
-            uid: hash.split("/")[2], // 用户id
-            cardType: record.cardType, // 卡券类型，如果不是卡券则为空(课时券、体验券、优惠券)
-            cardBag: record.cardBag, // 卡包图片地址
-            status: record.status, // 商品状态 0:持有 1:已消耗 2:冻结中
-            value: record.value, // 商品价值，如充值卡面额
-            cardExpireTime: record.cardExpireTime, // 卡券过期时间
-            isDonate: true // 是否是赠送
-          }
+          form: form
         }
       })
       .then(() => {
@@ -42,21 +152,21 @@ class StudentDetail extends PureComponent {
       .catch(err => err);
   };
 
+  componentDidMount() {
+    this.getGoodsList();
+  }
+
   render() {
-    const { loading, mallLoading, studentDetail, myVirtualGoods } = this.props;
-    console.log('list ', studentDetail);
-    console.log('myVirtualGoods ', myVirtualGoods);
-    console.log('studentDetail  ', studentDetail);
+    const { visible } = this.state;
+    const { loading, goodsList,mallLoading, studentDetail, myVirtualGoods } = this.props;
+    console.log('goodsList==> ', goodsList);
+
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
     const levelObj = {
       level1: '海狸',
       level2: '小狼',
       level3: '探索',
       level4: '乐扶'
-    };
-    const gridStyle = {
-      width: '33%',
-      textAlign: 'left'
     };
     const columns = [
       {
@@ -68,16 +178,6 @@ class StudentDetail extends PureComponent {
         title: '余额',
         key: 'value',
         dataIndex: 'value'
-      },
-      {
-        title: '操作',
-        key: 'action',
-        render: record => (
-          <Fragment>
-            {/*<a>修改余额</a>*/}
-            <a onClick={() => this.donateVirtualGoods(record)}>赠送</a>
-          </Fragment>
-        )
       }
     ];
 
@@ -200,10 +300,18 @@ class StudentDetail extends PureComponent {
           bordered={false}
           loading={mallLoading}
         >
+          <Button type="primary" onClick={() => this.showModal()}>赠送卡券</Button>
           <Table
             columns={columns}
             dataSource={myVirtualGoods}
             rowKey={record => record.createdAt}
+          />
+          <CreateForm
+            visible={visible}
+            sourceData={goodsList}
+            handleCancel={this.handleCancel}
+            handleAdd={this.donateVirtualGoods}
+            onPagination={this.onPagination}
           />
         </Card>
       </PageHeaderLayout>

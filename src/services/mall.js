@@ -224,7 +224,7 @@ export function donateVirtualGoods(form) {
       }
     }
   }`;
-  return graphRequest(donate, {form}, 'mall-admin')
+  return graphRequest(donate, form, 'mall-admin')
 }
 
 // 获取广告位列表
