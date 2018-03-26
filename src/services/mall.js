@@ -229,17 +229,29 @@ export function donateVirtualGoods(form) {
 
 // 获取广告位列表
 export function getAdvertiseList() {
-  const getAdvertiseList = `query getAdvertiseList {
-    me {
-      goods {
-        getDiscovery {
+  const getAdvertiseList = `query advertisementConfig{
+    pub {
+      advertisementConfig {
+        getDiscovery{
           gid
           img
         }
       }
     }
   }`;
-  return graphRequest(getAdvertiseList, {}, 'mall-admin')
+  return graphRequest(getAdvertiseList, {}, 'mall')
+}
+
+// 修改广告位
+export function updateAdvertiseList(form) {
+  const update = `mutation updateDiscovery($form: [DiscoveryConfig]) {
+    me{
+      goods {
+        updateDiscovery(form: $form)
+      }
+    }
+  }`
+  return graphRequest(update, form, 'mall-admin')
 }
 
 // 获取支付记录

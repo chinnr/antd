@@ -1,133 +1,65 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message } from 'antd';
-import { thumbnailPath, rootUrl } from "../../utils/constant";
+import { Card, Modal, Form, Radio, Select, Table, Pagination } from 'antd';
+import { rootUrl, thumbnailPath } from "../../utils/constant";
+import { successNotification } from "../../utils/utils";
 import AdvertisingForm from './AdvertisingForm';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
 const Option = Select.Option;
-
+const RadioGroup = Radio.Group;
 const CreateForm = Form.create()((props) => {
-  const { visible, form, handleAdd, handleCancel } = props;
+  const { visible, form, handleAdd, handleCancel, sourceData, onPagination,dataMeta } = props;
   const { getFieldDecorator, validateFields } = form;
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 }
   };
-  const propsObj = {
-    name: 'file',
-    action: rootUrl+'/api/young/post/upload/image',
-    onChange(info) {
-      if(info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if(info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-  };
+
   const handleOk = () => {
     validateFields((err, values) => {
       if(!err) {
         console.log('form 111 ', values);
-        const typeImg = `${rootUrl}${thumbnailPath}${values.typeImg.file.response.filename}`;
-        const formData = {
-          ...values,
-          type: +values.type,
-          skuPrefix: 'BLD-'+values.skuPrefix,
-          priority: +values.priority,
-          expireTime: values['expireTime'].format('YYYY-MM-DD'),
-          level: 1,
-          typeImg
-        };
-
-        console.log('formData ', formData)
-        handleAdd(formData);
+        console.log('form 111 ', values.goods.split('|'));
+        const params = {
+          gid: values.goods.split('|')[0],
+          img: values.goods.split('|')[1]
+        }
+        handleAdd(params);
       }
     });
   };
 
   return (
     <Modal
-      title="添加商品类型"
+      title="编辑广告位"
       maskClosable={true}
       visible={visible}
       onOk={handleOk}
       onCancel={() => handleCancel()}>
       <Form>
-        <FormItem
-          {...formItemLayout}
-          label="类型名称"
-        >
-          {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入类型名称' }],
-          })(
-            <Input placeholder="请输入类型名称" />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="类型标记前缀"
-        >
-          {getFieldDecorator('skuPrefix', {
-            rules: [{ required: true, message: '类型标记标记前缀' }],
-          })(
-            <Input placeholder="请输入类型标记前缀" />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="商品类型选择"
-          hasFeedback
-        >
-          {getFieldDecorator('type', {
-            rules: [
-              { required: true, message: '请选择商品类型' }
-            ]
-          })(
-            <Select>
-              <Option value="0">普通商品</Option>
-              <Option value="1">虚拟商品</Option>
-            </Select>
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="类型图片"
-        >
-          {getFieldDecorator('typeImg', {
-            rules: [{ required: true }]
-          })(
-            <Upload {...propsObj}>
-              <Button>
-                <Icon type="upload" /> 点击上传图片
-              </Button>
-            </Upload>
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="过期时间"
-        >
-          {getFieldDecorator('expireTime', {
-            rules: [{ required: true, message: '请选择时间' }]
-          })(
-            <DatePicker/>
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="排序"
-        >
-          {getFieldDecorator('priority', {
-            rules: [{ required: true, message: 'Please input name...' }],
-          })(
-            <Input type="number" min="0" placeholder="请输入排序" />
+        <FormItem>
+          {getFieldDecorator('goods')(
+            <RadioGroup>
+              {sourceData.map((item, i) => {
+                return (
+                  <Radio value={item.gid+"|"+item.imgs[0].url} key={i} style={{width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee',marginBottom: 5}}>
+                    <img style={{ width: 60, height: 60, display:'inline-block'}} src={rootUrl + thumbnailPath + item.imgs[0].url} />
+                    <div style={{ width: 200, backgroundColor: '#fff', display:'inline-block', position: 'relative',height: 40, marginLeft: 20}}>
+                      <p style={{margin: 0, position: 'absolute', top:20}}>{item.name}</p>
+                      <p style={{margin: 0, position: 'absolute', top: 40}}>{item.sku}</p>
+                    </div>
+                  </Radio>
+                )
+              })}
+            </RadioGroup>
           )}
         </FormItem>
       </Form>
+      <Pagination defaultCurrent={1} total={dataMeta.count} onChange={(p) => onPagination(p)}/>
     </Modal>
   );
-})
+});
 
 @connect(({ mall, loading }) => ({
   mall,
@@ -136,6 +68,26 @@ const CreateForm = Form.create()((props) => {
 @Form.create()
 class MallAdvertising extends PureComponent {
 
+  columns = [
+    {
+      title: '商品id',
+      dataIndex: 'gid'
+    },
+    {
+      title: '类型图片',
+      render: (record) => (
+        <span><img style={{ width: 100, height: 100 }} src={record.img} /></span>
+      )
+    },
+    {
+      title: '操作',
+      render: () => (
+        <Fragment>
+          <a onClick={()=>this.showModal()}>编辑</a>
+        </Fragment>
+      )
+    }
+  ];
   state = {
     selectedRows: [],
     visible: false
@@ -166,84 +118,76 @@ class MallAdvertising extends PureComponent {
     })
   };
 
-  /* 添加类型 */
-  handleAdd = (formData) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'mall/addGoodsType',
-      payload: formData
-    })
-      .then(() => {
-        this.handleCancel();
+  /**
+   * 修改广告位
+   * @returns {*}
+   */
+  updateAdvertiseList = (form) => {
+    console.log("修改广告位: ", form);
+    this.setState({
+      visible: false
+    });
+    this.props.dispatch({
+      type: 'mall/updateAdvertiseList',
+      payload: {
+        form: [form]
+      }
+    }).then(() => {
+      successNotification('修改成功', function () {
+        console.log("修改成功")
       })
+    }).catch(err => err)
   };
 
-  handleTableChange = (n) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'mall/getGoodsType',
+  getGoodsList = (p=0) => {
+    this.props.dispatch({
+      type: 'mall/getGoodsList',
       payload: {
-        page: n.current - 1,
-        limit: 10,
-        sort:["-createdAt"]
+        query: {
+          page: p,
+          limit: 10,
+          sort:["-createdAt"]
+        },
+        queryOption: {
+          type: 0
+        }
       }
-    })
+    }).catch(err => err)
   };
+
+  onPagination = (p) => {
+    this.getGoodsList(p-1);
+  };
+
+  componentDidMount() {
+    this.getGoodsList()
+  }
 
   render() {
     const { mall, loading } = this.props;
     const { selectedRows, visible } = this.state;
-    console.log('advertiseList ', mall.advertiseList);
-    const columns = [
-      {
-        title: '商品id',
-        dataIndex: 'gid'
-      },
-      {
-        title: '类型图片',
-        render: (record) => (
-          <span><img style={{ width: 100, height: 100 }} src={record.img} /></span>
-        )
-      },
-      {
-        title: '操作',
-        render: () => (
-          <Fragment>
-            <a href="">编辑</a>
-          </Fragment>
-        )
-      }
-    ];
+    // console.log('advertiseList ', mall.advertiseList);
+    // console.log('goodsList ', mall.goodsList);
     const list = mall.advertiseList;
-    const pagination = {};
-    const data = { list, pagination };
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <div style={{marginBottom: '10px'}}>
-              <Button icon="plus" type="primary" onClick={this.showModal}>添加广告位</Button>
-              {
-                selectedRows.length > 0 && (
-                  <span style={{marginLeft: '10px'}}>
-                    <Button>删除</Button>
-                  </span>
-                )
-              }
-            </div>
-            <AdvertisingForm
+            <Table
               loading={loading}
-              selectedRows={selectedRows}
-              onSelectRow={this.handleSelectRows}
-              columns={columns}
-              data={data}
-              onChange={this.handleTableChange}
+              rowKey={record => Math.random(1, 100)+record.gid}
+              dataSource={list}
+              columns={this.columns}
+              pagination={false}
             />
           </div>
           <CreateForm
             visible={visible}
+            sourceData={mall.goodsList}
+            dataMeta={mall.goodsListMeta}
             handleCancel={this.handleCancel}
-            handleAdd = {this.handleAdd}
+            handleAdd = {this.updateAdvertiseList}
+            onPagination = {this.onPagination}
           />
         </Card>
       </PageHeaderLayout>

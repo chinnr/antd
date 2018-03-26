@@ -1,5 +1,4 @@
 import * as mallService from '../services/mall';
-import * as badgeService from "../services/badge";
 
 export default {
   namespace: 'mall',
@@ -145,13 +144,22 @@ export default {
       if(errors) {
         throw new Error(errors[0].message);
       }
-      if(data.me) {
+      if(data.pub) {
         yield put({
           type: 'updateState',
           payload: {
-            advertiseList: data.me.goods.getDiscovery,
+            advertiseList: data.pub.advertisementConfig.getDiscovery,
           }
         })
+      }
+    },
+
+    *updateAdvertiseList({ payload }, { call, put }) {
+      const {data, errors} = yield call(mallService.updateAdvertiseList, payload);
+      if (errors) {
+        throw new Error(errors[0].message);
+      }else {
+        return data;
       }
     },
 
