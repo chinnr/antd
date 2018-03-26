@@ -96,6 +96,7 @@ class GoodsAdd extends Component {
           images.push(item.name)
         });
         values.imgs = images;
+        values.show = true;
         values.sizeImg = '';
         values.listImg = images[0];
         values.goodsJson = this.goodsJson;
@@ -612,7 +613,7 @@ class GoodsAdd extends Component {
                           <InputNumber min={0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
                         </Col>
                         <Col span={2}>
-                          <Button type="primary" icon="close-circle-o" size={10} onClick={() => this.deleteGift(item)}>删除</Button>
+                          <Button type="primary" icon="close-circle-o" onClick={() => this.deleteGift(item)}>删除</Button>
                         </Col>
                       </Row>
                     </Col>

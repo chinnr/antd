@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { Card, Modal, Form, Radio, Select, Table, Pagination } from 'antd';
 import { rootUrl, thumbnailPath } from '../../utils/constant';
 import { successNotification } from '../../utils/utils';
-import AdvertisingForm from './AdvertisingForm';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -21,7 +20,7 @@ const CreateForm = Form.create()(props => {
       if (!err) {
         const params = {
           gid: values.goods.split('|')[0],
-          img: values.goods.split('|')[1]
+          img: rootUrl + thumbnailPath + values.goods.split('|')[1]
         };
         handleAdd(params);
       }
@@ -91,19 +90,21 @@ class MallAdvertising extends PureComponent {
     },
     {
       title: '操作',
-      render: () => (
+      render: (record) => (
         <Fragment>
-          <a onClick={() => this.showModal()}>编辑</a>
+          <a onClick={() => this.showModal(record)}>编辑</a>
         </Fragment>
       )
     }
   ];
+  record = {};
   state = {
     selectedRows: [],
     visible: false
   };
 
-  showModal = () => {
+  showModal = (record) => {
+    this.record = record;
     this.setState({
       visible: true
     });
@@ -120,7 +121,12 @@ class MallAdvertising extends PureComponent {
    * @returns {*}
    */
   updateAdvertiseList = form => {
-    console.log('修改广告位: ', form);
+    const _this = this;
+    const { mall:{advertiseList} } = this.props;
+    const i = advertiseList.indexOf(this.record);
+    advertiseList.splice(i, 1, form);
+    console.log('修改广告位 form: ', form);
+    console.log('修改广告位 advertiseList: ', advertiseList);
     this.setState({
       visible: false
     });
@@ -128,12 +134,12 @@ class MallAdvertising extends PureComponent {
       .dispatch({
         type: 'mall/updateAdvertiseList',
         payload: {
-          form: [form]
+          form: advertiseList
         }
       })
       .then(() => {
         successNotification('修改成功', function() {
-          this.getAdvertiseList();
+          _this.getAdvertiseList();
         });
       })
       .catch(err => err);
@@ -182,7 +188,7 @@ class MallAdvertising extends PureComponent {
     const { mall, loading } = this.props;
     const { visible } = this.state;
     // console.log('advertiseList ', mall.advertiseList);
-    // console.log('goodsList ', mall.goodsList);
+    // console.log('mall.advertiseList  ', mall.advertiseList);
     const list = mall.advertiseList;
     return (
       <PageHeaderLayout>
