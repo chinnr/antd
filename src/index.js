@@ -25,6 +25,7 @@ const app = dva({
       e.message.toLocaleLowerCase() === 'token is expired' ||
       e.message.toLocaleLowerCase() === 'token expired' ||
       e.message === 'TokenExpiredError: jwt expired' ||
+      e.message === 'crypto/rsa: verification error' ||
       e.message === 'JsonWebTokenError: invalid signature'
     ) {
       notification['error']({
