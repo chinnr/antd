@@ -54,8 +54,8 @@ export default class CourseForm extends PureComponent {
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        console.log("gallery is array ? ",_this.isArray(values.gallery));
-        console.log("cover is string ? ",typeof values.cover);
+        // console.log("gallery is array ? ",_this.isArray(values.gallery));
+
 
         if(!_this.isArray(values.gallery)) {
           console.log("gallery is not array!");
@@ -65,10 +65,14 @@ export default class CourseForm extends PureComponent {
           });
           values.gallery = _gallery;
         }
+        if(!typeof values.cover === 'string') {
+          values.cover = values.cover.file.response.filename;
+        }else {
+          console.log("cover is string ? ",typeof values.cover);
+        }
 
 
-        /*
-        values.cover = values.cover.file.response.filename;
+        values.id = localStorage.getItem("courseId");
         this.props.dispatch({
           type: "course/updateCourseTemplate",
           payload: values
@@ -81,12 +85,15 @@ export default class CourseForm extends PureComponent {
             // }
           });
           form.resetFields();
-        }).catch( err => err )*/
+        }).catch( err => err )
       }
     });
   };
 
   onSelect(v, type) {
+    this.props.form.setFieldsValue({
+      badge:[]
+    });
     console.log("onSelect: ", v, type);
     let _this = this;
     this.setState({
@@ -154,7 +161,7 @@ export default class CourseForm extends PureComponent {
 
   // 获取要修改的团信息字段
   getCourseParams = () => {
-    console.log("获取要修改的团信息字段 ==>", this.props.location);
+    // console.log("获取要修改的团信息字段 ==>", this.props.location);
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
@@ -351,7 +358,7 @@ export default class CourseForm extends PureComponent {
         </FormItem>
         <FormItem {...formItemLayout} label="课程证章">
           {getFieldDecorator("badge", {
-            initialValue: ["414146e6-a0ed-4a7c-9432-95fbc5bd668f"],
+            initialValue: [],
             rules: [{ required: true, message: "请选择课程对应的证章!" }]
           })(
             <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
@@ -424,7 +431,7 @@ export default class CourseForm extends PureComponent {
           <Button
             type="primary"
             htmlType="submit"
-            disabled={this.hasErrors(getFieldsError())}
+            // disabled={this.hasErrors(getFieldsError())}
           >
             提交
           </Button>
