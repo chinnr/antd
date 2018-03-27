@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import React, { PureComponent } from "react";
+import { connect } from "dva";
 import {
   Form,
   Input,
@@ -12,15 +12,15 @@ import {
   Cascader,
   Upload,
   Icon
-} from 'antd';
-import moment from 'moment';
-import { Map, Marker } from 'react-amap';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from './team.less';
-import options from '../../utils/cascader-address-options';
-import { routerRedux } from 'dva/router';
-import { successNotification } from '../../utils/utils';
-import {rootUrl, thumbnailPath} from "../../utils/constant";
+} from "antd";
+import moment from "moment";
+import { Map, Marker } from "react-amap";
+import PageHeaderLayout from "../../layouts/PageHeaderLayout";
+import styles from "./team.less";
+import options from "../../utils/cascader-address-options";
+import { routerRedux } from "dva/router";
+import { successNotification } from "../../utils/utils";
+import { rootUrl, thumbnailPath } from "../../utils/constant";
 
 const pluginProps = {
   enableHighAccuracy: true,
@@ -45,15 +45,15 @@ export default class UpdateTeamInfo extends PureComponent {
       position: { longitude: 108.291275, latitude: 22.869617 },
       clickable: true,
       draggable: true,
-      addr: '',
+      addr: "",
       clickMap: false,
-      gid: '',
+      gid: "",
       fileList: [],
-      teamIcon: '',
+      teamIcon: "",
       previewVisible: false,
-      previewImage: '',
+      previewImage: ""
     };
-    this.mapPlugins = ['ToolBar'];
+    this.mapPlugins = ["ToolBar"];
     this.isDragMap = false;
     this.dragLocationInfo = {};
   }
@@ -61,20 +61,20 @@ export default class UpdateTeamInfo extends PureComponent {
   // 地图事件监听
   markerEvents = {
     click: () => {
-      console.log('marker clicked!');
+      console.log("marker clicked!");
     },
     dragend: map => {
       // console.log("dragend.....", map);
       this.props
         .dispatch({
-          type: 'team/locationInfo',
+          type: "team/locationInfo",
           payload: {
             longitude: map.lnglat.lng,
             latitude: map.lnglat.lat
           }
         })
         .then(res => {
-          console.log('res locationInfo: ', res);
+          console.log("res locationInfo: ", res);
           // 重新设置输入框地址
           this.props.form.setFieldsValue({ address: res.locationInfo.format });
           this.isDragMap = true;
@@ -86,17 +86,18 @@ export default class UpdateTeamInfo extends PureComponent {
 
   // 点击弹出地图
   showModal = () => {
+    const inputText = this.props.form.getFieldValue("address");
     this.props
       .dispatch({
-        type: 'team/addrInfo',
-        payload: { input: this.state.addr }
+        type: "team/addrInfo",
+        payload: { input: inputText }
       })
       .then(res => {
-        console.log('view res: ', res);
+        console.log("view res: ", res);
         const { addressInfo } = res;
         const _position = {
           longitude: addressInfo.longitude,
-          latitude: addressInfo.latitude,
+          latitude: addressInfo.latitude
         };
         this.setState(
           {
@@ -139,20 +140,19 @@ export default class UpdateTeamInfo extends PureComponent {
     });
   };
 
-  // 提交新建团信息
+  // 提交团信息
   handleSubmit = e => {
     e.preventDefault();
-    const {form} = this.props;
-    const {props} = this;
+    const { form } = this.props;
+    const { props } = this;
     const _this = this;
     if (this.isDragMap === true) {
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          console.log('你拖动了标记, 将采用新标记', this.dragLocationInfo);
-          console.log('表单 values ', values);
+          console.log("表单 values ", values);
           let _mien = [];
           values.mien.fileList.map(item => {
-            _mien.push(item.response.filename)
+            _mien.push(item.response.filename);
           });
           const _description = {
             icon: values.icon.file.response.filename,
@@ -160,7 +160,7 @@ export default class UpdateTeamInfo extends PureComponent {
           };
           this.props
             .dispatch({
-              type: 'team/updateTeam',
+              type: "team/updateTeam",
               payload: {
                 gid: this.state.gid,
                 form: {
@@ -176,36 +176,58 @@ export default class UpdateTeamInfo extends PureComponent {
               }
             })
             .then(() => {
-              localStorage.removeItem('teamInfo');
-              successNotification('修改团信息成功!', function() {
-                props.dispatch(routerRedux.push('/team/list'));
+              localStorage.removeItem("teamInfo");
+              successNotification("修改团信息成功!", function() {
+                props.dispatch(routerRedux.push("/team/list"));
               });
             })
             .catch(err => err);
         }
       });
     } else {
-      console.log('你没有拖动标记, 将采用原来的标记');
+      console.log("你没有拖动标记, 将采用原来的标记");
       this.props
         .dispatch({
-          type: 'team/addrInfo',
-          payload: { input: this.props.form.getFieldValue('address') }
+          type: "team/addrInfo",
+          payload: { input: this.props.form.getFieldValue("address") }
         })
         .then(res => {
           const { addressInfo } = res;
-          successNotification('地址转换成功!', function() {
-            console.log('addressInfo==>', addressInfo);
+          successNotification("地址转换成功!", function() {
+            console.log("addressInfo==>", addressInfo);
+
             form.validateFieldsAndScroll((err, values) => {
               if (!err) {
-                console.log('values: ', values);
-                let _mien = [];
-                values.mien.fileList.map(item => {
-                  _mien.push(item.response.filename)
-                });
+                // console.log("values: ", values);
+                let _mien = [],
+                  _icon = [];
+                const valueMien = values.mien,
+                  valueIcon = values.icon;
+                valueMien.fileList
+                  ? valueMien.fileList.map(item => {
+                      _mien.push(
+                        item.response ? item.response.filename : item.name
+                      );
+                    })
+                  : valueMien.map(item => {
+                      _mien.push(
+                        item.name ? item.name : item.response.filename
+                      );
+                    });
+
+                valueIcon.fileList
+                  ? valueIcon.fileList.map(item => {
+                      _icon = item.response ? item.response.filename : item.name;
+                    })
+                  : valueIcon.map(item => {
+                      _icon = item.name
+                    });
+
                 const _description = {
-                  icon: values.icon.file.response.filename,
+                  icon: _icon,
                   mien: _mien
                 };
+                console.log("description",_description);
                 props
                   .dispatch({
                     type: 'team/updateTeam',
@@ -248,29 +270,60 @@ export default class UpdateTeamInfo extends PureComponent {
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem('teamInfo')).record;
+      values = JSON.parse(localStorage.getItem("teamInfo")).record;
+      console.log("record===============>", values);
     } else {
       // 有 query
       localStorage.setItem(
-        'teamInfo',
+        "teamInfo",
         JSON.stringify(this.props.location.query)
       );
       values = this.props.location.query.record;
     }
+    this.setState({
+      teamIcon: [
+        {
+          uid: Math.random(-100,0),
+          name: "xxx",
+          url: rootUrl + thumbnailPath + values.description.icon,
+          status: "done"
+        }
+      ]
+    });
+    let fileList = values.description.mien.map(item => ({
+      uid: Math.random(-100,0),
+      name: item,
+      status: "done",
+      url: rootUrl + thumbnailPath + item
+    }));
+    this.setState({
+      fileList: fileList
+    });
+
     let keys = Object.keys(values);
     // console.log("values --> ", moment(new Date(values.createdTime), 'YYYY-MM-DD'))
     // console.log("keys --> ", keys)
     this.setState({
       gid: values.gid
     });
+    console.log("state=================>", this.state);
     this.props.form.setFieldsValue({
       name: values.name,
       groupLevel: values.groupLevel,
       address: values.address,
       company: values.description.company,
       brief: values.description.brief,
-      type: values.type === "" ? "main":"temp",
-      createdTime: moment(new Date(values.createdTime), 'YYYY-MM-DD')
+      type: values.type === "" ? "main" : "temp",
+      createdTime: moment(new Date(values.createdTime), "YYYY-MM-DD"),
+      icon: [
+        {
+          uid: Math.random(-100,0),
+          name: values.description.icon,
+          url: rootUrl + thumbnailPath + values.description.icon,
+          status: "done"
+        }
+      ],
+      mien: fileList
     });
     /*keys.map(item => {
       this.props.form.setFieldsValue({
@@ -294,7 +347,7 @@ export default class UpdateTeamInfo extends PureComponent {
       }
       return file;
     });
-    console.log("图片上传: ",fileList);
+    console.log("图片上传: ", fileList);
     this.setState({ fileList });
   };
 
@@ -313,7 +366,7 @@ export default class UpdateTeamInfo extends PureComponent {
       }
       return file;
     });
-    console.log("图片上传: ",teamIcon);
+    console.log("图片上传: ", teamIcon);
     this.setState({ teamIcon });
   };
 
@@ -322,8 +375,9 @@ export default class UpdateTeamInfo extends PureComponent {
    * @param file
    */
   handlePreview = file => {
+    console.log(file.url);
     this.setState({
-      previewImage: rootUrl + thumbnailPath + file.response.filename,
+      previewImage: file.url,
       previewVisible: true
     });
   };
@@ -342,19 +396,25 @@ export default class UpdateTeamInfo extends PureComponent {
   render() {
     const breadcrumbList = [
       {
-        title: '首页',
-        href: '/'
+        title: "首页",
+        href: "/"
       },
       {
-        title: '团队列表',
-        href: '/team/list'
+        title: "团队列表",
+        href: "/team/list"
       },
       {
-        title: '团信息修改',
-        href: '/team/edit-info'
+        title: "团信息修改",
+        href: "/team/edit-info"
       }
     ];
-    const { clickMap, fileList, teamIcon, previewVisible, previewImage } = this.state;
+    const {
+      clickMap,
+      fileList,
+      teamIcon,
+      previewVisible,
+      previewImage
+    } = this.state;
     const { submitting } = this.props;
     const {
       getFieldDecorator,
@@ -363,22 +423,22 @@ export default class UpdateTeamInfo extends PureComponent {
       isFieldTouched
     } = this.props.form;
     // Only show error after a field is touched.
-    const teamNameError = isFieldTouched('name') && getFieldError('name');
+    const teamNameError = isFieldTouched("name") && getFieldError("name");
     const groupLevelError =
-      isFieldTouched('groupLevel') && getFieldError('groupLevel');
+      isFieldTouched("groupLevel") && getFieldError("groupLevel");
     const createTimeError =
-      isFieldTouched('createTime') && getFieldError('createTime');
-    const addressError = isFieldTouched('address') && getFieldError('address');
+      isFieldTouched("createTime") && getFieldError("createTime");
+    const addressError = isFieldTouched("address") && getFieldError("address");
 
     const propsObj = {
-      name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      name: "file",
+      action: rootUrl + "/api/young/post/upload/image",
       onChange: this.handleChange,
       multiple: true
     };
     const propsObjIcon = {
-      name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      name: "file",
+      action: rootUrl + "/api/young/post/upload/image",
       onChange: this.handleUploadIcon,
       multiple: false
     };
@@ -422,28 +482,28 @@ export default class UpdateTeamInfo extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              validateStatus={teamNameError ? 'error' : ''}
-              help={teamNameError || ''}
+              validateStatus={teamNameError ? "error" : ""}
+              help={teamNameError || ""}
               label="团名称"
             >
-              {getFieldDecorator('name', {
-                initialValue: '',
+              {getFieldDecorator("name", {
+                initialValue: "",
                 rules: [
                   {
                     required: true,
-                    message: '请输入团名称'
+                    message: "请输入团名称"
                   }
                 ]
               })(<Input placeholder="团名称" disabled={true} />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={groupLevelError ? 'error' : ''}
-              help={groupLevelError || ''}
+              validateStatus={groupLevelError ? "error" : ""}
+              help={groupLevelError || ""}
               label="团部级别"
             >
-              {getFieldDecorator('groupLevel', {
-                initialValue: ''
+              {getFieldDecorator("groupLevel", {
+                initialValue: ""
               })(
                 <Select placeholder="请选择团部级别" disabled={true}>
                   <Option value="level1">海狸</Option>
@@ -455,37 +515,34 @@ export default class UpdateTeamInfo extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
+              validateStatus={createTimeError ? "error" : ""}
+              help={createTimeError || ""}
               label="成立时间"
             >
-              {getFieldDecorator('createdTime', {
+              {getFieldDecorator("createdTime", {
                 rules: [
                   {
                     required: true,
-                    message: '请选择起止日期'
+                    message: "请选择起止日期"
                   }
                 ],
-                initialValue: moment(new Date(), 'YYYY-MM-DD')
+                initialValue: moment(new Date(), "YYYY-MM-DD")
               })(
                 <DatePicker
-                  style={{ width: '100%' }}
-                  placeholder={'成立时间'}
+                  style={{ width: "100%" }}
+                  placeholder={"成立时间"}
                 />
               )}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="团类型"
-            >
-              {getFieldDecorator('type', {
+            <FormItem {...formItemLayout} label="团类型">
+              {getFieldDecorator("type", {
                 rules: [
                   {
                     required: true,
-                    message: '请选择团类型'
+                    message: "请选择团类型"
                   }
                 ],
-                initialValue: 'main'
+                initialValue: "main"
               })(
                 <RadioGroup>
                   <Radio value="main" disabled={true}>
@@ -499,18 +556,18 @@ export default class UpdateTeamInfo extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
+              validateStatus={createTimeError ? "error" : ""}
+              help={createTimeError || ""}
               label="地区"
             >
-              {getFieldDecorator('district', {
+              {getFieldDecorator("district", {
                 rules: [
                   {
                     required: true,
-                    message: '请选择团地区'
+                    message: "请选择团地区"
                   }
                 ],
-                initialValue: ['全国']
+                initialValue: ["全国"]
               })(
                 <Cascader
                   options={options}
@@ -521,15 +578,15 @@ export default class UpdateTeamInfo extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={addressError ? 'error' : ''}
-              help={addressError || ''}
+              validateStatus={addressError ? "error" : ""}
+              help={addressError || ""}
               label="选择地址"
             >
-              {getFieldDecorator('address', {
+              {getFieldDecorator("address", {
                 rules: [
                   {
                     required: true,
-                    message: '请输入地址'
+                    message: "请输入地址"
                   }
                 ]
               })(
@@ -538,50 +595,44 @@ export default class UpdateTeamInfo extends PureComponent {
                   onChange={e => this.handleAddrChange(e)}
                 />
               )}
-              <Button
-                disabled={!clickMap}
-                type="primary"
-                onClick={() => this.showModal()}
-              >
+              <Button type="primary" onClick={() => this.showModal()}>
                 查看地图上标记的位置
               </Button>
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="所属公司"
-            >
-              {getFieldDecorator('company', {
+            <FormItem {...formItemLayout} label="所属公司">
+              {getFieldDecorator("company", {
                 rules: [
                   {
-                    required: false,
+                    required: false
                   }
                 ]
-              })(
-                <Input
-                  placeholder="请输入所属公司"
-                />
-              )}
+              })(<Input placeholder="请输入所属公司" />)}
             </FormItem>
             <FormItem {...formItemLayout} label="团部头像">
-              {getFieldDecorator('icon')(
-                <Upload {...propsObjIcon} fileList={teamIcon} listType="picture-card" onPreview={this.handlePreview}>
+              {getFieldDecorator("icon")(
+                <Upload
+                  {...propsObjIcon}
+                  fileList={teamIcon}
+                  listType="picture-card"
+                  onPreview={this.handlePreview}
+                >
                   {teamIcon.length >= 1 ? null : uploadButton}
                 </Upload>
               )}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="团部简介"
-            >
-              {getFieldDecorator('brief')(
-                <Input.TextArea
-                  placeholder="请输入团部简介"
-                />
+            <FormItem {...formItemLayout} label="团部简介">
+              {getFieldDecorator("brief")(
+                <Input.TextArea placeholder="请输入团部简介" />
               )}
             </FormItem>
             <FormItem {...formItemLayout} label="团部风采">
-              {getFieldDecorator('mien')(
-                <Upload {...propsObj} fileList={fileList} listType="picture-card" onPreview={this.handlePreview}>
+              {getFieldDecorator("mien")(
+                <Upload
+                  {...propsObj}
+                  fileList={fileList}
+                  listType="picture-card"
+                  onPreview={this.handlePreview}
+                >
                   {fileList.length >= 3 ? null : uploadButton}
                 </Upload>
               )}
@@ -607,9 +658,9 @@ export default class UpdateTeamInfo extends PureComponent {
           onCancel={() => this.handleCancel()}
         >
           <div>
-            <div style={{ width: '100%', height: 360 }}>
+            <div style={{ width: "100%", height: 360 }}>
               <Map
-                amapkey={'a68fcf7d57d3cc225b948f23003b93f3'}
+                amapkey={"a68fcf7d57d3cc225b948f23003b93f3"}
                 plugins={this.mapPlugins}
                 center={this.state.position}
                 zoom={60}
@@ -626,8 +677,12 @@ export default class UpdateTeamInfo extends PureComponent {
           </div>
         </Modal>
 
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancelPreview}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <Modal
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.handleCancelPreview}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
         </Modal>
       </PageHeaderLayout>
     );
