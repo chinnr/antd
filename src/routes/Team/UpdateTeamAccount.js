@@ -18,11 +18,43 @@ export default class UpdateTeamAccount extends PureComponent {
       fileList:[],
       previewVisible:false,
       previewImage:'',
-      visible: true,
+      pswVisible:false,
+      userName:'',
       gid: ''
     };
   }
 
+  //修改密码弹出打开
+  pswCancel=()=>{
+    this.setState({pswVisible:false})
+  }
+
+  //修改密码弹出关闭
+  pswModal=()=>{
+    this.setState({pswVisible:true})
+  }
+
+  //修改密码提交
+  pswSubmit=()=>{
+    const form = this.props.form;
+    const { username } = this.state;
+    // console.log(form);
+    form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.props
+          .dispatch({
+            type: 'team/modifyTeamPsw',
+            payload: {
+              password: values.password,
+              username
+            }
+          })
+          .catch(err => {});
+      }
+      this.setState({ pswVisible: false });
+    });
+  }
 
   //关闭预览
   handleCancelPreview = ()=>{
@@ -102,7 +134,8 @@ export default class UpdateTeamAccount extends PureComponent {
           url: rootUrl + thumbnailPath + values.description.icon,
           status: "done"
         }
-      ]
+      ],
+      userName:values.username
     });
 
     let keys = Object.keys(values);
@@ -181,7 +214,7 @@ export default class UpdateTeamAccount extends PureComponent {
 
     const {
       fileList,
-      teamIcon,
+      pswVisible,
       previewVisible,
       previewImage
     } = this.state;
@@ -282,6 +315,7 @@ export default class UpdateTeamAccount extends PureComponent {
               </Button>
               <Button
                 style={{ marginLeft: 32 }}
+                onClick={this.pswModal}
               >
                 修改密码
               </Button>
@@ -294,6 +328,33 @@ export default class UpdateTeamAccount extends PureComponent {
           onCancel={this.handleCancelPreview}
         >
           <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
+        <Modal
+          visible={pswVisible}
+          footer={null}
+          onCancel={this.pswCancel}
+        >
+          <Form
+            onSubmit={this.pswSubmit}
+          >
+            <FormItem
+              {...formItemLayout}
+              validateStatus={usernameError ? 'error' : ''}
+              help={usernameError || ''}
+              label="新密码"
+            >
+              {getFieldDecorator('password')(<Input placeholder="新密码" />)}
+            </FormItem>
+            <FormItem {...submitFormLayout} style={{ marginTop: 32,textAlign:'center' }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitting}
+              >
+                提交
+              </Button>
+            </FormItem>
+          </Form>
         </Modal>
       </PageHeaderLayout>
     );
