@@ -52,7 +52,7 @@ class GoodsTypeTable extends PureComponent {
 
     return (
       <div className={styles.standardTable}>
-        <div className={styles.tableAlert}>
+        {/*<div className={styles.tableAlert}>
           <Alert
             message={(
               <div>
@@ -63,11 +63,10 @@ class GoodsTypeTable extends PureComponent {
             type="info"
             showIcon
           />
-        </div>
+        </div>*/}
         <Table
           loading={loading}
           rowKey={record => record.tid}
-          rowSelection={rowSelection}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}

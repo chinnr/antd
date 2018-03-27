@@ -102,17 +102,13 @@ class GoodsAdd extends Component {
         values.sizeImg = '';
         values.listImg = images[0];
         values.goodsJson = this.goodsJson;
-        // toISOString()  province  city imgs downTime  expireTime  upTime skuSize==>先是大小再到颜色
-        // goodsJson 格式 data:[{gid,count}]
-        // sku=skuPrefix+skuPure+skuSize
         values.expireTime  = values.downTime.toISOString();
         values.upTime = values.upTime.toISOString();
         values.downTime = values.downTime.toISOString();
-        // values.sku = 'BLD-'+values.sku;
-        // values.skuSize = doExchange(skuSize);
         if(values.type === 1) {
-          skuSizeList.push(values.virtualGoodsValue.toString());
+          skuSizeList.push(values.goodsValue.toString());
           values.skuSizeList = skuSizeList;
+          delete values.skuSizeList;
         }else {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
@@ -133,8 +129,6 @@ class GoodsAdd extends Component {
         delete values.size;
         delete values.address;
         delete values.goodsType;
-        delete values.virtualGoodsValue;
-        // delete values.goodsJson;
         this.addGoods(values);
       }
     });
@@ -548,8 +542,8 @@ class GoodsAdd extends Component {
               )}
             {/*</FormItem>*/}
             {goodsType === 1 &&
-              <FormItem {...formItemLayout} label="价值">
-                {getFieldDecorator('virtualGoodsValue', {
+              <FormItem {...formItemLayout} label="虚拟商品价值">
+                {getFieldDecorator('goodsValue', {
                   rules: [
                     {
                       required: true,

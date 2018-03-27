@@ -13,7 +13,7 @@ class GoodsManage extends PureComponent {
   columns = [
     {
       title: '商品名称',
-      // dataIndex: 'name',
+      key: 'goodsName',
       render: record => (
         <div>
           <p>{record.name}</p>
@@ -34,7 +34,8 @@ class GoodsManage extends PureComponent {
       dataIndex: 'stock'
     },
     {
-      title: '销量'
+      title: '销量',
+      dataIndex: 'hasSold'
     },
     {
       title: '操作',
