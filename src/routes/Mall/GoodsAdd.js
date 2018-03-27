@@ -117,7 +117,7 @@ class GoodsAdd extends Component {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
         }
-        // values.skuPrefix = values.skuPrefix;
+        values.skuPrefix = values.skuPrefix.split("|")[0];
         values.skuPure = values.name;
         if(values.address[0] === '全国'){
           values.province = 'all';
@@ -231,7 +231,7 @@ class GoodsAdd extends Component {
       type: 'mall/getGoodsType',
       payload: {
         page:  p-1,
-        limit: 10,
+        limit: 12,
         sort:["-createdAt"]
       }
     }).catch(err => err)
@@ -297,7 +297,8 @@ class GoodsAdd extends Component {
    * @param v
    */
   selectSkuPrefix = (v) => {
-    // console.log("selectSkuPrefix==>", v.target.value);
+    console.log("selectSkuPrefix==>", v.target.value.split('|')[1]);
+    this.setState({skuPrefix: v.target.value.split('|')[1]});
     this.props.form.setFieldsValue({goodsType: v.target.value})
   };
 
@@ -359,14 +360,14 @@ class GoodsAdd extends Component {
    * 0:普通商品 1:虚拟商品
    * */
   onSelectType = (v) => {
-    console.log("选择商品分类==>", v);
+    // console.log("选择商品分类==>", v);
     this.setState({goodsType: v});
   };
 
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, goodsType, giftList } = this.state;
+    const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -438,13 +439,13 @@ class GoodsAdd extends Component {
                 <RadioGroup onChange={(v) => this.selectSkuPrefix(v)}>
                   {mall.goodsType.map((item, i) => {
                     return (
-                      <Col span={8} key={i}><Radio value={item.skuPrefix}>{item.name}</Radio></Col>
+                      <Col span={8} key={i}><Radio value={item.skuPrefix+"|"+item.name}>{item.name}</Radio></Col>
                     )
                   })}
                 </RadioGroup>
               )}
             </Row>
-            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.goodsTypeMeta.count} onChange={(p)=>this.onPagination(p)}/>
+            <Pagination style={{marginTop: 20}} defaultCurrent={1} total={mall.goodsTypeMeta.count-1} onChange={(p)=>this.onPagination(p)}/>
           </Modal>
 
           <Modal
@@ -504,6 +505,7 @@ class GoodsAdd extends Component {
             })(
                 <Button onClick={() => this.showModal("goodsTypesVisible")}>选择</Button>
             )}
+            <span>&nbsp;&nbsp;{skuPrefix}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}

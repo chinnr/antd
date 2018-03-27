@@ -240,7 +240,7 @@ export default {
             type: 'getGoodsType',
             payload: {
               page: 0,
-              limit: 10,
+              limit: 12,
               sort: ["-createdAt"]
             }
           });
