@@ -58,7 +58,8 @@ class GoodsAdd extends Component {
     goodsTypesVisible: false,
     goodsListVisible: false,
     giftList: [], // 赠品列表,
-    skuPrefix: ''
+    skuPrefix: '',
+    goodsType: 0,
   };
 
   goodsJson = [];
@@ -109,12 +110,13 @@ class GoodsAdd extends Component {
         values.downTime = values.downTime.toISOString();
         // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
-        // if(values.skuSizeList === false) {
-        //   values.skuSizeList = []
-        // }else {
+        if(values.type === 1) {
+          skuSizeList.push(values.type.toString());
+          values.skuSizeList = skuSizeList;
+        }else {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
-        // }
+        }
         // values.skuPrefix = values.skuPrefix;
         values.skuPure = values.name;
         if(values.address[0] === '全国'){
@@ -201,6 +203,10 @@ class GoodsAdd extends Component {
     this.setState({showSku:v.target.value})
   };
 
+  /**
+   * 添加商品
+   * @param values
+   */
   addGoods = (values) => {
     const props = this.props;
     const _this = this;
@@ -230,6 +236,10 @@ class GoodsAdd extends Component {
     }).catch(err => err)
   };
 
+  /**
+   * 商品列表翻页
+   * @param p
+   */
   onGoodsListPagination = (p) => {
     const { dispatch } = this.props;
     dispatch({
@@ -244,12 +254,21 @@ class GoodsAdd extends Component {
     }).catch(err => err)
   };
 
+  /**
+   * 显示弹窗
+   * @param type
+   */
   showModal = (type) => {
     console.log("showModal", type)
     this.setState({
       [type]: true
     })
   };
+
+  /**
+   * 确认添加赠品
+   * @param type
+   */
   handleOk = (type) => {
     if(type === "goodsListVisible") {
       this.setState({
@@ -261,17 +280,31 @@ class GoodsAdd extends Component {
       [type]: false
     })
   };
+
+  /**
+   * 关闭弹窗
+   * @param type
+   */
   handleCancel = (type) => {
     this.setState({
       [type]: false
     })
   };
 
+  /**
+   * 选择商品类型
+   * @param v
+   */
   selectSkuPrefix = (v) => {
     // console.log("selectSkuPrefix==>", v.target.value);
     this.props.form.setFieldsValue({goodsType: v.target.value})
   };
 
+  /**
+   * 添加赠品
+   * @param v
+   * @param gid
+   */
   addGiftCount = (v, gid) => {
     console.log("onSelectGift: ", v, gid)
     const goodsObj = {
@@ -302,6 +335,10 @@ class GoodsAdd extends Component {
     arr.remove(item);
     return arr;
   };
+
+  /**
+   * 删除赠品
+   * */
   deleteGift = (item) => {
     console.log("deleteGift goodsJson: ",  this.props.form.getFieldValue("goodsJson"));
     console.log("deleteGift item : ",  item);
@@ -316,16 +353,26 @@ class GoodsAdd extends Component {
     })
   };
 
+  /**
+   * 选择商品分类
+   * 0:普通商品 1:虚拟商品
+   * */
+  onSelectType = (v) => {
+    console.log("选择商品分类==>", v);
+    this.setState({goodsType: v});
+  };
+
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, showSku, giftList, skuPrefix } = this.state;
+    const { fileList, previewVisible, previewImage, goodsType, giftList } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
       tabIndents: 2,
       contentFormat: 'html',
-      initialContent: '<p>Hello World!</p>'
+      initialContent: '请输入产品描述......',
+      pasteMode: 'text'
     };
     const uploadButton = (
       <div>
@@ -457,19 +504,25 @@ class GoodsAdd extends Component {
                 ]
               })(<Input placeholder="商品名称" />)}
             </FormItem>
-            {/*<FormItem
+            <FormItem
               {...formItemLayout}
-              label="商品编号"
+              label="商品分类"
             >
-              {getFieldDecorator('skuPure', {
+              {getFieldDecorator('type', {
+                initialValue: 0,
                 rules: [
                   {
                     required: true,
-                    message: '请输入商品编号'
+                    message: '请选择商品分类'
                   }
                 ]
-              })(<Input placeholder="商品编号" />)}
-            </FormItem>*/}
+              })(
+                <Select onChange={(v) => this.onSelectType(v)}>
+                  <Option value={0}>普通商品</Option>
+                  <Option value={1}>虚拟商品</Option>
+                </Select>
+              )}
+            </FormItem>
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {
                 rules: [
@@ -491,6 +544,7 @@ class GoodsAdd extends Component {
                 <span></span>
               )}
             {/*</FormItem>*/}
+            {goodsType === 0 &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
                   rules: [
@@ -503,6 +557,8 @@ class GoodsAdd extends Component {
                   <CheckboxGroup options={colors}/>
                 )}
               </FormItem>
+            }
+            {goodsType === 0 &&
               <FormItem {...formItemLayout} label="尺寸">
                 {getFieldDecorator('size', {
                   rules: [
@@ -511,8 +567,9 @@ class GoodsAdd extends Component {
                       message: '请选择尺寸'
                     }
                   ]
-                })(<CheckboxGroup options={sizeOptions} />)}
+                })(<CheckboxGroup options={sizeOptions}/>)}
               </FormItem>
+            }
             <FormItem {...formItemLayout} label="出售区域">
               {getFieldDecorator('address',{
                 rules: [
