@@ -10,6 +10,42 @@ import { successNotification } from '../../utils/utils';
   loading: loading.models.mall
 }))
 class GoodsManage extends PureComponent {
+  columns = [
+    {
+      title: '商品名称',
+      // dataIndex: 'name',
+      render: record => (
+        <div>
+          <p>{record.name}</p>
+          <p>sku: {record.sku}</p>
+        </div>
+      )
+    },
+    {
+      title: '原价',
+      dataIndex: 'originalPrice'
+    },
+    {
+      title: '折后价',
+      dataIndex: 'price'
+    },
+    {
+      title: '库存',
+      dataIndex: 'stock'
+    },
+    {
+      title: '销量'
+    },
+    {
+      title: '操作',
+      render: record => (
+        <Fragment>
+          {/*<a href="">编辑</a>*/}
+          <a onClick={() => this.deleteGoods(record)}>删除</a>
+        </Fragment>
+      )
+    }
+  ];
   state = {
     selectedRows: []
   };
@@ -64,42 +100,6 @@ class GoodsManage extends PureComponent {
     // console.log("goodsList==>", mall)
     const { selectedRows } = this.state;
     const list = mall.goodsList;
-    const columns = [
-      {
-        title: '商品名称',
-        // dataIndex: 'name',
-        render: record => (
-          <div>
-            <p>{record.name}</p>
-            <p>sku: {record.sku}</p>
-          </div>
-        )
-      },
-      {
-        title: '原价',
-        dataIndex: 'originalPrice'
-      },
-      {
-        title: '折后价',
-        dataIndex: 'price'
-      },
-      {
-        title: '库存',
-        dataIndex: 'stock'
-      },
-      {
-        title: '销量'
-      },
-      {
-        title: '操作',
-        render: record => (
-          <Fragment>
-            {/*<a href="">编辑</a>*/}
-            <a onClick={() => this.deleteGoods(record)}>删除</a>
-          </Fragment>
-        )
-      }
-    ];
     const pagination = {
       current: mall.goodsListMeta.page + 1,
       pageSize: mall.goodsListMeta.limit,
@@ -112,7 +112,7 @@ class GoodsManage extends PureComponent {
           <GoodsManageTable
             loading={loading}
             selectedRows={selectedRows}
-            columns={columns}
+            columns={this.columns}
             data={data}
             onSelectRow={this.handleSelectRows}
             onChange={this.handleTableChange}

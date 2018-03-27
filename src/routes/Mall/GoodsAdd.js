@@ -58,6 +58,7 @@ class GoodsAdd extends Component {
     goodsTypesVisible: false,
     goodsListVisible: false,
     giftList: [], // 赠品列表,
+    skuPrefix: ''
   };
 
   goodsJson = [];
@@ -108,12 +109,12 @@ class GoodsAdd extends Component {
         values.downTime = values.downTime.toISOString();
         // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
-        if(values.skuSizeList === false) {
-          values.skuSizeList = []
-        }else {
+        // if(values.skuSizeList === false) {
+        //   values.skuSizeList = []
+        // }else {
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
-        }
+        // }
         // values.skuPrefix = values.skuPrefix;
         values.skuPure = values.name;
         if(values.address[0] === '全国'){
@@ -129,6 +130,7 @@ class GoodsAdd extends Component {
         delete values.color;
         delete values.size;
         delete values.address;
+        delete values.goodsType;
         // delete values.goodsJson;
         this.addGoods(values);
       }
@@ -233,9 +235,11 @@ class GoodsAdd extends Component {
     dispatch({
       type: 'mall/getGoodsList',
       payload: {
-        page:  p-1,
-        limit: 10,
-        sort:["-createdAt"]
+        query: {
+          page: p - 1,
+          limit: 10,
+          sort: ["-createdAt"]
+        }
       }
     }).catch(err => err)
   };
@@ -261,6 +265,11 @@ class GoodsAdd extends Component {
     this.setState({
       [type]: false
     })
+  };
+
+  selectSkuPrefix = (v) => {
+    // console.log("selectSkuPrefix==>", v.target.value);
+    this.props.form.setFieldsValue({goodsType: v.target.value})
   };
 
   addGiftCount = (v, gid) => {
@@ -310,7 +319,7 @@ class GoodsAdd extends Component {
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, showSku, giftList } = this.state;
+    const { fileList, previewVisible, previewImage, showSku, giftList, skuPrefix } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -378,7 +387,7 @@ class GoodsAdd extends Component {
               {getFieldDecorator('skuPrefix', {
                 initialValue: null
               })(
-                <RadioGroup>
+                <RadioGroup onChange={(v) => this.selectSkuPrefix(v)}>
                   {mall.goodsType.map((item, i) => {
                     return (
                       <Col span={8} key={i}><Radio value={item.skuPrefix}>{item.name}</Radio></Col>
@@ -418,7 +427,16 @@ class GoodsAdd extends Component {
               {...formItemLayout}
               label="商品类型"
             >
+              {getFieldDecorator('goodsType',{
+              rules: [
+                {
+                  required: true,
+                  message: '请选择商品类型'
+                }
+              ]
+            })(
                 <Button onClick={() => this.showModal("goodsTypesVisible")}>选择</Button>
+            )}
             </FormItem>
             <FormItem
               {...formItemLayout}
@@ -466,17 +484,13 @@ class GoodsAdd extends Component {
                 </Upload>
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="商品规格">
+            {/*<FormItem {...formItemLayout} label="商品规格">*/}
               {getFieldDecorator('skuSizeList',{
                 initialValue: false,
               })(
-                <RadioGroup onChange={(v) => this.showSku(v)}>
-                  <Radio value={false}>没有规格</Radio>
-                  <Radio value={true}>有规格</Radio> {/*  ['XXL-red','XXL-blue']  */}
-                </RadioGroup>
+                <span></span>
               )}
-            </FormItem>
-            {showSku &&
+            {/*</FormItem>*/}
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
                   rules: [
@@ -489,8 +503,6 @@ class GoodsAdd extends Component {
                   <CheckboxGroup options={colors}/>
                 )}
               </FormItem>
-            }
-            {showSku &&
               <FormItem {...formItemLayout} label="尺寸">
                 {getFieldDecorator('size', {
                   rules: [
@@ -501,8 +513,6 @@ class GoodsAdd extends Component {
                   ]
                 })(<CheckboxGroup options={sizeOptions} />)}
               </FormItem>
-            }
-
             <FormItem {...formItemLayout} label="出售区域">
               {getFieldDecorator('address',{
                 rules: [
@@ -644,6 +654,16 @@ class GoodsAdd extends Component {
                   }
                 ]
               })(<DatePicker style={{ width: '100%' }} />)}
+            </FormItem>
+            <FormItem {...formItemLayout} label="是否显示">
+              {getFieldDecorator('show',{
+                initialValue: true,
+              })(
+                <RadioGroup>
+                  <Radio value={false}>显示</Radio>
+                  <Radio value={true}>不显示</Radio> {/*  ['XXL-red','XXL-blue']  */}
+                </RadioGroup>
+              )}
             </FormItem>
             {/*<FormItem {...formItemLayout} label="过期时间">
               {getFieldDecorator('expireTime',{

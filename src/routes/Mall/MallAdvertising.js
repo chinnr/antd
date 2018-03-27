@@ -130,6 +130,7 @@ class MallAdvertising extends PureComponent {
     this.setState({
       visible: false
     });
+    // const _this = this;
     this.props
       .dispatch({
         type: 'mall/updateAdvertiseList',

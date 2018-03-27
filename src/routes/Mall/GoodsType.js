@@ -72,7 +72,10 @@ const CreateForm = Form.create()((props) => {
           label="类型标记前缀"
         >
           {getFieldDecorator('skuPrefix', {
-            rules: [{ required: true, message: '类型标记标记前缀' }],
+            rules: [
+              { required: true, message: '请输入类型标记前缀' },
+              {  max: 8, message: '长度超过8个字符' }
+              ],
           })(
             <Input placeholder="请输入类型标记前缀" />
           )}
@@ -98,7 +101,7 @@ const CreateForm = Form.create()((props) => {
           label="类型图片"
         >
           {getFieldDecorator('typeImg', {
-            rules: [{ required: true }]
+            rules: [{ required: true, message: '请上传类型图片' }]
           })(
             <Upload {...propsObj}>
               <Button>
