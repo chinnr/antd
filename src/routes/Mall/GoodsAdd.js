@@ -111,7 +111,7 @@ class GoodsAdd extends Component {
         // values.sku = 'BLD-'+values.sku;
         // values.skuSize = doExchange(skuSize);
         if(values.type === 1) {
-          skuSizeList.push(values.type.toString());
+          skuSizeList.push(values.virtualGoodsValue.toString());
           values.skuSizeList = skuSizeList;
         }else {
           skuSizeList = [values.color, values.size];
@@ -133,6 +133,7 @@ class GoodsAdd extends Component {
         delete values.size;
         delete values.address;
         delete values.goodsType;
+        delete values.virtualGoodsValue;
         // delete values.goodsJson;
         this.addGoods(values);
       }
@@ -472,6 +473,25 @@ class GoodsAdd extends Component {
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem
               {...formItemLayout}
+              label="商品分类"
+            >
+              {getFieldDecorator('type', {
+                initialValue: 0,
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品分类'
+                  }
+                ]
+              })(
+                <Select onChange={(v) => this.onSelectType(v)}>
+                  <Option value={0}>普通商品</Option>
+                  <Option value={1}>虚拟商品</Option>
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
               label="商品类型"
             >
               {getFieldDecorator('goodsType',{
@@ -504,25 +524,6 @@ class GoodsAdd extends Component {
                 ]
               })(<Input placeholder="商品名称" />)}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="商品分类"
-            >
-              {getFieldDecorator('type', {
-                initialValue: 0,
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择商品分类'
-                  }
-                ]
-              })(
-                <Select onChange={(v) => this.onSelectType(v)}>
-                  <Option value={0}>普通商品</Option>
-                  <Option value={1}>虚拟商品</Option>
-                </Select>
-              )}
-            </FormItem>
             <FormItem {...formItemLayout} label="商品图片">
               {getFieldDecorator('imgs', {
                 rules: [
@@ -544,6 +545,20 @@ class GoodsAdd extends Component {
                 <span></span>
               )}
             {/*</FormItem>*/}
+            {goodsType === 1 &&
+              <FormItem {...formItemLayout} label="价值">
+                {getFieldDecorator('virtualGoodsValue', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入虚拟商品价值'
+                    }
+                  ]
+                })(
+                  <InputNumber min={0} max={100000} />
+                )}
+              </FormItem>
+            }
             {goodsType === 0 &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
