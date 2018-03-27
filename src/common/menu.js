@@ -38,6 +38,11 @@ const menuData = [
         hideInMenu: true,
       },
       {
+        name: '指定教官',
+        path: 'point-coach',
+        hideInMenu: true,
+      },
+      {
         name: '新建团部',
         path: 'new',
       },
