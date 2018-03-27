@@ -299,7 +299,7 @@ export default class OrderList extends PureComponent {
             <Table
               loading={loading}
               rowKey={record => record.sku}
-              rowSelection={rowSelection}
+              // rowSelection={rowSelection}
               dataSource={orderList}
               columns={columns}
               pagination={paginationProps}

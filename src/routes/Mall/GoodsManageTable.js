@@ -16,20 +16,8 @@ class GoodsManageTable extends PureComponent {
     }
   }
 
-  handleRowSelectChange = (selectedRowKeys, selectedRows) => {
-    if (this.props.onSelectRow) {
-      this.props.onSelectRow(selectedRows);
-    }
-
-    this.setState({ selectedRowKeys });
-  };
-
   handleTableChange = (pagination, filters, sorter) => {
     this.props.onChange(pagination, filters, sorter);
-  };
-
-  cleanSelectedKeys = () => {
-    this.handleRowSelectChange([], []);
   };
 
   render() {
@@ -42,32 +30,11 @@ class GoodsManageTable extends PureComponent {
       ...pagination,
     };
 
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleRowSelectChange,
-      getCheckboxProps: record => ({
-        disabled: record.disabled,
-      }),
-    };
-
     return (
       <div className={styles.standardTable}>
-        <div className={styles.tableAlert}>
-          <Alert
-            message={(
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>清空</a>
-              </div>
-            )}
-            type="info"
-            showIcon
-          />
-        </div>
         <Table
           loading={loading}
-          rowKey={record => record.sku}
-          rowSelection={rowSelection}
+          rowKey={record => Math.random(0,990) + record.sku}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}
