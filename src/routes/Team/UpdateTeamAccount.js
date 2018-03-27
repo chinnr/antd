@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, Upload, Icon } from 'antd';
+import { Form, Input, Button, Card, Upload, Icon,Modal } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { successNotification } from '../../utils/utils';
 import { routerRedux } from 'dva/router';
 import {message} from "antd/lib/index";
-import {rootUrl} from "../../utils/constant";
+import {rootUrl,thumbnailPath} from "../../utils/constant";
 
 const FormItem = Form.Item;
 
@@ -15,18 +15,32 @@ export default class UpdateTeamAccount extends PureComponent {
   constructor() {
     super();
     this.state = {
+      fileList:[],
+      previewVisible:false,
+      previewImage:'',
       visible: true,
       gid: ''
     };
   }
 
-  // 点击弹窗取消
-  handleCancel = e => {
-    // console.log(e);
+
+  //关闭预览
+  handleCancelPreview = ()=>{
+    this.setState({ previewVisible: false })
+  }
+
+  //预览
+  handlePreview = (file)=>{
     this.setState({
-      modalVisible: false
-    });
-  };
+      previewImage: file.url || file.thumbUrl,
+      previewVisible: true,
+    })
+  }
+
+  //更换头像
+  handleChange=(fileList)=>{
+    this.setState({ fileList:fileList.fileList });
+  }
 
   // 提交新建团信息
   handleSubmit = e => {
@@ -35,6 +49,9 @@ export default class UpdateTeamAccount extends PureComponent {
     props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('表单 values ', values);
+        let _icon;
+        _icon = values.icon.fileList?values.icon.fileList[0].response.filename:values.icon[0].name;
+
         this.props
           .dispatch({
             type: 'team/updateTeam',
@@ -42,7 +59,7 @@ export default class UpdateTeamAccount extends PureComponent {
               form: {
                 nickname: values.nickname,
                 phone: '86-' + values.phone,
-                icon: values.icon.file.response.filename
+                icon: _icon
               },
               gid: this.state.gid
             }
@@ -75,7 +92,19 @@ export default class UpdateTeamAccount extends PureComponent {
         JSON.stringify(this.props.location.query)
       );
       values = this.props.location.query.record;
+      console.log("values===============>>>",values);
     }
+    this.setState({
+      fileList: [
+        {
+          uid: Math.random(-100,0),
+          name: "xxx",
+          url: rootUrl + thumbnailPath + values.description.icon,
+          status: "done"
+        }
+      ]
+    });
+
     let keys = Object.keys(values);
     this.setState({
       gid: values.gid
@@ -84,7 +113,15 @@ export default class UpdateTeamAccount extends PureComponent {
     this.props.form.setFieldsValue({
       name: values.name,
       nickname: values.nickname,
-      phone: values.head.phone ? values.head.phone.replace('86-', '') : ''
+      phone: values.head.phone ? values.head.phone.replace('86-', '') : '',
+      icon: [
+        {
+          uid: Math.random(-100,0),
+          name: values.description.icon,
+          url: rootUrl + thumbnailPath + values.description.icon,
+          status: "done"
+        }
+      ]
     });
   };
 
@@ -142,17 +179,25 @@ export default class UpdateTeamAccount extends PureComponent {
       }
     };
 
+    const {
+      fileList,
+      teamIcon,
+      previewVisible,
+      previewImage
+    } = this.state;
+
     const propsObj = {
       name: 'file',
       action: rootUrl+'/api/young/post/upload/image',
-      onChange(info) {
-        if(info.file.status === 'done') {
-          message.success(`添加头像成功`);
-        } else if(info.file.status === 'error') {
-          message.error(`添加头像失败`);
-        }
-      }
+      multiple: false
     };
+
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
 
     return (
       <PageHeaderLayout
@@ -199,15 +244,15 @@ export default class UpdateTeamAccount extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="类型图片"
+              label="团长头像"
             >
-              {getFieldDecorator('icon', {
-                rules: [{ required: false }]
-              })(
-                <Upload {...propsObj}>
-                  <Button>
-                    <Icon type="upload" /> 点击上传图片
-                  </Button>
+              {getFieldDecorator('icon')(
+                <Upload {...propsObj}
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={this.handlePreview}
+                        onChange={this.handleChange}>
+                  {fileList.length >= 1 ? null : uploadButton}
                 </Upload>
               )}
             </FormItem>
@@ -235,9 +280,21 @@ export default class UpdateTeamAccount extends PureComponent {
               >
                 提交
               </Button>
+              <Button
+                style={{ marginLeft: 32 }}
+              >
+                修改密码
+              </Button>
             </FormItem>
           </Form>
         </Card>
+        <Modal
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.handleCancelPreview}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
       </PageHeaderLayout>
     );
   }
