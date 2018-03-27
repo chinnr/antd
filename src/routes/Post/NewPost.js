@@ -163,7 +163,7 @@ export default class NewPost extends Component {
       if (!err) {
         values["gallery"] = this.postGallery;
         console.log("values==>", values);
-        // this.createPost(values);
+        this.createPost(values);
       }
     });
   };

@@ -75,9 +75,9 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
-    '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
-    },
+    // '/dashboard/analysis': {
+    //   component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+    // },
     '/dashboard/monitor': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
     },
@@ -165,6 +165,9 @@ export const getRouterData = (app) => {
     '/course/new': {
       component: dynamicWrapper(app, ['course', 'badge'], () => import('../routes/Course/NewCourse')),
     },
+    '/course/edit': {
+      component: dynamicWrapper(app, ['course', 'badge'], () => import('../routes/Course/CourseEdit')),
+    },
     '/course/template-list': {
       component: dynamicWrapper(app, ['course'], () => import('../routes/Course/CourseTemplateList')),
     },
@@ -218,6 +221,9 @@ export const getRouterData = (app) => {
     },
     '/post/new': {
       component: dynamicWrapper(app, ['post'], () => import('../routes/Post/NewPost')),
+    },
+    '/post/classes': {
+      component: dynamicWrapper(app, ['post'], () => import('../routes/Post/NewClasses')),
     },
     '/post/list': {
       component: dynamicWrapper(app, ['post'], () => import('../routes/Post/PostList')),

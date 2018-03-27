@@ -20,10 +20,13 @@ const app = dva({
     e.preventDefault();
     if (
       e.message === 'rest136|会话已过期' ||
+      e.message === 'youngcourse171|无效token' ||
       e.message === 'rest215|token expired' ||
       e.message.toLocaleLowerCase() === 'token is expired' ||
       e.message.toLocaleLowerCase() === 'token expired' ||
-      e.message === 'TokenExpiredError: jwt expired'
+      e.message === 'TokenExpiredError: jwt expired' ||
+      e.message === 'crypto/rsa: verification error' ||
+      e.message === 'JsonWebTokenError: invalid signature'
     ) {
       notification['error']({
         message: '错误警告',

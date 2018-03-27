@@ -16,39 +16,9 @@ class AdvertisingForm extends PureComponent {
     }
   }
 
-  handleRowSelectChange = (selectedRowKeys, selectedRows) => {
-    if (this.props.onSelectRow) {
-      this.props.onSelectRow(selectedRows);
-    }
-
-    this.setState({ selectedRowKeys });
-  };
-
-  handleTableChange = (pagination, filters, sorter) => {
-    this.props.onChange(pagination, filters, sorter);
-  };
-
-  cleanSelectedKeys = () => {
-    this.handleRowSelectChange([], []);
-  };
-
   render() {
     const { selectedRowKeys } = this.state;
     const { data: { list, pagination }, loading, columns } = this.props;
-
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      ...pagination,
-    };
-
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleRowSelectChange,
-      getCheckboxProps: record => ({
-        disabled: record.disabled,
-      }),
-    };
 
     return (
       <div className={styles.standardTable}>

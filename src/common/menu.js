@@ -1,7 +1,7 @@
 import { isUrl } from '../utils/utils';
 
 const menuData = [
-  {
+  /*{
     name: 'dashboard',
     icon: 'dashboard',
     path: 'dashboard',
@@ -16,7 +16,7 @@ const menuData = [
       path: 'workplace',
       // hideInMenu: true,
     }],
-  },
+  },*/
   {
     name: '学员管理',
     icon: 'idcard',
@@ -68,6 +68,11 @@ const menuData = [
         name: '课程审核',
         path: 'course-review',
         hideInMenu: true,
+      },
+      {
+        name: '课程编辑',
+        path: 'edit',
+        hideInMenu: false,
       }
     ],
   },
@@ -118,6 +123,10 @@ const menuData = [
     icon: 'file',
     path: 'post',
     children: [
+      {
+        name: '文章类型管理',
+        path: 'classes'
+      },
       {
         name: '新建文章',
         path: 'new'

@@ -9,7 +9,9 @@ import {
   Card,
   Modal,
   Radio,
-  Cascader
+  Cascader,
+  Upload,
+  Icon
 } from 'antd';
 import moment from 'moment';
 import { Map, Marker } from 'react-amap';
@@ -18,6 +20,7 @@ import styles from './team.less';
 import options from '../../utils/cascader-address-options';
 import { routerRedux } from 'dva/router';
 import { successNotification } from '../../utils/utils';
+import {rootUrl, thumbnailPath} from "../../utils/constant";
 
 const pluginProps = {
   enableHighAccuracy: true,
@@ -44,7 +47,11 @@ export default class UpdateTeamInfo extends PureComponent {
       draggable: true,
       addr: '',
       clickMap: false,
-      gid: ''
+      gid: '',
+      fileList: [],
+      teamIcon: '',
+      previewVisible: false,
+      previewImage: '',
     };
     this.mapPlugins = ['ToolBar'];
     this.isDragMap = false;
@@ -89,7 +96,7 @@ export default class UpdateTeamInfo extends PureComponent {
         const { addressInfo } = res;
         const _position = {
           longitude: addressInfo.longitude,
-          latitude: addressInfo.latitude
+          latitude: addressInfo.latitude,
         };
         this.setState(
           {
@@ -123,7 +130,6 @@ export default class UpdateTeamInfo extends PureComponent {
 
   // 处理地址
   handleAddrChange = e => {
-    console.log('处理地址...', e.target.value);
     this.setState({ addr: e.target.value }, () => {
       if (this.state.addr.length > 0) {
         this.setState({ clickMap: true });
@@ -136,24 +142,36 @@ export default class UpdateTeamInfo extends PureComponent {
   // 提交新建团信息
   handleSubmit = e => {
     e.preventDefault();
+    const {form} = this.props;
+    const {props} = this;
+    const _this = this;
     if (this.isDragMap === true) {
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           console.log('你拖动了标记, 将采用新标记', this.dragLocationInfo);
           console.log('表单 values ', values);
+          let _mien = [];
+          values.mien.fileList.map(item => {
+            _mien.push(item.response.filename)
+          });
+          const _description = {
+            icon: values.icon.file.response.filename,
+            mien: _mien
+          };
           this.props
             .dispatch({
               type: 'team/updateTeam',
               payload: {
                 gid: this.state.gid,
                 form: {
-                  createdAt: values.createdTime.toISOString(),
+                  createdTime: values.createdTime.toISOString(),
                   province: this.dragLocationInfo.province,
                   city: this.dragLocationInfo.city,
                   district: this.dragLocationInfo.district,
                   address: this.dragLocationInfo.format,
                   longitude: this.dragLocationInfo.longitude,
-                  latitude: this.dragLocationInfo.latitude
+                  latitude: this.dragLocationInfo.latitude,
+                  description: _description
                 }
               }
             })
@@ -175,35 +193,47 @@ export default class UpdateTeamInfo extends PureComponent {
         })
         .then(res => {
           const { addressInfo } = res;
-          console.log('addressInfo==>', addressInfo);
-          this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-              console.log('values: ', values);
-              this.props
-                .dispatch({
-                  type: 'team/updateTeam',
-                  payload: {
-                    gid: this.state.gid,
-                    form: {
-                      createdAt: values.createdTime.toISOString(),
-                      province: addressInfo.province,
-                      city: addressInfo.city,
-                      district: addressInfo.district,
-                      address: addressInfo.format,
-                      longitude: addressInfo.longitude,
-                      latitude: addressInfo.latitude
+          successNotification('地址转换成功!', function() {
+            console.log('addressInfo==>', addressInfo);
+            form.validateFieldsAndScroll((err, values) => {
+              if (!err) {
+                console.log('values: ', values);
+                let _mien = [];
+                values.mien.fileList.map(item => {
+                  _mien.push(item.response.filename)
+                });
+                const _description = {
+                  icon: values.icon.file.response.filename,
+                  mien: _mien
+                };
+                props
+                  .dispatch({
+                    type: 'team/updateTeam',
+                    payload: {
+                      gid: _this.state.gid,
+                      form: {
+                        createdTime: values.createdTime.toISOString(),
+                        province: addressInfo.province,
+                        city: addressInfo.city,
+                        district: addressInfo.district,
+                        address: addressInfo.format,
+                        longitude: addressInfo.longitude,
+                        latitude: addressInfo.latitude,
+                        description: _description
+                      }
                     }
-                  }
-                })
-                .then(() => {
-                  successNotification('修改团信息成功!', function() {
-                    props.dispatch(routerRedux.push('/team/list'));
-                  });
-                  localStorage.removeItem('teamInfo');
-                })
-                .catch(err => err);
-            }
+                  })
+                  .then(() => {
+                    successNotification('修改团信息成功!', function() {
+                      props.dispatch(routerRedux.push('/team/list'));
+                    });
+                    localStorage.removeItem('teamInfo');
+                  })
+                  .catch(err => err);
+              }
+            });
           });
+          // console.log('addressInfo==>', addressInfo);
         })
         .catch(err => err);
     }
@@ -228,15 +258,80 @@ export default class UpdateTeamInfo extends PureComponent {
       values = this.props.location.query.record;
     }
     let keys = Object.keys(values);
+    // console.log("values --> ", moment(new Date(values.createdTime), 'YYYY-MM-DD'))
+    // console.log("keys --> ", keys)
     this.setState({
       gid: values.gid
     });
-    keys.map(item => {
+    this.props.form.setFieldsValue({
+      name: values.name,
+      groupLevel: values.groupLevel,
+      address: values.address,
+      company: values.description.company,
+      brief: values.description.brief,
+      type: values.type === "" ? "main":"temp",
+      createdTime: moment(new Date(values.createdTime), 'YYYY-MM-DD')
+    });
+    /*keys.map(item => {
       this.props.form.setFieldsValue({
         [item]: values[item]
       });
+    });*/
+  };
+
+  /**
+   * 团部风采图片上传
+   * @param info
+   */
+  handleChange = info => {
+    let fileList = info.fileList;
+    fileList = fileList.map(file => {
+      if (file.response) {
+        file.url = rootUrl + thumbnailPath + file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    console.log("图片上传: ",fileList);
+    this.setState({ fileList });
+  };
+
+  /**
+   * 上传团部头像
+   * @param info
+   */
+  handleUploadIcon = info => {
+    let teamIcon = info.fileList;
+    teamIcon = teamIcon.map(file => {
+      if (file.response) {
+        file.url = rootUrl + thumbnailPath + file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    console.log("图片上传: ",teamIcon);
+    this.setState({ teamIcon });
+  };
+
+  /**
+   * 上传图片的预览
+   * @param file
+   */
+  handlePreview = file => {
+    this.setState({
+      previewImage: rootUrl + thumbnailPath + file.response.filename,
+      previewVisible: true
     });
   };
+
+  /**
+   * 取消预览
+   */
+  handleCancelPreview = () => this.setState({ previewVisible: false });
 
   componentDidMount() {
     // To disabled submit button at the beginning.
@@ -259,7 +354,7 @@ export default class UpdateTeamInfo extends PureComponent {
         href: '/team/edit-info'
       }
     ];
-    const { clickMap } = this.state;
+    const { clickMap, fileList, teamIcon, previewVisible, previewImage } = this.state;
     const { submitting } = this.props;
     const {
       getFieldDecorator,
@@ -274,6 +369,19 @@ export default class UpdateTeamInfo extends PureComponent {
     const createTimeError =
       isFieldTouched('createTime') && getFieldError('createTime');
     const addressError = isFieldTouched('address') && getFieldError('address');
+
+    const propsObj = {
+      name: 'file',
+      action: rootUrl+'/api/young/post/upload/image',
+      onChange: this.handleChange,
+      multiple: true
+    };
+    const propsObjIcon = {
+      name: 'file',
+      action: rootUrl+'/api/young/post/upload/image',
+      onChange: this.handleUploadIcon,
+      multiple: false
+    };
 
     const formItemLayout = {
       labelCol: {
@@ -293,6 +401,12 @@ export default class UpdateTeamInfo extends PureComponent {
         sm: { span: 10, offset: 7 }
       }
     };
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
 
     return (
       <PageHeaderLayout
@@ -313,7 +427,7 @@ export default class UpdateTeamInfo extends PureComponent {
               label="团名称"
             >
               {getFieldDecorator('name', {
-                initialValue: '南宁旅-航洋一团',
+                initialValue: '',
                 rules: [
                   {
                     required: true,
@@ -329,7 +443,7 @@ export default class UpdateTeamInfo extends PureComponent {
               label="团部级别"
             >
               {getFieldDecorator('groupLevel', {
-                initialValue: 'level4'
+                initialValue: ''
               })(
                 <Select placeholder="请选择团部级别" disabled={true}>
                   <Option value="level1">海狸</Option>
@@ -362,8 +476,6 @@ export default class UpdateTeamInfo extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
               label="团类型"
             >
               {getFieldDecorator('type', {
@@ -434,6 +546,47 @@ export default class UpdateTeamInfo extends PureComponent {
                 查看地图上标记的位置
               </Button>
             </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="所属公司"
+            >
+              {getFieldDecorator('company', {
+                rules: [
+                  {
+                    required: false,
+                  }
+                ]
+              })(
+                <Input
+                  placeholder="请输入所属公司"
+                />
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="团部头像">
+              {getFieldDecorator('icon')(
+                <Upload {...propsObjIcon} fileList={teamIcon} listType="picture-card" onPreview={this.handlePreview}>
+                  {teamIcon.length >= 1 ? null : uploadButton}
+                </Upload>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="团部简介"
+            >
+              {getFieldDecorator('brief')(
+                <Input.TextArea
+                  placeholder="请输入团部简介"
+                />
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="团部风采">
+              {getFieldDecorator('mien')(
+                <Upload {...propsObj} fileList={fileList} listType="picture-card" onPreview={this.handlePreview}>
+                  {fileList.length >= 3 ? null : uploadButton}
+                </Upload>
+              )}
+            </FormItem>
+
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"
@@ -471,6 +624,10 @@ export default class UpdateTeamInfo extends PureComponent {
               </Map>
             </div>
           </div>
+        </Modal>
+
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancelPreview}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </PageHeaderLayout>
     );

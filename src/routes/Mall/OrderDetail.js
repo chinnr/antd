@@ -18,13 +18,19 @@ export default class BasicProfile extends Component {
     };
     console.log('路由参数: ', this.props.location.pathname, id);
     this.getOrderDetail(0, queryOption);
+    this.getAllPayRecord(0, queryOption);
   }
+
   /**
    * 获取单个订单
    * @param p
    * @param queryOption
+   * @param timeSpan
    */
-  getOrderDetail = (p = 0, queryOption = {}) => {
+  getOrderDetail = (p = 0, queryOption = {}, timeSpan = {
+    "startTime": "2000/01/01",
+    "endTime": "2099/12/31"
+  }) => {
     this.props
       .dispatch({
         type: 'mall/orderList',
@@ -33,7 +39,33 @@ export default class BasicProfile extends Component {
             limit: 10,
             page: p
           },
-          queryOption: queryOption
+          queryOption: queryOption,
+          timeSpan: timeSpan
+        }
+      })
+      .catch(err => err);
+  };
+
+  /**
+   * 获取用户支付记录
+   * @param p
+   * @param queryOption
+   * @param timeSpan
+   */
+  getAllPayRecord = (p = 0, queryOption = {}, timeSpan = {
+    "startTime": "2000/01/01",
+    "endTime": "2099/12/31"
+  }) => {
+    this.props
+      .dispatch({
+        type: 'mall/getAllPayRecord',
+        payload: {
+          query: {
+            limit: 10,
+            page: p
+          },
+          queryOption: queryOption,
+          timeSpan: timeSpan
         }
       })
       .catch(err => err);
@@ -56,7 +88,8 @@ export default class BasicProfile extends Component {
   };
 
   render() {
-    const { mall: { orderList, orderListMeta } } = this.props;
+    const { mall: { orderList, orderListMeta, allPayRecord, allPayRecordMeta } } = this.props;
+    console.log("this.props order detail==>", this.props.mall);
     const breadcrumbList = [
       {
         title: '首页',
@@ -133,8 +166,8 @@ export default class BasicProfile extends Component {
             columns={goodsColumns}
             rowKey="gid"
           />
-          <Divider style={{ marginBottom: 32 }} />
-          <DescriptionList
+          {/*<Divider style={{ marginBottom: 32 }} />*/}
+          {/*<DescriptionList
             size="large"
             title="支付信息"
             style={{ marginBottom: 32 }}
@@ -146,14 +179,14 @@ export default class BasicProfile extends Component {
               浙江省杭州市西湖区万塘路18号
             </Description>
             <Description term="实付金额">无</Description>
-          </DescriptionList>
-          <Divider style={{ marginBottom: 32 }} />
+          </DescriptionList>*/}
+          {/*<Divider style={{ marginBottom: 32 }} />*/}
           <DescriptionList
             size="large"
             title="物流信息"
             style={{ marginBottom: 32 }}
           >
-            <Description term="物流公司">付小小</Description>
+            {/*<Description term="物流公司">付小小</Description>*/}
             <Description term="运单号">18100000000</Description>
             <Description term="发货时间">2018-03-18</Description>
             <Description term="收货地址">

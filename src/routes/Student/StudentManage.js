@@ -246,7 +246,7 @@ class StudentManage extends PureComponent {
             <Col style={{float: "right"}}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>重置</Button>
-              <Button style={{marginLeft: 8}} onClick={() => this.outPutData()}>导出数据</Button>
+              {/*<Button style={{marginLeft: 8}} onClick={() => this.outPutData()}>导出数据</Button>*/}
             </Col>
           </Row>
         </Form>
@@ -314,7 +314,7 @@ class StudentManage extends PureComponent {
       current: student.page + 1
     };
     return (
-      <PageHeaderLayout title="学员管理">
+      <PageHeaderLayout>
         <Card bordered={false}>
           <div style={{marginBottom: '10px'}}>{this.renderForm()}</div>
           <div>

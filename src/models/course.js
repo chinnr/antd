@@ -36,15 +36,32 @@ export default {
   },
   effects: {
     *createCourseTemplate({ payload }, { call, put }) {
-      const { data, errors } = yield call(
-        courseService.createCourseTemplate,
-        payload
-      );
+      const { data, errors } = yield call(courseService.createCourseTemplate, payload);
       if (errors) {
         const err = errors[0].message;
         throw new Error(err);
       } else {
         console.log('createCourseTemplate==>', data);
+      }
+    },
+
+    *updateCourseTemplate({ payload }, { call, put }) {
+      const { data, errors } = yield call(courseService.updateCourseTemplate, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log('updateCourseTemplate ==>', data);
+      }
+    },
+
+    *deleteCourseTemplate({ payload }, { call, put }) {
+      const { data, errors } = yield call(courseService.deleteCourseTemplate, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log('deleteCourseTemplate==>', data);
       }
     },
 

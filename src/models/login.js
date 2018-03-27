@@ -1,5 +1,4 @@
 import { routerRedux } from 'dva/router';
-import { fakeAccountLogin } from '../services/api';
 import * as loginService from '../services/login';
 import { setAuthority } from '../utils/authority';
 
@@ -30,7 +29,7 @@ export default {
             type: 'changeLoginStatus',
             payload: data,
           });
-          yield put(routerRedux.push('/dashboard/analysis'));
+          yield put(routerRedux.push('/student'));
           window.location.reload();
         }
       }

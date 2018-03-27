@@ -60,12 +60,12 @@ export function delGoodsType() {
 }
 
 // 获取商品列表
-export function goodsList(v) {
-  const query = `
-    query getGoodsList($v: FormQuery) {
+export function goodsList(payload) {
+  const getAllGoods = `
+    query getGoodsList($query: FormQuery, $queryOption: QueryData) {
       me {
         goods {
-          getAll(query: $v) {
+          getAll(query: $query, queryOption:$queryOption) {
             data {
               gid
               name
@@ -91,7 +91,7 @@ export function goodsList(v) {
       }
     }
   `;
-  return graphRequest(query, { v }, 'mall-admin')
+  return graphRequest(getAllGoods, payload, 'mall-admin')
 }
 
 // 获取单个商品详情
@@ -165,6 +165,18 @@ export function goodsAdd(form) {
   return graphRequest(goodsAdd, {form}, 'mall-admin')
 }
 
+// 删除商品
+export function deleteGoods(gid) {
+  const deleteGoods = `mutation deleteGoods($t:String, $gid: String) {
+    me(token: $t) {
+      goods {
+        deleteGoods(gid: $gid)
+      }
+    }
+  }`;
+  return graphRequest(deleteGoods, gid, 'mall-admin')
+}
+
 // 订单列表管理
 export function orderList(payload) {
   const orderList = `query orderList($query: FormQuery, $queryOption: QueryOrder, $timeSpan:TimeSpan!) {
@@ -212,20 +224,59 @@ export function donateVirtualGoods(form) {
       }
     }
   }`;
-  return graphRequest(donate, {form}, 'mall-admin')
+  return graphRequest(donate, form, 'mall-admin')
 }
 
 // 获取广告位列表
 export function getAdvertiseList() {
-  const getAdvertiseList = `query getAdvertiseList {
-    me {
-      goods {
-        getDiscovery {
+  const getAdvertiseList = `query advertisementConfig{
+    pub {
+      advertisementConfig {
+        getDiscovery{
           gid
           img
         }
       }
     }
   }`;
-  return graphRequest(getAdvertiseList, {}, 'mall-admin')
+  return graphRequest(getAdvertiseList, {}, 'mall')
+}
+
+// 修改广告位
+export function updateAdvertiseList(form) {
+  const update = `mutation updateDiscovery($form: [DiscoveryConfig]) {
+    me{
+      goods {
+        updateDiscovery(form: $form)
+      }
+    }
+  }`
+  return graphRequest(update, form, 'mall-admin')
+}
+
+// 获取支付记录
+export function getAllPayRecord(payload) {
+  const payRecord = `query getAllPayRecord($queryOption: QueryPayRecordOption,$query: FormQuery,$timeSpan: adminTimeSpan!) {
+    me{
+      payRecord {
+        getAllPayRecord(queryOption: $queryOption, query: $query, timeSpan: $timeSpan) {
+          data{
+            id
+            platformName
+            returnCode
+            uid
+            receipt_amount
+            buyer_pay_amount
+            out_trade_no
+          }
+          meta{
+            page
+            limit
+            count
+          }
+        }
+      }
+    }
+  }`;
+  return graphRequest(payRecord, payload, 'mall-admin')
 }

@@ -60,6 +60,16 @@ export default {
       }
     },
 
+    *createClasses({payload}, {call, put}) {
+      const {data, errors} = yield call(postService.createClassses, payload);
+      if(errors) {
+        const err = errors[0].message;
+        throw new Error(err)
+      }else {
+        console.log("createClassses ==> ", data);
+      }
+    },
+
     *getPosts({ payload }, { call, put }) {
       const { data, errors } = yield call(postService.postList, payload);
       if (errors) {

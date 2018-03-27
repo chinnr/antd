@@ -1,5 +1,4 @@
 import * as mallService from '../services/mall';
-import * as badgeService from "../services/badge";
 
 export default {
   namespace: 'mall',
@@ -12,6 +11,8 @@ export default {
     advertiseList: [],
     orderList: [],
     orderListMeta: {},
+    allPayRecord: [],
+    allPayRecordMeta:{}
   },
   reducers: {
     updateState(state, { payload }) {
@@ -40,9 +41,9 @@ export default {
       }
     },
 
-    *getGoodsList({ payload: v }, { call, put }) {
-      const { data, errors } = yield call(mallService.goodsList, v);
-      console.log('goods ', data)
+    *getGoodsList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.goodsList, payload);
+      console.log('goods  ====>  ', data)
       if(errors) {
         throw new Error(errors[0].message);
       }
@@ -101,6 +102,16 @@ export default {
       }
     },
 
+    *deleteGoods({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.deleteGoods, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log("deleteGoods ==> ", data);
+      }
+    },
+
     *orderList({ payload }, { call, put }) {
       const { data, errors } = yield call(mallService.orderList, payload);
       if (errors) {
@@ -133,15 +144,40 @@ export default {
       if(errors) {
         throw new Error(errors[0].message);
       }
-      if(data.me) {
+      if(data.pub) {
         yield put({
           type: 'updateState',
           payload: {
-            advertiseList: data.me.goods.getDiscovery,
+            advertiseList: data.pub.advertisementConfig.getDiscovery,
           }
         })
       }
     },
+
+    *updateAdvertiseList({ payload }, { call, put }) {
+      const {data, errors} = yield call(mallService.updateAdvertiseList, payload);
+      if (errors) {
+        throw new Error(errors[0].message);
+      }else {
+        return data;
+      }
+    },
+
+    *getAllPayRecord({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.getAllPayRecord, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            allPayRecord: data.me.payRecord.getAllPayRecord.data,
+            allPayRecordMeta: data.me.payRecord.getAllPayRecord.meta,
+          }
+        })
+      }
+    }
   },
   subscriptions: {
   	setup({ dispatch, history }) {
@@ -161,9 +197,11 @@ export default {
           dispatch({
             type: 'getGoodsList',
             payload: {
-              page: 0,
-              limit: 10,
-              sort:["-createdAt"]
+              query: {
+                page: 0,
+                limit: 10,
+                sort:["-createdAt"]
+              }
             }
           })
         }
@@ -209,9 +247,11 @@ export default {
           dispatch({
             type: 'getGoodsList',
             payload: {
-              page: 0,
-              limit: 10,
-              sort: ["-createdAt"]
+              query: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"]
+              }
             }
           })
         }

@@ -32,10 +32,10 @@ export function updateTeam(payload) {
 }
 
 // 管理员获取所有团
-export function getAllTeams(query) {
-  const getAllTeams = `query allTeams($query: FormQuery) {
+export function getAllTeams(payload) {
+  const getAllTeams = `query allTeams($query: FormQuery, $groupLevel: String) {
     me {
-      groups(query: $query) {
+      groups(query: $query, groupLevel:$groupLevel) {
         data {
           gid
           uid
@@ -44,6 +44,7 @@ export function getAllTeams(query) {
           name
           city
           address
+          district
           groupLevel
           username
           nickname
@@ -51,6 +52,12 @@ export function getAllTeams(query) {
           head {
             phone
             name
+          },
+          description {
+            icon
+            brief
+            company
+            mien
           }
         }
         meta {
@@ -61,7 +68,7 @@ export function getAllTeams(query) {
       }
     }
   }`;
-  return graphRequest(getAllTeams, query, 'young-admin')
+  return graphRequest(getAllTeams, payload, 'young-admin')
 }
 
 // 根据地址获取经纬度
