@@ -58,7 +58,7 @@ export function courseTemplatePubList(payload) {
         cover
         gallery
         note
-        badge{
+        badgeList{
           bid
           name
         }

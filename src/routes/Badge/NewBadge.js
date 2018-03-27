@@ -72,6 +72,7 @@ export default class NewBadge extends PureComponent {
 
   // 创建证章
   submitBadge = (values, type) => {
+    const _this = this;
     this.props
       .dispatch({
         type: 'badge/' + type,
@@ -85,7 +86,7 @@ export default class NewBadge extends PureComponent {
           ? (message = '修改成功')
           : (message = '新建成功!');
         successNotification(message, function() {
-          props.dispatch(routerRedux.push('/badge/list'));
+          _this.props.dispatch(routerRedux.push('/badge/list'));
           if (type === 'updateBadge') {
             localStorage.removeItem('badgeParams');
             localStorage.setItem('isEditBadge', 'false');

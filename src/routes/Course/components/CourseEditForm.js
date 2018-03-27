@@ -175,7 +175,7 @@ export default class CourseForm extends PureComponent {
       values = this.props.location.query.record;
     }
     let _badges = [];
-    values.badge.map(item => {
+    values.badgeList.map(item => {
       _badges.push(item.bid);
     });
 
