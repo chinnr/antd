@@ -111,7 +111,7 @@ export default class CourseTempalteList extends Component {
         id: record.id,
       }
     }).then(()=>{
-      successNotification("删除成功", function () {
+      successNotification("删除成功==>>>", function () {
         this.getTempList(courseTemplatePubListMeta.page);
       })
       }).catch(err => err)
