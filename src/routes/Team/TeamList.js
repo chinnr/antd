@@ -47,8 +47,8 @@ export default class TeamList extends Component {
       },
       {
         title: '团长昵称',
-        dataIndex: 'otherName',
-        key: 'otherName'
+        dataIndex: 'nickname',
+        key: 'nickname'
       },
       /*{
         title: '成立时间',
