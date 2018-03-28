@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message, Radio, notification } from 'antd';
+import { Card, Modal, Form, Input, DatePicker, Upload, Button, Icon, Select, message, Radio, notification, Divider } from 'antd';
 import { thumbnailPath, rootUrl } from "../../utils/constant";
 import GoodsTypeTable from './GoodsTypeTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -203,6 +203,44 @@ class GoodsType extends PureComponent {
     })
   };
 
+  // 删除商品类型
+  deleteGoodsType = (record) => {
+    const { dispatch } = this.props;
+    const { mall:{goodsTypeMeta} } = this.props;
+    const {} = this.props;
+    dispatch({
+      type: 'mall/deleteGoodsType',
+      payload: {
+        tid: record.tid
+      }
+    })
+      .then(() => {
+        this.setState({
+          visible: false
+        }, () => {
+          notification["success"]({
+            message: '操作成功',
+            duration: 2
+          });
+          this.getGoodsTypeList(goodsTypeMeta.page)
+        })
+        // this.handleCancel();
+      })
+  };
+
+  // 获取类型列表
+  getGoodsTypeList = (p) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'mall/getGoodsType',
+      payload: {
+        page: p,
+        limit: 10,
+        sort:["-createdAt"]
+      }
+    })
+  };
+
   handleTableChange = (n) => {
     const { dispatch } = this.props;
     dispatch({
@@ -236,9 +274,11 @@ class GoodsType extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: (record) => (
           <Fragment>
-            <a href="">编辑</a>
+            <a onClick={() => this.showModal()}>编辑</a>
+            <Divider type="vertical"/>
+            <a onClick={() => this.deleteGoodsType(record)}>删除</a>
           </Fragment>
         )
       }
