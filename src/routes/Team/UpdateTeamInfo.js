@@ -200,28 +200,36 @@ export default class UpdateTeamInfo extends PureComponent {
               if (!err) {
                 // console.log("values: ", values);
                 let _mien = [],
-                  _icon = [];
+                  _icon;
                 const valueMien = values.mien,
                   valueIcon = values.icon;
-                valueMien.fileList
-                  ? valueMien.fileList.map(item => {
-                      _mien.push(
-                        item.response ? item.response.filename : item.name
-                      );
-                    })
-                  : valueMien.map(item => {
-                      _mien.push(
-                        item.name ? item.name : item.response.filename
-                      );
-                    });
 
-                valueIcon.fileList
-                  ? valueIcon.fileList.map(item => {
-                      _icon = item.response ? item.response.filename : item.name;
-                    })
-                  : valueIcon.map(item => {
-                      _icon = item.name
-                    });
+                //如果提交的mien下有fileList这一级
+                if(valueMien.fileList){
+                  valueMien.fileList.map(item => {
+                    _mien.push(
+                      item.response ? item.response.filename : item.name
+                    );
+                  })
+                }else{//没有fileList这一级
+                  valueMien.map(item => {
+                    _mien.push(
+                      item.name ? item.name : item.response.filename
+                    );
+                  });
+                }
+
+                //如果提交的icon下有fileList这一级
+                if(valueIcon.fileList){
+                  valueIcon.fileList.map(item => {
+                    _icon = item.response ? item.response.filename : item.name;
+                  })
+                }else{//没有fileList这一级
+                  valueIcon.map(item => {
+                    _icon = item.name
+                  });
+                }
+
 
                 const _description = {
                   icon: _icon,
