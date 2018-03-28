@@ -102,14 +102,14 @@ class GoodsAdd extends Component {
         values.sizeImg = '';
         values.listImg = images[0];
         values.goodsJson = this.goodsJson;
-        values.expireTime  = values.downTime.toISOString();
         values.upTime = values.upTime.toISOString();
         values.downTime = values.downTime.toISOString();
         if(values.type === 1) {
           skuSizeList.push(values.goodsValue.toString());
           values.skuSizeList = skuSizeList;
           delete values.skuSizeList;
-        }else {
+        } else {
+          values.expireTime  = values.downTime.toISOString();
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
         }
@@ -733,16 +733,18 @@ class GoodsAdd extends Component {
                 </RadioGroup>
               )}
             </FormItem>
-            {/*<FormItem {...formItemLayout} label="过期时间">
-              {getFieldDecorator('expireTime',{
-                rules: [
-                  {
-                    required: true,
-                    message: '过期时间'
-                  }
-                ]
-              })(<DatePicker style={{ width: '100%' }} />)}
-            </FormItem>*/}
+            {goodsType === 1 &&
+              <FormItem {...formItemLayout} label="过期时间">
+                {getFieldDecorator('expireTime', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '过期时间'
+                    }
+                  ]
+                })(<DatePicker style={{width: '100%'}}/>)}
+              </FormItem>
+            }
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"
