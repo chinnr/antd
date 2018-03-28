@@ -104,12 +104,12 @@ class GoodsAdd extends Component {
         values.goodsJson = this.goodsJson;
         values.upTime = values.upTime.toISOString();
         values.downTime = values.downTime.toISOString();
+        values.expireTime  = values.downTime.toISOString();
         if(values.type === 1) {
           skuSizeList.push(values.goodsValue.toString());
           values.skuSizeList = skuSizeList;
           delete values.skuSizeList;
         } else {
-          values.expireTime  = values.downTime.toISOString();
           skuSizeList = [values.color, values.size];
           values.skuSizeList = doExchange(skuSizeList);
         }
@@ -541,20 +541,6 @@ class GoodsAdd extends Component {
                 <span></span>
               )}
             {/*</FormItem>*/}
-            {goodsType === 1 &&
-              <FormItem {...formItemLayout} label="虚拟商品价值">
-                {getFieldDecorator('goodsValue', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入虚拟商品价值'
-                    }
-                  ]
-                })(
-                  <InputNumber min={0} max={100000} />
-                )}
-              </FormItem>
-            }
             {goodsType === 0 &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
@@ -581,6 +567,34 @@ class GoodsAdd extends Component {
                 })(<CheckboxGroup options={sizeOptions}/>)}
               </FormItem>
             }
+
+            {goodsType === 1 &&
+            <FormItem {...formItemLayout} label="虚拟商品价值">
+              {getFieldDecorator('goodsValue', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入虚拟商品价值'
+                  }
+                ]
+              })(
+                <InputNumber min={0} max={100000}  style={{width: '100%'}}/>
+              )}
+            </FormItem>
+            }
+            {goodsType === 1 &&
+            <FormItem {...formItemLayout} label="过期时间(天)">
+              {getFieldDecorator('cardExpireTime', {
+                rules: [
+                  {
+                    required: true,
+                    message: '过期时间'
+                  }
+                ]
+              })(<InputNumber min={0} max={10000000} style={{width: '100%'}}/>)}
+            </FormItem>
+            }
+
             <FormItem {...formItemLayout} label="出售区域">
               {getFieldDecorator('address',{
                 rules: [
@@ -733,18 +747,6 @@ class GoodsAdd extends Component {
                 </RadioGroup>
               )}
             </FormItem>
-            {goodsType === 1 &&
-              <FormItem {...formItemLayout} label="过期时间">
-                {getFieldDecorator('expireTime', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '过期时间'
-                    }
-                  ]
-                })(<DatePicker style={{width: '100%'}}/>)}
-              </FormItem>
-            }
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"

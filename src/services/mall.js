@@ -46,6 +46,18 @@ export function addGoodsType(formData) {
   return graphRequest(mutation, { formData }, 'mall-admin')
 }
 
+// 删除商品类型
+export function  deleteGoodsType(tid) {
+  const deleteGoodsType = `mutation deleteGoodsType($tid: String) {
+    me {
+      goodsType {
+        deleteGoodsType(tid: $tid)
+      }
+    }
+  }`;
+  return graphRequest(deleteGoodsType, tid, 'mall-admin');
+}
+
 export function delGoodsType() {
   const mutation = `
     mutation delGoodsType {

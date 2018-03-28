@@ -88,8 +88,11 @@ export default {
       }
     },
 
-    *delGoodsType({ payload }, { call, put }) {
-
+    *deleteGoodsType({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.deleteGoodsType, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
     },
 
     *addGoods({ payload }, { call, put }) {
