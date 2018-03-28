@@ -70,6 +70,11 @@ const menuData = [
         path: 'course-record',
       },
       {
+        name: '开课详情',
+        path: 'course-detail',
+        hideInMenu: true,
+      },
+      {
         name: '课程审核',
         path: 'course-review',
         hideInMenu: true,
