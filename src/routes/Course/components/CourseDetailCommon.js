@@ -38,7 +38,7 @@ const CourseCommon = (props)=>{
   console.log("gallery=================>>>>>>>>",gallery);
   const listImg = gallery.map((item,index)=>{
     return(
-      <img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{height:'240px',justifyContent:'space-around'}} />
+      <img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{height:'300px',padding:'20px'}} />
     )
 
   })
