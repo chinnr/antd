@@ -11,6 +11,7 @@ export function studentList(v) {
               phone
               profile {
                 realName
+                icon
               }
             }
             number

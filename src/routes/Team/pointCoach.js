@@ -45,6 +45,7 @@ export default class PointCoach extends PureComponent {
     console.log("record===============>", values);
     this.gid = values.gid;
     this.name = values.name;
+    this.coachs = values.coachList;
   };
 
   render() {
@@ -80,6 +81,10 @@ export default class PointCoach extends PureComponent {
       phone: 'Sidney No. 1 Lake Park',
     }];
 
+    this.coachs.forEach((item)=>{
+      item.key = Math.random(0,20000);
+    })
+
     const {getFieldDecorator} = this.props.form;
 
 
@@ -89,7 +94,7 @@ export default class PointCoach extends PureComponent {
       >
         <Card bordered={false} title={`${this.name} / 教官管理`}>
           {getFieldDecorator('members', {
-            initialValue: tableData,
+            initialValue: this.coachs,
           })(<TableForm gid={this.gid} />)}
         </Card>
 

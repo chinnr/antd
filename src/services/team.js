@@ -49,6 +49,11 @@ export function getAllTeams(payload) {
           username
           nickname
           type
+          coachList{
+            uid
+            name
+            icon
+          }
           head {
             phone
             name

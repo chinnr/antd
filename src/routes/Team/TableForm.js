@@ -26,6 +26,11 @@ export default class TableForm extends PureComponent {
       dataIndex: 'icon',
       key: 'icon',
       width: '20%',
+      render:(text,record)=>{
+        return (
+          <img src={text} style={{height:70}}/>
+        )
+      }
     }, {
       title: '电话号码',
       dataIndex: 'phone',
@@ -120,7 +125,7 @@ export default class TableForm extends PureComponent {
                 name:item.base.profile.realName,
                 phone:item.base.phone,
                 key:Math.random(0,10000),
-                icon:'暂无此数据'
+                icon:item.base.profile.icon
               }
             })
             console.log("newData===========>>>>>",newData);
