@@ -33,7 +33,7 @@ export default class CourseReview extends Component {
     return _id;
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const _id = this.getCourseId();
     this.props
       .dispatch({
@@ -41,8 +41,6 @@ export default class CourseReview extends Component {
         payload: { id: _id }
       })
       .catch(err => err);
-
-
   }
 
   // 点击展开课程详细信息
@@ -131,11 +129,16 @@ export default class CourseReview extends Component {
     const { course: { courseDetail } } = this.props;
     const { openCourseDetail, rejectModal } = this.state;
     const { getFieldDecorator } = this.props.form;
+
+    console.log("cccccccccccccccccccccc===========>>>>",courseDetail);
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
 
-
-        <CourseCommon {...courseDetail}></CourseCommon>
+        {JSON.stringify(courseDetail).length > 2 ?
+          <CourseCommon {...courseDetail}></CourseCommon>
+          :
+          <p>暂无数据</p>
+        }
 
         <div style={{textAlign:'center'}}>
           <Button
