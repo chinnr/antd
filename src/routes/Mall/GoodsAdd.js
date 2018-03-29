@@ -103,8 +103,8 @@ class GoodsAdd extends Component {
         values.listImg = images[0];
         values.goodsJson = this.goodsJson;
         values.upTime = values.upTime.toISOString();
-        values.downTime = values.downTime.toISOString();
         values.expireTime  = values.downTime.toISOString();
+        values.downTime = values.downTime.toISOString();
         if(values.type === 1) {
           skuSizeList.push(values.goodsValue.toString());
           values.skuSizeList = skuSizeList;

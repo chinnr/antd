@@ -14,11 +14,15 @@ export function goodsType(q) {
           }
           data {
             tid
+            parentId
             name
             type
             level
             typeImg
             skuPrefix
+            expireTime
+            priority
+            show
           }
         }
       } 
@@ -58,17 +62,18 @@ export function  deleteGoodsType(tid) {
   return graphRequest(deleteGoodsType, tid, 'mall-admin');
 }
 
-export function delGoodsType() {
-  const mutation = `
-    mutation delGoodsType {
-      me {
-        goodsType {
-          deleteGoodsType 
+// 修改商品类型
+export function updateGoodsType(form) {
+  const updateGoodsType = `mutation updateGoodsType($form: GoodsTypeInputUpdate) {
+    me {
+      goodsType {
+        updateGoodsType(form: $form) {
+          tid
         }
       }
     }
-  `;
-  return graphRequest(mutation, {  }, 'mall-admin')
+  }`;
+  return graphRequest(updateGoodsType, {form}, 'mall-admin');
 }
 
 // 获取商品列表
@@ -237,6 +242,21 @@ export function donateVirtualGoods(form) {
     }
   }`;
   return graphRequest(donate, form, 'mall-admin')
+}
+
+// 获取用户卡券统计
+export function getVirtualGoodsCount(uid) {
+  const getVirtualGoodsCount = `query getVirtualGoodsCount($uid: String!) {
+    me {
+      virtualGoods {
+        getVirtualGoodsCount(uid: $uid){
+          keshi
+          tiyan
+        }
+      }
+    }
+  }`;
+  return graphRequest(getVirtualGoodsCount, {uid}, 'mall-admin')
 }
 
 // 获取广告位列表

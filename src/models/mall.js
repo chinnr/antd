@@ -12,7 +12,8 @@ export default {
     orderList: [],
     orderListMeta: {},
     allPayRecord: [],
-    allPayRecordMeta:{}
+    allPayRecordMeta:{},
+    virtualGoodsCount: {}
   },
   reducers: {
     updateState(state, { payload }) {
@@ -31,6 +32,7 @@ export default {
         throw new Error(errors[0].message);
       }
       if(data.me) {
+        console.log("modal getGoodsType >>> ", data.me.goodsType.getGoodsTypes.data);
         yield put({
           type: 'updateState',
           payload: {
@@ -80,11 +82,12 @@ export default {
       if(errors) {
         throw new Error(errors[0].message);
       }
-      if(data.me) {
-        yield put({
-          type: 'add',
-          payload: data.me.goodsType.createGoodsType
-        })
+    },
+
+    *updateGoodsType({ payload: formData }, { call, put }) {
+      const { data, errors } = yield call(mallService.updateGoodsType, formData);
+      if(errors) {
+        throw new Error(errors[0].message);
       }
     },
 
@@ -121,12 +124,26 @@ export default {
         const err = errors[0].message;
         throw new Error(err);
       } else {
-        console.log("orderList ==> ", data.me.order.getAll);
         yield put({
           type: 'updateState',
           payload: {
             orderList: data.me.order.getAll.data,
             orderListMeta: data.me.order.getAll.meta
+          }
+        })
+      }
+    },
+
+    *getVirtualGoodsCount({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.getVirtualGoodsCount, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }else {
+        const virtualGoodsCount = data.me.virtualGoods.getVirtualGoodsCount;
+        yield put({
+          type: 'updateState',
+          payload: {
+            virtualGoodsCount: virtualGoodsCount
           }
         })
       }
@@ -225,11 +242,11 @@ export default {
         }
         if(pathname.match(reg)) {
           const uid = pathname.match(reg)[1];
-          console.log("pathname: ", pathname);
+          // console.log("pathname: ", pathname);
           if(uid.length > 0) {
-            console.log("uid.length > 0 ");
+            // console.log("uid.length > 0 ");
             dispatch({
-              type: 'getUserVirtualGoods',
+              type: 'getVirtualGoodsCount',
               payload: uid
             });
             dispatch({
