@@ -38,7 +38,7 @@ const CourseCommon = (props)=>{
   console.log("gallery=================>>>>>>>>",gallery);
   const listImg = gallery.map((item,index)=>{
     return(
-      <img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{height:'240px'}} />
+      <img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{height:'240px',justifyContent:'space-around'}} />
     )
 
   })
@@ -102,8 +102,7 @@ const CourseCommon = (props)=>{
 
       </Card>
 
-      <Card className={style.listCard} title='课程风采'>
-        {/*<img src={`${rootUrl}${thumbnailPath}${gallery}`} style={{height:'260px'}}/>*/}
+      <Card className={style.galleryCard} title='课程风采'>
         {listImg}
       </Card>
 
