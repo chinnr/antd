@@ -85,7 +85,8 @@ const CreateForm = Form.create()(props => {
   loading: loading.models.student,
   mallLoading: loading.models.mall,
   myVirtualGoods: mall.myVirtualGoods,
-  goodsList: mall.goodsList
+  goodsList: mall.goodsList,
+  virtualGoodsCount: mall.virtualGoodsCount,
 }))
 class StudentDetail extends PureComponent {
   state = {
@@ -153,13 +154,12 @@ class StudentDetail extends PureComponent {
   };
 
   componentDidMount() {
-    this.getGoodsList();
+    // this.getGoodsList();
   }
 
   render() {
     const { visible } = this.state;
-    const { loading, goodsList,mallLoading, studentDetail, myVirtualGoods } = this.props;
-    console.log('goodsList==> ', goodsList);
+    const { loading, goodsList, mallLoading, studentDetail, virtualGoodsCount } = this.props;
 
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
     const levelObj = {
@@ -168,21 +168,23 @@ class StudentDetail extends PureComponent {
       level3: '探索',
       level4: '乐扶'
     };
-    const columns = [
+    const breadcrumbList = [
       {
-        title: '卡劵类型',
-        key: 'cardType',
-        dataIndex: 'cardType'
+        title: '首页',
+        href: '/'
       },
       {
-        title: '余额',
-        key: 'value',
-        dataIndex: 'value'
+        title: '学员管理',
+        href: '/student'
+      },
+      {
+        title: '学员详情',
+        href: '/student-detail'
       }
     ];
 
     return (
-      <PageHeaderLayout title="学员详情">
+      <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card title="入团信息" bordered={false} loading={loading}>
           <Row>
             <Col span={20}>
@@ -296,16 +298,19 @@ class StudentDetail extends PureComponent {
         </Card>
         <Card
           style={{ marginTop: 10 }}
-          title="卡劵包"
+          title="卡劵信息"
           bordered={false}
           loading={mallLoading}
         >
           <Button type="primary" onClick={() => this.showModal()}>赠送卡券</Button>
-          <Table
-            columns={columns}
-            dataSource={myVirtualGoods}
-            rowKey={record => record.createdAt}
-          />
+          <Row>
+            <Col span={8}>
+              <p>课时券: {virtualGoodsCount.keshi}</p>
+            </Col>
+            <Col span={8}>
+              <p>体验券: {virtualGoodsCount.tiyan}</p>
+            </Col>
+          </Row>
           <CreateForm
             visible={visible}
             sourceData={goodsList}
