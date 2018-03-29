@@ -7,6 +7,7 @@ import DescriptionList from '../../components/DescriptionList';
 import styles from './CourseReview.less';
 import moment from 'moment/moment';
 import { routerRedux } from 'dva/router';
+import CourseCommon from './components/CourseDetailCommon'
 
 const { Description } = DescriptionList;
 const TextArea = Input.TextArea;
@@ -40,6 +41,8 @@ export default class CourseReview extends Component {
         payload: { id: _id }
       })
       .catch(err => err);
+
+
   }
 
   // 点击展开课程详细信息
@@ -130,56 +133,26 @@ export default class CourseReview extends Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
-        <Card>
-          <DescriptionList className={styles.headerList} size="small" col="2">
-            <Description term="标题">{courseDetail.title}</Description>
-            <Description term="培养能力">{courseDetail.skills}</Description>
-            <Description term="开课时间">
-              {moment(courseDetail.startedAt).format('YYYY-MM-DD hh:mm')}
-            </Description>
-            <Description term="上课地点">
-              {courseDetail.courseLocation}
-            </Description>
-            <Description term="结课时间">
-              {moment(courseDetail.endedAt).format('YYYY-MM-DD hh:mm')}
-            </Description>
-            <Description term="集合地点">
-              {courseDetail.collectLocation}
-            </Description>
-            <Description term="体验券">
-              {courseDetail.payExpCoupons}
-            </Description>
-            <Description term="课时券">
-              {courseDetail.payClassCoupons}
-            </Description>
-            <Description term="课程详情">
-              <Button onClick={() => this.toggleCourseDetail()}>
-                {openCourseDetail ? '收起' : '展开'}
-              </Button>
-            </Description>
-          </DescriptionList>
-          {openCourseDetail && (
-            <div style={{ height: 400, overflow: 'scroll' }}>
-              <div
-                dangerouslySetInnerHTML={{ __html: courseDetail.description }}
-              />
-            </div>
-          )}
-          <div>
-            <Button
-              type="primary"
-              onClick={() => this.reviewCourse('resolve', courseDetail.id)}
-            >
-              通过
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => this.reviewCourse('reject', courseDetail.id)}
-            >
-              拒绝
-            </Button>
-          </div>
-        </Card>
+
+
+        <CourseCommon {...courseDetail}></CourseCommon>
+
+        <div style={{textAlign:'center'}}>
+          <Button
+            type="primary"
+            onClick={() => this.reviewCourse('resolve', courseDetail.id)}
+            style={{marginRight:'30px'}}
+          >
+            通过
+          </Button>
+          <Button
+            type="danger"
+            onClick={() => this.reviewCourse('reject', courseDetail.id)}
+          >
+            拒绝
+          </Button>
+        </div>
+
         <Modal
           title="拒绝理由"
           visible={rejectModal}
