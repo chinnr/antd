@@ -120,14 +120,20 @@ export function courseDetail(id) {
         status
         type
         method
+        note
+        gallery
         stage
         level
+        cover
+        content
         lesson
         capacity
+        deadlinedAt
         payExpCoupons
         payClassCoupons
         startedAt
         endedAt
+        instructors
         courseLocation
         collectLocation
         description
