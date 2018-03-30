@@ -122,6 +122,7 @@ export function courseDetail(id) {
         method
         note
         gallery
+        badgeList
         stage
         level
         cover
