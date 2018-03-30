@@ -42,6 +42,7 @@ export function studentDetail(uid) {
           base {
             profile {
               realName
+              icon
               sex
               birth
               ethnic
