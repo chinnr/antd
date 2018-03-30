@@ -8,6 +8,7 @@ import {
 } from "antd";
 import style from '../Course.less';
 import { rootUrl, thumbnailPath } from "../../../utils/constant";
+import {handleLevel,handleStage} from "../../../utils/utils";
 
 const CourseCommon = (props)=>{
   const {
@@ -43,7 +44,7 @@ const CourseCommon = (props)=>{
   //课程风采
   const listImg = gallery.map((item,index)=>{
     return(
-      <Col span={6}><img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{ width:'100%', marginTop:8, marginBottom:8 }} /></Col>
+      <Col span={6}><img src={rootUrl+thumbnailPath+item} key={'listImg'+index.toString()} alt="" style={{ width:'100%', marginTop:8, marginBottom:8 }} /></Col>
     )
   })
 
@@ -52,7 +53,7 @@ const CourseCommon = (props)=>{
   if(ins&&ins.length>=1){
     listItem = ins.map((item,index)=>{
       return (
-        <li style={{float:'left',width:'200px'}} key={index.toString()}><img style={{height:'50px',marginRight:'30px'}} src={item.icon}/>{item.realName}</li>
+        <li style={{float:'left',width:'200px'}} key={'listItem'+index.toString()}><img style={{height:'50px',marginRight:'30px'}} src={item.icon}/>{item.realName}</li>
       )
     })
   }else{
@@ -64,7 +65,7 @@ const CourseCommon = (props)=>{
   if(badgeList&&badgeList.length>=1){
     badges = badgeList.map((item,index)=>{
       return (
-        <span style={{marginRight:'30px'}} key={index.toString()}>{index}.item.name</span>
+        <span style={{marginRight:'30px'}} key={'badges'+index.toString()}>{index}.item.name</span>
       )
     })
   }else{
@@ -89,7 +90,7 @@ const CourseCommon = (props)=>{
             </Row>
             <Row>
               <Col lg={12}>支付类型：{payClassCoupons}课时卷     {payExpCoupons}体验卷</Col>
-              <Col lg={12}>级别阶段：{level}-{stage}</Col>
+              <Col lg={12}>级别阶段：{handleLevel(level)}{handleStage(stage)}</Col>
             </Row>
             <Row>
               报名截止：{moment(deadlinedAt).format('YYYY-MM-DD HH:mm')}
