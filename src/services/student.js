@@ -52,6 +52,7 @@ export function studentDetail(uid) {
               phone
               province
               city
+              icon
             }
           }
           group {

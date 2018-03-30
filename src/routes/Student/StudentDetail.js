@@ -1,10 +1,14 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Table, Row, Col,Form, Radio, Select, Modal, Button, InputNumber } from 'antd';
+import { Card, Form, Radio, Select, Modal, Button, InputNumber, Divider, Avatar } from 'antd';
+import DescriptionList from '../../components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {routerRedux} from "dva/router";
 import {successNotification} from "../../utils/utils";
 import {rootUrl, thumbnailPath} from "../../utils/constant";
+import styles from './StudentDetail.less';
+
+const { Description } = DescriptionList;
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -37,7 +41,7 @@ const CreateForm = Form.create()(props => {
   };
 
   return (
-    <Modal title="编辑广告位" maskClosable={true} visible={visible} onOk={handleOk} onCancel={() => handleCancel()}>
+    <Modal title="卡券列表" maskClosable={true} visible={visible} onOk={handleOk} onCancel={() => handleCancel()}>
       <Form>
         <FormItem>
           {getFieldDecorator('goods')(
@@ -185,132 +189,48 @@ class StudentDetail extends PureComponent {
 
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
-        <Card title="入团信息" bordered={false} loading={loading}>
-          <Row>
-            <Col span={20}>
-              <Row>
-                <Col span={6}>
-                  <span>编号:&nbsp;&nbsp;{studentDetail.number}</span>
-                </Col>
-                <Col span={6}>
-                  <span>阶段:&nbsp;&nbsp;{levelObj[studentDetail.level]}</span>
-                </Col>
-                <Col span={6}>
-                  <span>团属:&nbsp;&nbsp;{studentDetail.group}</span>
-                </Col>
-              </Row>
-              <Row style={{ marginTop: 10 }}>
-                <Col span={6}>
-                  <span>所在组:&nbsp;&nbsp;{studentDetail.classNameAlias}</span>
-                </Col>
-                <Col span={6}>
-                  <span>职务:&nbsp;&nbsp;{duty}</span>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+        <Card bordered={false} loading={loading} style={{ marginBottom: 24 }}>
+          <div style={{ marginBottom: 24 }}>
+            <Avatar size="large" src={studentDetail.icon} /><span className={styles.realName}>{studentDetail.realName}</span>
+          </div>
+          <DescriptionList style={{ marginBottom: 32 }}>
+            <Description term="童军号">{studentDetail.number}</Description>
+            <Description term="阶段">{levelObj[studentDetail.level]}</Description>
+            <Description term="所属团">{studentDetail.group}</Description>
+            <Description term="所属队伍">{studentDetail.classNameAlias}</Description>
+            <Description term="职务">{duty}</Description>
+
+          </DescriptionList>
+          <Divider style={{ marginBottom: 32 }} />
+          <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
+            <Description term="性别">{studentDetail.sex === '1' ? '男' : '女'}</Description>
+            <Description term="生日">{studentDetail.birth}</Description>
+            <Description term="电话号码">{studentDetail.phone}</Description>
+            <Description term="民族">{studentDetail.ethnic}</Description>
+            <Description term="宗教信仰">{studentDetail.religion}</Description>
+            <Description term="身份证号">{studentDetail.id}</Description>
+            <Description term="家庭住址">{studentDetail.province}{studentDetail.city}{studentDetail.address}</Description>
+          </DescriptionList>
+          <Divider style={{ marginBottom: 32 }} />
+          <DescriptionList size="large" title="亲属信息">
+            <Description term="监护人1">{studentDetail.relativeName1}</Description>
+            <Description term="关系">{studentDetail.relativeRelation1}</Description>
+            <Description term="联系电话">{studentDetail.relativePhone1}</Description>
+            <Description term="监护人2">{studentDetail.relativeName2}</Description>
+            <Description term="关系">{studentDetail.relativeRelation2}</Description>
+            <Description term="联系电话">{studentDetail.relativePhone2}</Description>
+          </DescriptionList>
         </Card>
         <Card
-          style={{ marginTop: 10 }}
-          title="基本信息"
+          style={{ marginBottom: 24 }}
+          title="卡券信息"
           bordered={false}
-          loading={loading}
+          extra={<Button type="primary" onClick={() => this.showModal()} style={{ margin: -16 }}>赠送卡券</Button>}
         >
-          <Row>
-            <Col span={20}>
-              <Row>
-                <Col span={6}>
-                  <span>姓名:&nbsp;&nbsp;{studentDetail.realName}</span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    性别:&nbsp;&nbsp;{studentDetail.sex === '1' ? '男' : '女'}
-                  </span>
-                </Col>
-                <Col span={6}>
-                  <span>生日:&nbsp;&nbsp;{studentDetail.birth}</span>
-                </Col>
-                <Col span={6}>
-                  <span>民族:&nbsp;&nbsp;{studentDetail.ethnic}</span>
-                </Col>
-              </Row>
-              <Row style={{ marginTop: 10 }}>
-                <Col span={6}>
-                  <span>宗教信仰:&nbsp;&nbsp;{studentDetail.religion}</span>
-                </Col>
-                <Col span={6}>
-                  <span>身份证号:&nbsp;&nbsp;{studentDetail.id}</span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    家庭住址:&nbsp;&nbsp;{studentDetail.province}
-                    {studentDetail.city}
-                    {studentDetail.address}
-                  </span>
-                </Col>
-                <Col span={6}>
-                  <span>电话号码:&nbsp;&nbsp;{studentDetail.phone}</span>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Card>
-        <Card
-          style={{ marginTop: 10 }}
-          title="监护人信息"
-          bordered={false}
-          loading={loading}
-        >
-          <Row>
-            <Col span={20}>
-              <Row>
-                <Col span={6}>
-                  <span>监护人:&nbsp;&nbsp;{studentDetail.relativeName1}</span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    关系:&nbsp;&nbsp;{studentDetail.relativeRelation1}
-                  </span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    联系电话:&nbsp;&nbsp;{studentDetail.relativePhone1}
-                  </span>
-                </Col>
-              </Row>
-              <Row style={{ marginTop: 10 }}>
-                <Col span={6}>
-                  <span>监护人:&nbsp;&nbsp;{studentDetail.relativeName2}</span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    关系:&nbsp;&nbsp;{studentDetail.relativeRelation2}
-                  </span>
-                </Col>
-                <Col span={6}>
-                  <span>
-                    联系电话:&nbsp;&nbsp;{studentDetail.relativePhone2}
-                  </span>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Card>
-        <Card
-          style={{ marginTop: 10 }}
-          title="卡劵信息"
-          bordered={false}
-          loading={mallLoading}
-        >
-          <Button type="primary" onClick={() => this.showModal()}>赠送卡券</Button>
-          <Row>
-            <Col span={8}>
-              <p>课时券: {virtualGoodsCount.keshi}</p>
-            </Col>
-            <Col span={8}>
-              <p>体验券: {virtualGoodsCount.tiyan}</p>
-            </Col>
-          </Row>
+          <DescriptionList>
+            <Description term="剩余课时券">{virtualGoodsCount.keshi}</Description>
+            <Description term="剩余体验券">{virtualGoodsCount.tiyan}</Description>
+          </DescriptionList>
           <CreateForm
             visible={visible}
             sourceData={goodsList}
