@@ -1,4 +1,4 @@
-import graphRequest from '../utils/graphRequest';
+import graphRequest from "../utils/graphRequest";
 import MallAdvertising from "../routes/Mall/MallAdvertising";
 
 // 获取全部商品类型
@@ -28,7 +28,7 @@ export function goodsType(q) {
       } 
     }
   }`;
-  return graphRequest(query, { q }, 'mall-admin')
+  return graphRequest(query, {q}, "mall-admin");
 }
 
 // 添加商品类型
@@ -47,11 +47,11 @@ export function addGoodsType(formData) {
       }
     }
   }`;
-  return graphRequest(mutation, { formData }, 'mall-admin')
+  return graphRequest(mutation, {formData}, "mall-admin");
 }
 
 // 删除商品类型
-export function  deleteGoodsType(tid) {
+export function deleteGoodsType(tid) {
   const deleteGoodsType = `mutation deleteGoodsType($tid: String) {
     me {
       goodsType {
@@ -59,7 +59,7 @@ export function  deleteGoodsType(tid) {
       }
     }
   }`;
-  return graphRequest(deleteGoodsType, tid, 'mall-admin');
+  return graphRequest(deleteGoodsType, tid, "mall-admin");
 }
 
 // 修改商品类型
@@ -73,7 +73,7 @@ export function updateGoodsType(form) {
       }
     }
   }`;
-  return graphRequest(updateGoodsType, {form}, 'mall-admin');
+  return graphRequest(updateGoodsType, {form}, "mall-admin");
 }
 
 // 获取商品列表
@@ -108,7 +108,7 @@ export function goodsList(payload) {
       }
     }
   `;
-  return graphRequest(getAllGoods, payload, 'mall-admin')
+  return graphRequest(getAllGoods, payload, "mall-admin");
 }
 
 // 获取单个商品详情
@@ -142,11 +142,11 @@ export function getGoodsDetail(gid) {
       }
     }
   }`;
-  return graphRequest(getGoodsDetail, gid, 'mall-admin')
+  return graphRequest(getGoodsDetail, gid, "mall-admin");
 }
 
 // 获取卡券列表
-export function virtualGoods(query , adminVirtual) {
+export function virtualGoods(query, adminVirtual) {
   const virtualGoodsQuery = `
     query getUserVirtualGoods($query: FormQuery!, $adminVirtual: AdminVirtualQuery) {
       me {
@@ -167,7 +167,7 @@ export function virtualGoods(query , adminVirtual) {
       }
     }
   `;
-  return graphRequest(virtualGoodsQuery, { query, adminVirtual }, 'mall-admin');
+  return graphRequest(virtualGoodsQuery, {query, adminVirtual}, "mall-admin");
 }
 
 // 添加商品
@@ -179,7 +179,7 @@ export function goodsAdd(form) {
       }
     }
   }`;
-  return graphRequest(goodsAdd, {form}, 'mall-admin')
+  return graphRequest(goodsAdd, {form}, "mall-admin");
 }
 
 // 删除商品
@@ -191,7 +191,7 @@ export function deleteGoods(gid) {
       }
     }
   }`;
-  return graphRequest(deleteGoods, gid, 'mall-admin')
+  return graphRequest(deleteGoods, gid, "mall-admin");
 }
 
 // 订单列表管理
@@ -229,7 +229,7 @@ export function orderList(payload) {
       }
     }
   }`;
-  return graphRequest(orderList, payload, 'mall-admin')
+  return graphRequest(orderList, payload, "mall-admin");
 }
 
 // 赠送卡券
@@ -241,7 +241,7 @@ export function donateVirtualGoods(form) {
       }
     }
   }`;
-  return graphRequest(donate, form, 'mall-admin')
+  return graphRequest(donate, form, "mall-admin");
 }
 
 // 获取用户卡券统计
@@ -256,7 +256,7 @@ export function getVirtualGoodsCount(uid) {
       }
     }
   }`;
-  return graphRequest(getVirtualGoodsCount, {uid}, 'mall-admin')
+  return graphRequest(getVirtualGoodsCount, {uid}, "mall-admin");
 }
 
 // 获取广告位列表
@@ -271,7 +271,7 @@ export function getAdvertiseList() {
       }
     }
   }`;
-  return graphRequest(getAdvertiseList, {}, 'mall')
+  return graphRequest(getAdvertiseList, {}, "mall");
 }
 
 // 修改广告位
@@ -282,8 +282,8 @@ export function updateAdvertiseList(form) {
         updateDiscovery(form: $form)
       }
     }
-  }`
-  return graphRequest(update, form, 'mall-admin')
+  }`;
+  return graphRequest(update, form, "mall-admin");
 }
 
 // 获取支付记录
@@ -310,5 +310,19 @@ export function getAllPayRecord(payload) {
       }
     }
   }`;
-  return graphRequest(payRecord, payload, 'mall-admin')
+  return graphRequest(payRecord, payload, "mall-admin");
+}
+
+//更新订单状态
+export function updateOrderState(payload) {
+  console.log("!!!!!!!!========>",payload);
+  const update = `mutation($form: UpdateStatusModel) {
+  me {
+    Order{
+      UpdateOrderState(form:$form)
+    }
+  }
+}
+`;
+  return graphRequest(update, payload, "mall-admin");
 }
