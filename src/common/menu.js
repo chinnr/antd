@@ -82,7 +82,7 @@ const menuData = [
       {
         name: '课程编辑',
         path: 'edit',
-        hideInMenu: false,
+        hideInMenu: true,
       }
     ],
   },
