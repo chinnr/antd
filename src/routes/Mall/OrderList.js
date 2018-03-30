@@ -202,6 +202,14 @@ export default class OrderList extends PureComponent {
   };
 
   /**
+   * 发货
+   * @param id=>id       status=>0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消 5.发货
+   */
+  ship = ({id,status})=>{
+    const { dispatch } = this.props;
+  }
+
+  /**
    * 前往订单详情页面
    * @param uid
    */
@@ -281,8 +289,8 @@ export default class OrderList extends PureComponent {
           return (
             <div>
               <a onClick={() => this.goToDetail(record)}>详情</a>
-              {/*<Divider type="vertical" />*/}
-              {/*<a>发货</a>*/}
+              <Divider type="vertical" />
+              <a onClick={() =>{this.ship(record)}}>发货</a>
             </div>
           )
         }

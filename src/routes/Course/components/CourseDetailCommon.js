@@ -24,10 +24,14 @@ const CourseCommon = (props)=>{
     skills,
     courseLocation,
     collectLocation,
-    instructors,
+    payExpCoupons,
+    description,
     note,
     gallery,
+    ins,
+    badgeList
   } = props;
+
 
   const classType = {
     0:'团集会',
@@ -35,15 +39,40 @@ const CourseCommon = (props)=>{
     2:'兴趣课'
   }
 
-  console.log("gallery=================>>>>>>>>",gallery);
+  //课程风采
   const listImg = gallery.map((item,index)=>{
     return(
       <img src={rootUrl+thumbnailPath+item} key={index.toString()} alt="" style={{height:'300px',padding:'20px'}} />
     )
-
   })
 
-  console.log("courseDetail=>>>>>>>>>>>>>>",props);
+  //任课教官
+  let listItem;
+  if(ins&&ins.length>=1){
+    listItem = ins.map((item,index)=>{
+      return (
+        <li style={{float:'left',width:'200px'}} key={index.toString()}><img style={{height:'50px',marginRight:'30px'}} src={item.icon}/>{item.realName}</li>
+      )
+    })
+  }else{
+    listItem = <p>暂无教官</p>
+  }
+
+  //获得荣誉
+  let badges;
+  if(badgeList&&badgeList.length>=1){
+    badges = badgeList.map((item,index)=>{
+      return (
+        <span style={{marginRight:'30px'}} key={index.toString()}>{index}.item.name</span>
+      )
+    })
+  }else{
+    badges = <span>暂无荣誉</span>
+  }
+
+
+  console.log("ins=================>>>>>>>",badgeList)
+
   return(
     <div>
       <Card className={style.listCard}>
@@ -60,7 +89,7 @@ const CourseCommon = (props)=>{
               <Col lg={14}>服务范围：{score}</Col>
             </Row>
             <Row>
-              <Col lg={10}>支付类型：{payClassCoupons}课时卷</Col>
+              <Col lg={10}>支付类型：{payClassCoupons}课时卷     {payExpCoupons}体验卷</Col>
               <Col lg={14}>级别阶段：{level}-{stage}</Col>
             </Row>
             <Row>
@@ -81,7 +110,7 @@ const CourseCommon = (props)=>{
             培养能力：{skills}
           </Row>
           <Row>
-            获得荣誉：{}
+            获得荣誉：{badges}
           </Row>
           <Row>
             <Col lg={12}>
@@ -95,11 +124,11 @@ const CourseCommon = (props)=>{
       </Card>
 
       <Card className={style.listCard} title='任课教官'>
-        uid:{instructors}
+        {listItem}
       </Card>
 
       <Card className={style.listCard} title='详细信息'>
-
+        <div dangerouslySetInnerHTML={{__html: description}}></div>
       </Card>
 
       <Card className={style.galleryCard} title='课程风采'>
