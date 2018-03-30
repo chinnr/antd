@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import moment from 'moment/moment';
 import { Row, Col, Card, Form, Input, Select, Button, Table, InputNumber, DatePicker, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import {successNotification} from '../../utils/utils';
 
 import styles from './OrderList.less';
 import {routerRedux} from "dva/router";
@@ -207,6 +208,16 @@ export default class OrderList extends PureComponent {
    */
   ship = ({id,status})=>{
     const { dispatch } = this.props;
+    dispatch({
+      type:"mall/updateOrderState",
+      payload:{form:{id,status}}
+    }).then((res)=>{
+      console.log("updateOrder???????????================>",res);
+      successNotification("发货成功",()=>{
+
+      });
+
+    }).catch(err => err);
   }
 
   /**
