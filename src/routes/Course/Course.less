@@ -9,14 +9,20 @@
   }
 }
 
-.listCard{
-  margin-bottom: 20px;
-}
-
-.galleryCard{
+.listCard {
   margin-bottom: 20px;
   :global {
-    .ant-card-body{
+    .coachList {
+      float: left;
+      width: 200px;
+    }
+  }
+}
+
+.galleryCard {
+  margin-bottom: 20px;
+  :global {
+    .ant-card-body {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -150,6 +156,7 @@
       }
     }
   }
+
   .listCard {
     :global {
       .ant-radio-group {
