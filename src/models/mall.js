@@ -26,6 +26,20 @@ export default {
     }
   },
   effects: {
+    *updateOrderState({ payload }, { call, put }){
+      console.log("form=============================>",payload);
+      const { data, errors } = yield call(mallService.updateOrderState, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me){
+        const res = data.me.Order.UpdateOrderState;
+        console.log("updateOrderState!!!!!==========================>>>",res);
+        return res;
+      }
+
+    },
+
     *getGoodsType({ payload: query }, { call, put }) {
       const { data, errors } = yield call(mallService.goodsType, query);
       if(errors) {
