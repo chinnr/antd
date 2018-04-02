@@ -31,6 +31,36 @@ export function goodsType(q) {
   return graphRequest(query, { q }, 'mall-admin')
 }
 
+// 获取单个商品类型
+export function oneGoodsType(queryOption) {
+  const query = `query getGoodsType($queryOption: QueryGoodsType) {
+    me {
+      goodsType {
+        getGoodsTypes(queryOption: $queryOption) {
+          meta {
+            count
+            limit
+            page
+          }
+          data {
+            tid
+            parentId
+            name
+            type
+            level
+            typeImg
+            skuPrefix
+            expireTime
+            priority
+            show
+          }
+        }
+      } 
+    }
+  }`;
+  return graphRequest(query, queryOption, 'mall-admin')
+}
+
 // 添加商品类型
 export function addGoodsType(formData) {
   const mutation = `mutation addGoodsType($formData: GoodsTypeInputCreate) {

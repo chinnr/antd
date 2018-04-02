@@ -13,7 +13,8 @@ export default {
     orderListMeta: {},
     allPayRecord: [],
     allPayRecordMeta:{},
-    virtualGoodsCount: {}
+    virtualGoodsCount: {},
+    goodsTypeDetail: []
   },
   reducers: {
     updateState(state, { payload }) {
@@ -39,7 +40,24 @@ export default {
             goodsType: data.me.goodsType.getGoodsTypes.data,
             goodsTypeMeta: data.me.goodsType.getGoodsTypes.meta
           }
-        })
+        });
+      }
+    },
+    *getOneGoodsType({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.oneGoodsType, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me) {
+        console.log("modal getOneGoodsType >>> ", data.me.goodsType.getGoodsTypes.data);
+        const goodsTypeDetail = data.me.goodsType.getGoodsTypes.data;
+        yield put({
+          type: 'updateState',
+          payload: {
+            goodsTypeDetail: goodsTypeDetail,
+          }
+        });
+        return goodsTypeDetail
       }
     },
 
@@ -203,7 +221,7 @@ export default {
   	setup({ dispatch, history }) {
       const reg = /\/student-detail\/(.+)/;
   		history.listen(({ pathname }) => {
-        if(pathname === '/mall/goods-type') {
+        if(pathname === '/mall/goods-type' || pathname === '/mall/type-edit') {
           dispatch({
             type: 'getGoodsType',
             payload: {
