@@ -79,11 +79,11 @@ const menuData = [
         path: 'course-review',
         hideInMenu: true,
       },
-      {
-        name: '课程编辑',
-        path: 'edit',
-        hideInMenu: true,
-      }
+      // {
+      //   name: '课程编辑',
+      //   path: 'edit',
+      //   hideInMenu: false,
+      // }
     ],
   },
   {
