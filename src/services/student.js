@@ -42,6 +42,7 @@ export function studentDetail(uid) {
           base {
             profile {
               realName
+              icon
               sex
               birth
               ethnic
@@ -51,6 +52,7 @@ export function studentDetail(uid) {
               phone
               province
               city
+              icon
             }
           }
           group {

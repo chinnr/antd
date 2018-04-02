@@ -18,7 +18,8 @@ const FormItem = Form.Item;
 export default class CourseReview extends Component {
   state = {
     openCourseDetail: false,
-    rejectModal: false
+    rejectModal: false,
+    instructors:[]
   };
 
   getCourseId = () => {
@@ -39,6 +40,23 @@ export default class CourseReview extends Component {
       .dispatch({
         type: 'course/courseDetail',
         payload: { id: _id }
+      })
+      .then(res => {
+        let arr = [];
+        res.instructors.forEach(uid => {
+          this.props
+            .dispatch({
+              type: "student/getStudentDetail",
+              payload: uid
+            })
+            .then(res => {
+              const {icon,realName} = res;
+              arr.push({icon,realName});
+              this.setState({
+                instructors: [...arr]
+              })
+            });
+        });
       })
       .catch(err => err);
   }
@@ -135,7 +153,7 @@ export default class CourseReview extends Component {
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
 
         {JSON.stringify(courseDetail).length > 2 ?
-          <CourseCommon {...courseDetail}></CourseCommon>
+          <CourseCommon {...courseDetail} ins={this.state.instructors}></CourseCommon>
           :
           <p>暂无数据</p>
         }

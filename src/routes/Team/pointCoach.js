@@ -12,7 +12,7 @@ import {
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import TableForm from "./TableForm";
 
-@connect(({ team, student }) => ({ team, student }))
+@connect(({ team }) => ({ team }))
 @Form.create()
 export default class PointCoach extends PureComponent {
   constructor(){

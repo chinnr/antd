@@ -120,18 +120,19 @@ export default class TableForm extends PureComponent {
             console.log("选中的教官=============》》》》》》》》》",findCoachs);
 
             //生成一个新的符合表格的数据
-            const newData = findCoachs.map((item)=>{
+            let newData = findCoachs.map((item)=>{
               return {
                 name:item.base.profile.realName,
                 phone:item.base.phone,
-                key:Math.random(0,10000),
+                key:item.uid,
                 icon:item.base.profile.icon
               }
             })
             console.log("newData===========>>>>>",newData);
 
 
-            const lastCoachs =[...this.state.data,...newData];
+            const lastCoachs = this.filterSameCoach(this.state.data,newData)
+            console.log("最终选中的教官================>>>>>>>>>>",lastCoachs);
             this.setState({data:lastCoachs});
             successNotification('指派教官成功!', function() {
               return false;
@@ -143,12 +144,19 @@ export default class TableForm extends PureComponent {
     });
   };
 
-  findCoachs = (values,studentList)=>{
-    let last = studentList.filter((item)=>{
-      values.uid.forEach((uid)=>{
-        item.uid == uid
-      })
-    });
+  //把key重复的教官去重
+  //params  arr1:this.state.data         arr2:指派教官的数据
+  filterSameCoach = (arr1,arr2)=>{
+    let stateData = arr1,
+      newData = arr2;
+    for(let i =0;i<newData.length;i++){
+      for(let j = 0;j<stateData.length;j++){
+        if(newData[i].key === stateData[j].key){
+          newData.splice(i,1);
+        }
+      }
+    }
+    return [...newData,...stateData];
   }
 
 

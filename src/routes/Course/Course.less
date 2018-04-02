@@ -9,8 +9,25 @@
   }
 }
 
-.listCard{
+.listCard {
   margin-bottom: 20px;
+  :global {
+    .coachList {
+      float: left;
+      width: 200px;
+    }
+  }
+}
+
+.galleryCard {
+  margin-bottom: 20px;
+  :global {
+    .ant-card-body {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
 }
 
 .standardList {
@@ -139,6 +156,7 @@
       }
     }
   }
+
   .listCard {
     :global {
       .ant-radio-group {

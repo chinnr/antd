@@ -58,6 +58,8 @@ export default {
             studentDetail
           }
         })
+
+        return studentDetail
       }
     },
     *updateUserPassword({ payload: { uid, form } }, { call, put }) {
