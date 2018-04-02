@@ -65,7 +65,7 @@ const CourseCommon = (props)=>{
   if(badgeList&&badgeList.length>=1){
     badges = badgeList.map((item,index)=>{
       return (
-        <span style={{marginRight:'30px'}} key={'badges'+index.toString()}>{index}.item.name</span>
+        <span style={{marginRight:'30px'}} key={'badges'+index.toString()}>{index}.{item.name}</span>
       )
     })
   }else{
