@@ -109,7 +109,7 @@ export default class TableForm extends PureComponent {
           })
           .then(() => {
             //把选中的指定教练通过uid从studentList中筛选出来
-            const findCoachs = this.props.student.studentList.filter((item)=>{
+            let findCoachs = this.props.student.studentList.filter((item)=>{
               for(let i=0;i<values.uids.length;i++){
                 if(values.uids[i]==item.uid){
                   return true;
@@ -119,19 +119,8 @@ export default class TableForm extends PureComponent {
             });
             console.log("选中的教官=============》》》》》》》》》",findCoachs);
 
-            //生成一个新的符合表格的数据
-            let newData = findCoachs.map((item)=>{
-              return {
-                name:item.base.profile.realName,
-                phone:item.base.phone,
-                key:item.uid,
-                icon:item.base.profile.icon
-              }
-            })
-            console.log("newData===========>>>>>",newData);
-
-
-            const lastCoachs = this.filterSameCoach(this.state.data,newData)
+            console.log("this.state.data==============>>>>>>>>",this.state.data);
+            const lastCoachs = this.filterSameCoach(this.state.data,findCoachs)
             console.log("最终选中的教官================>>>>>>>>>>",lastCoachs);
             this.setState({data:lastCoachs});
             successNotification('指派教官成功!', function() {
@@ -145,18 +134,44 @@ export default class TableForm extends PureComponent {
   };
 
   //把key重复的教官去重
-  //params  arr1:this.state.data         arr2:指派教官的数据
-  filterSameCoach = (arr1,arr2)=>{
-    let stateData = arr1,
-      newData = arr2;
-    for(let i =0;i<newData.length;i++){
-      for(let j = 0;j<stateData.length;j++){
-        if(newData[i].key === stateData[j].key){
-          newData.splice(i,1);
+  //params  arr1:this.state.data(已指派的教官)         arr2:新指派教官的数据
+  filterSameCoach = (arr1,arr2)=> {
+    let keyArr = [],
+      concatArr = [...arr1,...arr2];
+    concatArr.forEach((item)=>{
+      console.log("item================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",item);
+      keyArr.push(item.uid);
+    })
+    let set = Array.from(new Set(keyArr));
+    console.log("set============================================>>>>>>>>>>>>>>>>>>>>>>>>>",set);
+
+    let lastCoachs = this.props.student.studentList.filter((item)=>{
+      for(let i=0;i<set.length;i++){
+        if(set[i]==item.uid){
+          return true;
+          break;
         }
       }
-    }
-    return [...newData,...stateData];
+    });
+    console.log("lastCoachs=======================================================>>>>>>>>>>>>>",lastCoachs);
+
+    lastCoachs = lastCoachs.map((item)=>{
+      return {
+        name:item.base.profile.realName,
+        phone:item.base.phone,
+        key:item.uid,
+        icon:item.base.profile.icon
+      }
+    })
+
+
+    console.log("合并后的数据===============>>>>>>>>>", lastCoachs);
+    return lastCoachs;
+  }
+
+  //filter  from  studentList
+  filterArr(arr){
+
   }
 
 
