@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from "dva";
 import { Table, Button, Input, message, Popconfirm } from 'antd';
-import styles from './style.less';
-import CoachForm from './CoachForm';
-import { successNotification } from '../../utils/utils';
+import styles from '../style.less';
+import CoachForm from '../CoachForm';
+import { successNotification } from '../../../utils/utils';
 
 @connect(({ team, student }) => ({ team, student }))
 export default class TableForm extends PureComponent {

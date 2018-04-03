@@ -10,7 +10,7 @@ import {
   Icon
 } from "antd";
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
-import TableForm from "./TableForm";
+import TableForm from "./components/TableForm";
 
 @connect(({ team }) => ({ team }))
 @Form.create()
