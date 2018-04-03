@@ -96,7 +96,7 @@ const CourseCommon = (props)=>{
               报名截止：{moment(deadlinedAt).format('YYYY-MM-DD HH:mm')}
             </Row>
             <Row>
-              上课时间：{moment(startedAt).format('YYYY-MM-DD HH:mm')} ~ {moment(endedAt).format('YYYY-MM-DD HH:mm')}
+              上课时间：{startedAt?moment(startedAt).format('YYYY-MM-DD HH:mm'):'暂无'} ~ {endedAt?moment(endedAt).format('YYYY-MM-DD HH:mm'):'暂无'}
             </Row>
           </Col>
         </Row>
