@@ -1,5 +1,16 @@
 import graphRequest from '../utils/graphRequest';
 
+//删除团
+export function deleteTeam(gid) {
+  const deleteTeam = `mutation($gid:String) {
+  me {
+    groupDelete(gid:$gid)
+  }
+}`;
+  console.log("!!!!!!!!!!!!==============>>>>>>>>>>",gid);
+  return graphRequest(deleteTeam,gid,'young-admin');
+}
+
 // 创建团
 export function createTeam(argv) {
   const createTeamMutation = `mutation newHead($formHead: FormHeadRegister!,$formGroup: FormGroupNew!){
@@ -11,7 +22,7 @@ export function createTeam(argv) {
       }
     }
   }`;
-  // console.log("createTeamMutation==>", argv)
+
   return graphRequest(createTeamMutation, argv, 'young-admin');
 }
 
