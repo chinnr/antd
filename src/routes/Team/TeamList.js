@@ -126,7 +126,7 @@ export default class TeamList extends Component {
           record: record
         }
       })
-    ).catch(err => {});
+    )
   };
 
   // 打开修改密码弹窗
