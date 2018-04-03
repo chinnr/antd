@@ -78,6 +78,8 @@ export default class TeamList extends Component {
             <a onClick={() => this.goToPage(record, 'edit-account')}>修改账号</a>
             <Divider type="vertical" />
             <a onClick={() => this.goToPage(record,'point-coach')}>指派教官</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.deleteTeam(record,record.key)}>删除</a>
           </span>
         )
       }
@@ -88,8 +90,31 @@ export default class TeamList extends Component {
       data: [],
       visible: false,
       coachFormVisible: false,
-      username: ''
+      username: '',
+      team:this.props.team.teams
     };
+    console.log("this.state.team================================>>>>>>>>>>>>>>",this.props.team);
+  }
+
+  //删除团部
+  deleteTeam = (record,key)=>{
+    this.props.dispatch({
+      type:'team/deleteTeam',
+      payload:{
+        gid:record.gid
+      }
+    }).then(res=>{
+      if(res){
+        successNotification('删除成功!', function() {
+          return false;
+        });
+        this.getAllTeams();
+      }else{
+        successNotification('删除失败!', function() {
+          return false;
+        });
+      }
+    }).catch(err=>{})
   }
 
   // 跳转到修改编辑页面
@@ -101,7 +126,7 @@ export default class TeamList extends Component {
           record: record
         }
       })
-    );
+    ).catch(err => {});
   };
 
   // 打开修改密码弹窗
@@ -337,9 +362,6 @@ export default class TeamList extends Component {
                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={() => this.outPutData()}>
-                  导出数据
-                </Button>
               </span>
             </div>
           </Form>
@@ -349,7 +371,7 @@ export default class TeamList extends Component {
   }
 
   render() {
-    const { teams, teamsMeta } = this.props.team;
+    const { teamsMeta,teams } = this.props.team;
     const { studentList, page, count } = this.props.student;
     const { visible, coachFormVisible } = this.state;
 
