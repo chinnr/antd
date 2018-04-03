@@ -158,7 +158,7 @@ class StudentDetail extends PureComponent {
   };
 
   componentDidMount() {
-    // this.getGoodsList();
+    this.getGoodsList();
   }
 
   render() {

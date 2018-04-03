@@ -9,7 +9,8 @@ import {
   Card,
   Modal,
   Radio,
-  Cascader
+  Cascader,
+  Spin
 } from 'antd';
 import moment from 'moment';
 import { Map, Marker } from 'react-amap';
@@ -42,11 +43,13 @@ export default class NewTeam extends PureComponent {
       clickable: true,
       draggable: true,
       addr: '',
-      clickMap: false
+      clickMap: false,
+      showSpin: false,
     };
     this.mapPlugins = ['ToolBar'];
     this.isDragMap = false;
     this.dragLocationInfo = {};
+    this.addressInfo = {};
   }
 
   // 地图事件监听
@@ -130,6 +133,26 @@ export default class NewTeam extends PureComponent {
     });
   };
 
+  // 失去焦点 格式化地址
+  handleAddrOnBlur = (e) => {
+    console.log("失去焦点 格式化地址 ==>", e.target.value);
+    this.setState({showSpin: true});
+    this.props
+      .dispatch({
+        type: 'team/addrInfo',
+        payload: { input: e.target.value }
+      })
+      .then(res => {
+        const {addressInfo} = res;
+        console.log('addressInfo==>', addressInfo);
+        this.addressInfo = addressInfo;
+        this.setState({showSpin: false});
+      })
+      .catch(err => {
+        this.setState({showSpin: false});
+      })
+  };
+
   // 提交新建团信息
   handleSubmit = e => {
     e.preventDefault();
@@ -174,57 +197,47 @@ export default class NewTeam extends PureComponent {
       });
     } else {
       console.log('你没有拖动标记, 将采用原来的标记');
-      this.props
-        .dispatch({
-          type: 'team/addrInfo',
-          payload: { input: this.state.addr }
-        })
-        .then(res => {
-          const { addressInfo } = res;
-          console.log('addressInfo==>', addressInfo);
-          this.props.form.validateFieldsAndScroll((err, values) => {
-            if(err) {
-              console.log("发生错误:", err )
-            }
-            if (!err) {
-              console.log('values: ', values);
-              this.props
-                .dispatch({
-                  type: 'team/createTeam',
-                  payload: {
-                    formHead: {
-                      username: values.username,
-                      nickname: values.nickname,
-                      password: values.password,
-                      phone: '86-' + values.phone,
-                      level: 'level4'
-                    },
-                    formGroup: {
-                      name: values.name,
-                      type: values.type === 'main' ? '' : values.type,
-                      groupLevel: values.groupLevel,
-                      createdTime: values.createdTime.toISOString(),
-                      province: addressInfo.province,
-                      city: addressInfo.city,
-                      district: addressInfo.district,
-                      address: addressInfo.format,
-                      longitude: addressInfo.longitude,
-                      latitude: addressInfo.latitude,
-                      provinceLim: values.area[0],
-                      cityLim: values.area[1]
-                    }
-                  }
-                }).then(() => {
-                  console.log("新建团队成功")
-                  successNotification('新建团队成功!', function() {
-                    return false;
-                  });
-              })
-                .catch(err => err);
-            }
-          });
-        })
-        .catch(err => err);
+      this.props.form.validateFieldsAndScroll((err, values) => {
+        if(err) {
+          console.log("发生错误:", err )
+        }
+        if (!err) {
+          console.log('values: ', values);
+          this.props
+            .dispatch({
+              type: 'team/createTeam',
+              payload: {
+                formHead: {
+                  username: values.username,
+                  nickname: values.nickname,
+                  password: values.password,
+                  phone: '86-' + values.phone,
+                  level: 'level4'
+                },
+                formGroup: {
+                  name: values.name,
+                  type: values.type === 'main' ? '' : values.type,
+                  groupLevel: values.groupLevel,
+                  createdTime: values.createdTime.toISOString(),
+                  province: this.addressInfo.province,
+                  city: this.addressInfo.city,
+                  district: this.addressInfo.district,
+                  address: this.addressInfo.format,
+                  longitude: this.addressInfo.longitude,
+                  latitude: this.addressInfo.latitude,
+                  provinceLim: values.area[0],
+                  cityLim: values.area[1]
+                }
+              }
+            }).then(() => {
+            console.log("新建团队成功")
+            successNotification('新建团队成功!', function() {
+              return false;
+            });
+          })
+            .catch(err => err);
+        }
+      });
     }
   };
 
@@ -239,7 +252,7 @@ export default class NewTeam extends PureComponent {
   }
 
   render() {
-    const { clickMap } = this.state;
+    const { clickMap, showSpin } = this.state;
     const { submitting } = this.props;
     const {
       getFieldDecorator,
@@ -397,8 +410,12 @@ export default class NewTeam extends PureComponent {
                 <Input
                   placeholder="请输入地址"
                   onChange={e => this.handleAddrChange(e)}
+                  onBlur={e => this.handleAddrOnBlur(e)}
                 />
               )}
+              {showSpin &&
+                <Spin tip="正在转换地址..."/>
+              }
               <Button
                 disabled={!clickMap}
                 type="primary"
