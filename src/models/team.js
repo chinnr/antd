@@ -28,8 +28,18 @@ export default {
     }
   },
   effects: {
+    *deleteTeam({payload},{call}){
+      console.log("modal===============>>>>>>>>>>",payload);
+      const {data,errors} =  yield call(teamService.deleteTeam, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        const deleteMsg = data.me.groupDelete;
+        return deleteMsg;
+      }
+    },
     *createTeam({ payload }, { call, put }) {
-      console.log('createTeam...payload: ', payload);
       const { data, errors } = yield call(teamService.createTeam, payload);
       if (errors) {
         const err = errors[0].message;
