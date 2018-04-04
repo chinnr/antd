@@ -287,7 +287,7 @@ export default {
             })
           }
         }
-        if(pathname === '/mall/goods-add') {
+        if(pathname === '/mall/goods-add'||'/mall/goods-edit') {
           dispatch({
             type: 'getGoodsType',
             payload: {
