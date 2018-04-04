@@ -78,8 +78,9 @@ export default class TeamList extends Component {
             <a onClick={() => this.goToPage(record, 'edit-account')}>团长账号</a>
             <Divider type="vertical" />
             <a onClick={() => this.goToPage(record,'point-coach')}>常驻教官</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.deleteTeam(record,record.key)}>删除</a>
+            {record.numJoin>0&&<span><Divider type="vertical" />
+              <a onClick={() => this.deleteTeam(record,record.key)}>删除</a></span>}
+
           </span>
         )
       }
