@@ -58,11 +58,11 @@ const menuData = [
     path: 'course',
     children: [
       {
-        name: '新建课程模版',
+        name: '新建模版',
         path: 'new',
       },
       {
-        name: '课程模版列表',
+        name: '模版列表',
         path: 'template-list',
       },
       {
@@ -107,17 +107,18 @@ const menuData = [
     path: 'mall',
     children: [
       {
-        name: '商品类型管理',
+        name: '商品类型',
         path: 'goods-type'
       },
       {
-        name: '商品管理',
-        path: 'goods-list'
-      },
-      {
-        name: '商品添加',
+        name: '添加商品',
         path: 'goods-add'
       },
+      {
+        name: '商品列表',
+        path: 'goods-list'
+      },
+
       {
         name: '广告位',
         path: 'advertising'
@@ -129,12 +130,12 @@ const menuData = [
     ]
   },
   {
-    name: '内容管理',
+    name: '文章管理',
     icon: 'file',
     path: 'post',
     children: [
       {
-        name: '文章类型管理',
+        name: '文章类型',
         path: 'classes'
       },
       {

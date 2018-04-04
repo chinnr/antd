@@ -227,19 +227,19 @@ export const handleStage = (stage) => {
   let stageObj = {};
   if(isNaN(stage) === true) {
     stageObj = {
-      "stage1": "阶段一",
-      "stage2": "阶段二",
-      "stage3": "阶段三",
-      "stage4": "阶段四",
-      "stage5": "阶段五"
+      "stage1": "一阶",
+      "stage2": "二阶",
+      "stage3": "三阶",
+      "stage4": "四阶",
+      "stage5": "五阶"
     };
   }else{
     stageObj = {
-      1: "阶段一",
-      2: "阶段二",
-      3: "阶段三",
-      4: "阶段四",
-      5: "阶段五"
+      1: "一阶",
+      2: "二阶",
+      3: "三阶",
+      4: "四阶",
+      5: "五阶"
     };
   }
   return stageObj[stage];
@@ -249,7 +249,7 @@ export const handleStage = (stage) => {
 export const handleType = (type) => {
   const typeObj = {
     0:"团集会",
-    1:"活动课",
+    1:"活动",
     2:"兴趣课",
   };
   return typeObj[type];

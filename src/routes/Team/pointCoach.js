@@ -55,11 +55,11 @@ export default class PointCoach extends PureComponent {
         href: "/"
       },
       {
-        title: "团队列表",
+        title: "团部列表",
         href: "/team/list"
       },
       {
-        title: "指定教官",
+        title: "教官管理",
         href: "/team/point-coach"
       }
     ];
@@ -92,7 +92,7 @@ export default class PointCoach extends PureComponent {
       <PageHeaderLayout
         breadcrumbList={breadcrumbList}
       >
-        <Card bordered={false} title={`${this.name} / 教官管理`}>
+        <Card bordered={false} title={`${this.name} - 常驻教官`}>
           {getFieldDecorator('members', {
             initialValue: this.coachs,
           })(<TableForm gid={this.gid} />)}

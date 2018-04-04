@@ -27,15 +27,34 @@ export default {
     }
   },
   effects: {
+    *updateGoods({payload},{call}) {
+      const {data,errors} = yield call(mallService.updateGoods, payload);
+      if(!errors){
+        console.log("更新商品======================>>>>>>>>>>>>>>>>",data);
+      }else{
+        throw new Error(errors[0].message);
+      }
+    },
+    *getTypeName({payload},{call}) {
+      // console.log("getTypeName   payload=============================>",payload);
+      const {data,errors} = yield call(mallService.getTypeName, payload);
+      if(errors) {
+        throw new Error(errors[0].message);
+      }else{
+        const res = data.me.goodsType.getGoodsTypes.data[0].name;
+        // console.log("getTypeName!!!!!==========================>>>",res);
+        return res;
+      }
+    },
     *updateOrderState({ payload }, { call, put }){
-      console.log("form=============================>",payload);
+      // console.log("form=============================>",payload);
       const { data, errors } = yield call(mallService.updateOrderState, payload);
       if(errors) {
         throw new Error(errors[0].message);
       }
       if(data.me){
         const res = data.me.Order.UpdateOrderState;
-        console.log("updateOrderState!!!!!==========================>>>",res);
+        // console.log("updateOrderState!!!!!==========================>>>",res);
         return res;
       }
 
@@ -287,7 +306,7 @@ export default {
             })
           }
         }
-        if(pathname === '/mall/goods-add') {
+        if(pathname === '/mall/goods-add'||'/mall/goods-edit') {
           dispatch({
             type: 'getGoodsType',
             payload: {

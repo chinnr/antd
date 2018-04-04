@@ -261,10 +261,11 @@ export default class NewBadge extends PureComponent {
                 ]
               })(
                 <Select placeholder="请选择证章阶段">
-                  <Option value="stage1">阶段1</Option>
-                  <Option value="stage2">阶段2</Option>
-                  <Option value="stage3">阶段3</Option>
-                  <Option value="stage4">阶段4</Option>
+                  <Option value="stage1">一阶</Option>
+                  <Option value="stage2">二阶</Option>
+                  <Option value="stage3">三阶</Option>
+                  <Option value="stage4">四阶</Option>
+                  <Option value="stage5">五阶</Option>
                 </Select>
               )}
             </FormItem>

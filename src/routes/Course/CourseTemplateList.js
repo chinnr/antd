@@ -56,11 +56,6 @@ export default class CourseTempalteList extends Component {
         key: "title"
       },
       {
-        title: "服务范围",
-        dataIndex: "score",
-        key: "score"
-      },
-      {
         title: "操作",
         dataIndex: "option",
         key: "option",
@@ -220,12 +215,7 @@ export default class CourseTempalteList extends Component {
             <Form layout={"inline"} onSubmit={this.filter}>
               <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                 <Col md={8} sm={24} xl={8}>
-                  <FormItem {...formItemLayout} label="课程主题">
-                    {getFieldDecorator("title")(<Input/>)}
-                  </FormItem>
-                </Col>
-                <Col md={8} sm={24} xl={8}>
-                  <FormItem {...formItemLayout} label="类型">
+                  <FormItem {...formItemLayout} label="课程类型">
                     {getFieldDecorator("type", {
                       initialValue: 0
                     })(
@@ -251,37 +241,26 @@ export default class CourseTempalteList extends Component {
                     )}
                   </FormItem>
                 </Col>
-              </Row>
-              <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                 <Col md={8} sm={24} xl={8}>
                 <FormItem {...formItemLayout} label="课程阶段">
                   {getFieldDecorator("stage", {
                     initialValue: 1
                   })(
                     <Select placeholder="请选择课程阶段">
-                      <Option value={1}>阶段1</Option>
-                      <Option value={2}>阶段2</Option>
-                      <Option value={3}>阶段3</Option>
-                      <Option value={4}>阶段4</Option>
+                      <Option value={1}>一阶</Option>
+                      <Option value={2}>二阶</Option>
+                      <Option value={3}>三阶</Option>
+                      <Option value={4}>四阶</Option>
+                      <Option value={5}>五阶</Option>
                     </Select>
                   )}
                 </FormItem>
                 </Col>
                 <Col md={8} sm={24} xl={8}>
-                <FormItem {...formItemLayout} label="服务范围">
-                  {getFieldDecorator("score", {
-                    initialValue: "public"
-                  })(
-                    <Select placeholder="请选择课程服务范围">
-                      <Option value="public">公开</Option>
-                      <Option value="member">仅会员</Option>
-                      <Option value="non-member">非会员</Option>
-                      <Option value="welcome">欢迎课</Option>
-                    </Select>
-                  )}
-                </FormItem>
+                  <FormItem {...formItemLayout} label="课程主题">
+                    {getFieldDecorator("title")(<Input/>)}
+                  </FormItem>
                 </Col>
-
               </Row>
               <Row>
                 <FormItem>
