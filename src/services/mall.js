@@ -106,6 +106,36 @@ export function updateGoodsType(form) {
   return graphRequest(updateGoodsType, {form}, "mall-admin");
 }
 
+// 更新商品
+export function updateGoods(payload) {
+  const updateGoods = `mutation updateGoods($form: UpdateGoodsInput) {
+  me() {
+    goods{
+      updateGoods(form:$form){
+        gid
+      }
+    }
+  }
+}`;
+  return graphRequest(updateGoods,payload,"mall-admin");
+}
+
+//获取商品类型名称
+export function getTypeName(payload){
+  const getName = `query getName($query: FormQuery, $queryOption: QueryGoodsType) {
+  me {
+    goodsType{
+      getGoodsTypes(query:$query,queryOption:$queryOption){
+        data{
+          name
+        }
+      }
+    }
+  }
+}`
+  return graphRequest(getName,payload,'mall-admin');
+}
+
 // 获取商品列表
 export function goodsList(payload) {
   const getAllGoods = `
@@ -116,17 +146,34 @@ export function goodsList(payload) {
             data {
               gid
               name
+              type
               sku
               imgs{
                 url
               }
               listImg
+              province
+              city
+              goodsValue
+              sizeImg
+              description
               skuPrefix
               skuPure
               skuSize
+              goodsJson{
+                gid
+                count 
+                name
+              }
               originalPrice
               price
               stock
+              upTime
+              downTime
+              expireTime
+              description
+              show
+              postPrice
             }
             meta {
               count
