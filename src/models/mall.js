@@ -27,6 +27,14 @@ export default {
     }
   },
   effects: {
+    *updateGoods({payload},{call}) {
+      const {data,errors} = yield call(mallService.updateGoods, payload);
+      if(!errors){
+        console.log("更新商品======================>>>>>>>>>>>>>>>>",data);
+      }else{
+        throw new Error(errors[0].message);
+      }
+    },
     *getTypeName({payload},{call}) {
       // console.log("getTypeName   payload=============================>",payload);
       const {data,errors} = yield call(mallService.getTypeName, payload);
