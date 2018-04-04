@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from "dva";
-import { Table, Button, Input, message, Popconfirm } from 'antd';
+import { Table, Button, Input, message, Popconfirm, Avatar } from 'antd';
 import styles from '../style.less';
 import CoachForm from '../CoachForm';
 import { successNotification } from '../../../utils/utils';
@@ -17,25 +17,22 @@ export default class TableForm extends PureComponent {
     };
     this.gid = '';
     this.columns = [{
-      title: '教官姓名',
-      dataIndex: 'name',
-      key: 'name',
-      width: '20%',
-    }, {
       title: '头像',
       dataIndex: 'icon',
       key: 'icon',
-      width: '20%',
       render:(text,record)=>{
         return (
-          <img src={text} style={{height:70}}/>
+          <Avatar src={text} size="large"/>
         )
       }
+    }, {
+      title: '教官名字',
+      dataIndex: 'name',
+      key: 'name',
     }, {
       title: '电话号码',
       dataIndex: 'phone',
       key: 'phone',
-      width: '40%',
     }, {
       title: '操作',
       key: 'action',
