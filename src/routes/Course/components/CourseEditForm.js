@@ -349,10 +349,11 @@ export default class CourseForm extends PureComponent {
             rules: [{ required: true, message: "请选择课程阶段!" }]
           })(
             <Select placeholder="请选择课程阶段" onChange={v => this.onSelect(v, "stage")}>
-              <Option value={1}>阶段1</Option>
-              <Option value={2}>阶段2</Option>
-              <Option value={3}>阶段3</Option>
-              <Option value={4}>阶段4</Option>
+              <Option value={1}>一阶</Option>
+              <Option value={2}>二阶</Option>
+              <Option value={3}>三阶</Option>
+              <Option value={4}>四阶</Option>
+              <Option value={5}>五阶</Option>
             </Select>
           )}
         </FormItem>
