@@ -156,7 +156,7 @@ export default class GoodsTypeAdd extends Component {
   // 返回商品类型列表
   goToPage = () => {
     this.props.dispatch(
-      routerRedux.goBack()
+      routerRedux.push('/mall/goods-type')
     );
   };
 
@@ -394,7 +394,7 @@ export default class GoodsTypeAdd extends Component {
               <Button onClick={() => this.showModal('goodsTypesVisible')}>选择</Button>
               {getFieldDecorator('parentId', {
                 initialValue: '',
-                rules: [{ required: true, message: '请选择父级类型' }]
+                rules: [{ required: false, message: '请选择父级类型' }]
               })(<span>&nbsp;&nbsp;{parentId}</span>)}
             </FormItem>
             <FormItem {...formItemLayout} label="类型等级">
