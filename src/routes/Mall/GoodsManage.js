@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Input, Button } from 'antd';
+import { Card, Input, Divider } from 'antd';
+import { routerRedux } from 'dva/router';
 import GoodsManageTable from './GoodsManageTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { successNotification } from '../../utils/utils';
@@ -41,7 +42,8 @@ class GoodsManage extends PureComponent {
       title: '操作',
       render: record => (
         <Fragment>
-          {/*<a href="">编辑</a>*/}
+          <a onClick={() => this.editGoods(record)}>编辑</a>
+          <Divider type="vertical" />
           <a onClick={() => this.deleteGoods(record)}>删除</a>
         </Fragment>
       )
@@ -71,6 +73,17 @@ class GoodsManage extends PureComponent {
       }
     });
   };
+
+  editGoods = record =>{
+    this.props.dispatch(
+      routerRedux.push({
+        pathname: '/mall/goods-edit',
+        query: {
+          record: record
+        }
+      })
+    )
+  }
 
   deleteGoods = record => {
     const { dispatch } = this.props;
