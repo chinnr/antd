@@ -109,7 +109,7 @@ export function updateGoodsType(form) {
 // 更新商品
 export function updateGoods(payload) {
   const updateGoods = `mutation updateGoods($form: UpdateGoodsInput) {
-  me() {
+  me {
     goods{
       updateGoods(form:$form){
         gid
