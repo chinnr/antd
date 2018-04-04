@@ -33,7 +33,7 @@ export default class CourseRecord extends PureComponent {
   handleType = type => {
     let typeObj = {
       0: '团集会',
-      1: '活动课',
+      1: '活动',
       2: '兴趣课'
     };
     return typeObj[type];

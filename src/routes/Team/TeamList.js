@@ -46,7 +46,7 @@ export default class TeamList extends Component {
         render: (text, record) => (record.type === '' ? '普通团' : '临时团')
       },
       {
-        title: '团长昵称',
+        title: '团长名字',
         dataIndex: 'nickname',
         key: 'nickname'
       },
@@ -73,11 +73,11 @@ export default class TeamList extends Component {
         key: 'option',
         render: (text, record) => (
           <span>
-            <a onClick={() => this.goToPage(record, 'edit-info')}>修改信息</a>
+            <a onClick={() => this.goToPage(record, 'edit-info')}>团部信息</a>
             <Divider type="vertical" />
-            <a onClick={() => this.goToPage(record, 'edit-account')}>修改账号</a>
+            <a onClick={() => this.goToPage(record, 'edit-account')}>团长账号</a>
             <Divider type="vertical" />
-            <a onClick={() => this.goToPage(record,'point-coach')}>指派教官</a>
+            <a onClick={() => this.goToPage(record,'point-coach')}>常驻教官</a>
             <Divider type="vertical" />
             <a onClick={() => this.deleteTeam(record,record.key)}>删除</a>
           </span>
