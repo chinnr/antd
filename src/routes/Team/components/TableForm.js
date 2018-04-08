@@ -92,6 +92,7 @@ export default class TableForm extends PureComponent {
   // 指派教官
   addCoach = () => {
     const form = this.coachForm;
+    const _this = this;
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form ===>: ', values);
@@ -106,21 +107,25 @@ export default class TableForm extends PureComponent {
           })
           .then(() => {
             //把选中的指定教练通过uid从studentList中筛选出来
-            let findCoachs = this.props.student.studentList.filter((item)=>{
-              for(let i=0;i<values.uids.length;i++){
-                if(values.uids[i]==item.uid){
-                  return true;
-                  break;
-                }
-              }
-            });
-            console.log("选中的教官=============》》》》》》》》》",findCoachs);
+            // let findCoachs = this.props.student.studentList.filter((item)=>{
+            //   for(let i=0;i<values.uids.length;i++){
+            //     if(values.uids[i]==item.uid){
+            //       return true;
+            //       break;
+            //     }
+            //   }
+            // });
+            // console.log("选中的教官=============》》》》》》》》》",findCoachs);
+            //
+            // console.log("this.state.data==============>>>>>>>>",this.state.data);
+            // const lastCoachs = this.filterSameCoach(this.state.data,findCoachs)
+            // console.log("最终选中的教官================>>>>>>>>>>",lastCoachs);
+            // this.setState({data:lastCoachs});
 
-            console.log("this.state.data==============>>>>>>>>",this.state.data);
-            const lastCoachs = this.filterSameCoach(this.state.data,findCoachs)
-            console.log("最终选中的教官================>>>>>>>>>>",lastCoachs);
-            this.setState({data:lastCoachs});
+            // _this.getAllCoach();
+
             successNotification('指派教官成功!', function() {
+              window.location.reload();
               return false;
             });
           })
@@ -166,10 +171,6 @@ export default class TableForm extends PureComponent {
     return lastCoachs;
   }
 
-  //filter  from  studentList
-  filterArr(arr){
-
-  }
 
 
   saveCoachFormRef = form => {
