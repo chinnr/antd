@@ -144,19 +144,15 @@ export default class BasicProfile extends Component {
     ];
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
-        <Card bordered={false}>
-          <DescriptionList
-            size="large"
-            title="订单信息"
-            style={{ marginBottom: 32 }}
-          >
+        <Card title="订单信息" style={{ marginBottom: 24 }} bordered={false}>
+          <DescriptionList style={{ marginBottom: 32 }}>
             <Description term="订单编号">{orderList.length > 0 && orderList[0].sku}</Description>
             <Description term="买家账号">{orderList.length > 0 && orderList[0].consignee}</Description>
             <Description term="下单时间">
               {moment(orderList.length > 0 && orderList[0].buyTime).format('YYYY-MM-DD HH:mm:ss')}
             </Description>
             <Description term="订单状态">
-              {this.handleOrderStatus(orderList.length > 0 && orderList[0].status)}
+              <b>{this.handleOrderStatus(orderList.length > 0 && orderList[0].status)}</b>
             </Description>
           </DescriptionList>
           <Table
@@ -166,12 +162,14 @@ export default class BasicProfile extends Component {
             columns={goodsColumns}
             rowKey="gid"
           />
-          {/*<Divider style={{ marginBottom: 32 }} />*/}
-          {/*<DescriptionList
-            size="large"
-            title="支付信息"
-            style={{ marginBottom: 32 }}
-          >
+          <DescriptionList>
+            <Description term="邮费">6.00</Description>
+            <Description term="优惠券">-10.00</Description>
+            <Description term="应付金额"><b>20.00</b></Description>
+          </DescriptionList>
+        </Card>
+        <Card title="支付信息" style={{ marginBottom: 24 }} bordered={false}>
+          <DescriptionList>
             <Description term="支付方式">付小小</Description>
             <Description term="支付账号">18100000000</Description>
             <Description term="付款时间">菜鸟仓储</Description>
@@ -179,14 +177,11 @@ export default class BasicProfile extends Component {
               浙江省杭州市西湖区万塘路18号
             </Description>
             <Description term="实付金额">无</Description>
-          </DescriptionList>*/}
-          {/*<Divider style={{ marginBottom: 32 }} />*/}
-          <DescriptionList
-            size="large"
-            title="物流信息"
-            style={{ marginBottom: 32 }}
-          >
-            {/*<Description term="物流公司">付小小</Description>*/}
+          </DescriptionList>
+        </Card>
+        <Card title="物流信息" style={{ marginBottom: 24 }} bordered={false}>
+          <DescriptionList>
+            <Description term="物流公司">付小小</Description>
             <Description term="运单号">18100000000</Description>
             <Description term="发货时间">2018-03-18</Description>
             <Description term="收货地址">
