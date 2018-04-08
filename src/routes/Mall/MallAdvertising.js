@@ -81,10 +81,10 @@ class MallAdvertising extends PureComponent {
       dataIndex: 'gid'
     },
     {
-      title: '类型图片',
+      title: '广告图',
       render: record => (
         <span>
-          <img style={{ width: 100, height: 100 }} src={record.img} />
+          <img style={{ height: 50 }} src={record.img} />
         </span>
       )
     },
