@@ -139,7 +139,7 @@ export function addCoach(payload) {
   // console.log("指派教官 payload==>", payload);
   const addCoachMutate = `mutation addCoach($gid: String!,$uids: [String]!,$isOn: Boolean!) {
     me {
-      groupCoachStaffSetPatch(gid: $gid, uids: $uids, isOn:$isOn)
+      groupCoachSetPatch(gid: $gid, uids: $uids, isOn:$isOn)
     }
   }`;
   return graphRequest(addCoachMutate, payload, 'young-admin');
