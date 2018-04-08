@@ -286,6 +286,12 @@ export function orderList(payload) {
               name
               price
               skuSize
+              donate{
+                gid
+                count
+                name
+                skuSize
+              }
             }
             sku
             status
