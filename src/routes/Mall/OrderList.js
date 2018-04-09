@@ -129,10 +129,10 @@ export default class OrderList extends PureComponent {
             <FormItem label="订单状态">
               {getFieldDecorator('status')(
                 <Select>
-                  <Option value={0}>已下单</Option>
-                  <Option value={1}>已完成</Option>
+                  <Option value={0}>未付款</Option>
                   <Option value={2}>已付款</Option>
-                  <Option value={3}>已确认</Option>
+                  <Option value={1}>已完成</Option>
+                  {/*<Option value={3}>已确认</Option>*/}
                   <Option value={4}>已取消</Option>
                 </Select>
               )}
@@ -142,7 +142,7 @@ export default class OrderList extends PureComponent {
         </Row>
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="成交时间">
+            <FormItem label="下单时间">
               {getFieldDecorator('timeSpan')(
                 <RangePicker style={{ width: '100%' }} />
               )}
@@ -193,10 +193,10 @@ export default class OrderList extends PureComponent {
    */
   handleOrderStatus = (status) => {
     const orderStatus = {
-      0:'已下单',
+      0:'未付款',
       1:'已完成',
       2:'已付款',
-      3:'已确认',
+      // 3:'已确认',
       4:'已取消',
     };
     return orderStatus[status];
@@ -249,7 +249,7 @@ export default class OrderList extends PureComponent {
     };
     const columns = [
       {
-        title: '订单号',
+        title: '订单编号',
         dataIndex: 'sku',
       },
       {
@@ -271,7 +271,7 @@ export default class OrderList extends PureComponent {
             <div>
               {record.gidJson.map((item,i) => {
                 return (
-                  <span key={i}>{item.name} x {item.count}</span>
+                  <span key={i}> {item.name}x{item.count} </span>
                 )
               })}
             </div>
@@ -282,17 +282,18 @@ export default class OrderList extends PureComponent {
         title: '买家',
         dataIndex: 'consignee',
       },
+      // {
+      //   title: '金额',
+      //   dataIndex: 'totalMoney',
+      // },
       {
-        title: '交易状态',
+        title: '状态',
         // dataIndex: 'status',
         render: (record) => {
           return <span>{this.handleOrderStatus(record.status)}</span>
         }
       },
-      {
-        title: '实收款',
-        dataIndex: 'totalMoney',
-      },
+
       {
         title: '操作',
         // dataIndex: 'option',

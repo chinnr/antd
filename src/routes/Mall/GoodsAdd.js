@@ -210,7 +210,7 @@ class GoodsAdd extends Component {
       payload: values
     }).then(() => {
       successNotification('添加商品成功', function() {
-        // props.dispatch(routerRedux.push('/badge/list'));
+        props.dispatch(routerRedux.push('/mall/goods-list'));
         _this.goodsJson = [];
       });
     }).catch(err=>err)
@@ -667,6 +667,7 @@ class GoodsAdd extends Component {
                 })(
                   <BraftEditor
                     {...editorProps}
+                    style={{height: 400}}
                     ref={instance => (this.editorInstance = instance)}
                     media={{
                       image: true,
