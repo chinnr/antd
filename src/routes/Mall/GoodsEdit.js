@@ -74,137 +74,142 @@ export default class GoodsEdit extends PureComponent {
 
   //获取商品参数
   getGoodsParams = ()=>{
-    let values = {};
+    let gid='';
+    const _this = this;
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem("goodsInfo")).record;
+      gid = JSON.parse(localStorage.getItem("goodsInfo")).record.gid;
     } else {
       // 有 query
       localStorage.setItem(
         "goodsInfo",
         JSON.stringify(this.props.location.query)
       );
-      // values = this.props.location.query.record;
+      gid = this.props.location.query.record.gid;
 
-      this.props.dispatch({
-        type:'mall/getGoodsById',
-        payload:{
-          gid:this.props.location.query.record.gid
-        }
-      }).then(res=>{
-        console.log("根据ID获取的商品详情=====================>>>>>>>>>>>>>>",res);
-        values = res;
-        let giftList= [];
-        values.goodsJson.forEach((item)=>{
-          let temp = item.gid +'|'+item.name+'|'+item.count;
-          giftList.push(temp);
-          let tempItem = {count:0,gid:''};
-          tempItem.count = item.count;
-          tempItem.gid = item.gid;
-          console.log("goodsJson===============>>>>>>>>>>",tempItem);
-          this.goodsJson.push(tempItem);
-        });
+    }
+    this.props.dispatch({
+      type:'mall/getGoodsById',
+      payload:{
+        gid
+      }
+    }).then(res=>{
+      console.log("根据ID获取的商品详情=====================>>>>>>>>>>>>>>",res);
+      _this.getGoodsById(res);
+
+    })
 
 
-        let sizeAcolor,
-          color,
-          size,
-          expireTime;
-        if(values.type == 0){
-          sizeAcolor = values.skuSize.split('-');
+  }
 
-          color = sizeAcolor[1];
-
-          size = sizeAcolor[0];
-
-          console.log("color================>>>>>>>>>>>>>>",color);
-        }else{
-          expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
-        }
-
-        const imgs = values.imgs.map(item=>{
-          return {
-            uid: Math.random(-100,0),
-            name: item.url,
-            url: rootUrl + thumbnailPath + item.url,
-            status: "done"
-          }
-        })
-
-        const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
-
-        const downTime = moment(new Date(values.downTime),'YYYY/MM/DD hh:mm:ss');
-
-        const description = values.description;
-
-        const skuPrefix = values.skuPrefix.split("|")[0];
-
-        this.skuPrefix  =skuPrefix;
-
-        let address;
-        if(values.province==="all"){
-          address = ["全国"];
-        }else{
-          if(values.city==="all"){
-            address = [values.province,"市辖区"]
-          }else{
-            address = [values.province,values.city]
-          }
-        }
-
-        this.props.dispatch({
-          type:'mall/getTypeName',
-          payload:{
-            query:{
-              limit:10
-            },
-            queryOption:{
-              skuPrefix:skuPrefix
-            }
-          }
-        }).then(res=>{
-          this.setState({skuPrefix:res});
-        }).catch(err=>err)
+  //获取商品详情
+  getGoodsById = (values)=>{
+    let giftList= [];
+    values.goodsJson.forEach((item)=>{
+      let temp = item.gid +'|'+item.name+'|'+item.count;
+      giftList.push(temp);
+      let tempItem = {count:0,gid:''};
+      tempItem.count = item.count;
+      tempItem.gid = item.gid;
+      console.log("goodsJson===============>>>>>>>>>>",tempItem);
+      this.goodsJson.push(tempItem);
+    });
 
 
-        this.setState({giftList});
-        this.setState({imgs});
-        this.setState({description},()=>{
-          this.props.form.setFieldsValue({
-            description
-          })
-        })
-        this.setState({type:values.type},()=>{
-          if(this.state.type===1){
-            this.props.form.setFieldsValue({
-              goodsValue:values.goodsValue,
-              expireTime,
-            })
-          }
-        });
-        this.editorInstance.setContent(description, "html");
+    let sizeAcolor,
+      color,
+      size,
+      expireTime;
+    if(values.type == 0){
+      sizeAcolor = values.skuSize.split('-');
 
-        this.props.form.setFieldsValue({
-          name: values.name,
-          type: values.type,
-          imgs:imgs,
-          color:color,
-          size:size,
-          address:address,
-          originalPrice:values.originalPrice,
-          price:values.price,
-          stock:values.stock,
-          show:values.show,
-          description,
-          upTime,
-          downTime,
-          postPrice:values.postPrice
-        });
+      color = sizeAcolor[1];
 
-      })
+      size = sizeAcolor[0];
+
+      console.log("color================>>>>>>>>>>>>>>",color);
+    }else{
+      expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
     }
 
+    const imgs = values.imgs.map(item=>{
+      return {
+        uid: Math.random(-100,0),
+        name: item.url,
+        url: rootUrl + thumbnailPath + item.url,
+        status: "done"
+      }
+    })
 
+    const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
+
+    const downTime = moment(new Date(values.downTime),'YYYY/MM/DD hh:mm:ss');
+
+    const description = values.description;
+
+    const skuPrefix = values.skuPrefix.split("|")[0];
+
+    this.skuPrefix  =skuPrefix;
+
+    let address;
+    if(values.province==="all"){
+      address = ["全国"];
+    }else{
+      if(values.city==="all"){
+        address = [values.province,"市辖区"]
+      }else{
+        address = [values.province,values.city]
+      }
+    }
+
+    this.props.dispatch({
+      type:'mall/getTypeName',
+      payload:{
+        query:{
+          limit:10
+        },
+        queryOption:{
+          skuPrefix:skuPrefix
+        }
+      }
+    }).then(res=>{
+      this.setState({skuPrefix:res});
+    }).catch(err=>err)
+
+
+    this.setState({giftList});
+    this.setState({imgs});
+    this.setState({description},()=>{
+      this.props.form.setFieldsValue({
+        description
+      })
+    })
+    this.setState({type:values.type},()=>{
+      if(this.state.type===1){
+        this.props.form.setFieldsValue({
+          goodsValue:values.goodsValue,
+          expireTime,
+        })
+      }
+    });
+    this.editorInstance.setContent(description, "html");
+
+    this.props.form.setFieldsValue({
+      name: values.name,
+      type: values.type,
+      imgs:imgs,
+      color:color,
+      size:size,
+      address:address,
+      originalPrice:values.originalPrice,
+      price:values.price,
+      stock:values.stock,
+      show:values.show,
+      description,
+      upTime,
+      downTime,
+      postPrice:values.postPrice
+    });
   }
 
   //图片上传或者删除
