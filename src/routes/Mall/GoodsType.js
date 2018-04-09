@@ -31,14 +31,14 @@ class GoodsType extends PureComponent {
       dataIndex: 'name'
     },
     {
-      title: '排序',
-      dataIndex: 'level'
+      title: '图片',
+      render: (record) => (
+        <span><img style={{ width: 50, height: 50 }} src={record.typeImg} /></span>
+      )
     },
     {
-      title: '类型图片',
-      render: (record) => (
-        <span><img style={{ width: 100, height: 100 }} src={record.typeImg} /></span>
-      )
+      title: '排序',
+      dataIndex: 'level'
     },
     {
       title: '操作',

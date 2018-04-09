@@ -17,8 +17,8 @@ class GoodsManage extends PureComponent {
       key: 'goodsName',
       render: record => (
         <div>
-          <p>{record.name}</p>
-          <p>sku: {record.sku}</p>
+          <div>{record.name}</div>
+          <div>SKU: {record.sku}</div>
         </div>
       )
     },
