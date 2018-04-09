@@ -196,10 +196,13 @@ export function getGoodsDetail(gid) {
           sku
           skuPrefix
           skuSize
+          goodsValue
           description
           upTime
           downTime
           stock
+          show
+          type
           price
           goodsJson {
             gid
