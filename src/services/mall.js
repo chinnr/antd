@@ -111,9 +111,7 @@ export function updateGoods(payload) {
   const updateGoods = `mutation updateGoods($form: UpdateGoodsInput) {
   me {
     goods{
-      updateGoods(form:$form){
-        gid
-      }
+      updateGoods(form:$form)
     }
   }
 }`;
