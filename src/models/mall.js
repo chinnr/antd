@@ -62,17 +62,15 @@ export default {
       }
     },
     *updateOrderState({ payload }, { call, put }){
-      // console.log("form=============================>",payload);
       const { data, errors } = yield call(mallService.updateOrderState, payload);
+      console.log("???????????============>>>>>>>>>>>>>",data);
       if(errors) {
         throw new Error(errors[0].message);
-      }
-      if(data.me){
+      }else{
         const res = data.me.Order.UpdateOrderState;
-        // console.log("updateOrderState!!!!!==========================>>>",res);
-        return res;
-      }
 
+        if(typeof res =="number") return res;
+      }
     },
 
     *getGoodsType({ payload: query }, { call, put }) {
@@ -255,6 +253,7 @@ export default {
         throw new Error(errors[0].message);
       }
       if(data.me) {
+        console.log("recordPay==============>>>>>>>>>>>>>>>>>>>>>>>>>>>>",data);
         yield put({
           type: 'updateState',
           payload: {
