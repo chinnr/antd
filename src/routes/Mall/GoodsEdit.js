@@ -22,7 +22,7 @@ import {
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import colors from '../../static/colors';
 import styles from './index.less';
-import {doExchange, successNotification} from '../../utils/utils';
+import {successNotification} from '../../utils/utils';
 import options from '../../utils/cascader-address-options';
 import { rootUrl, thumbnailPath } from "../../utils/constant";
 // 引入编辑器以及编辑器样式
@@ -84,113 +84,127 @@ export default class GoodsEdit extends PureComponent {
         "goodsInfo",
         JSON.stringify(this.props.location.query)
       );
-      values = this.props.location.query.record;
-    }
+      // values = this.props.location.query.record;
 
-    let giftList= [];
-    values.goodsJson.forEach((item)=>{
-      let temp = item.gid +'|'+item.name+'|'+item.count;
-      giftList.push(temp);
-      this.goodsJson.push(item);
-    });
-
-
-    let sizeAcolor,
-      color,
-      size,
-      expireTime;
-    if(values.type == 0){
-      sizeAcolor = values.skuSize.split('-');
-
-      color = sizeAcolor[1];
-
-      size = sizeAcolor[0];
-
-      console.log("color================>>>>>>>>>>>>>>",color);
-    }else{
-      expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
-    }
-
-    const imgs = values.imgs.map(item=>{
-      return {
-        uid: Math.random(-100,0),
-        name: item.url,
-        url: rootUrl + thumbnailPath + item.url,
-        status: "done"
-      }
-    })
-
-    const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
-
-    const downTime = moment(new Date(values.downTime),'YYYY/MM/DD hh:mm:ss');
-
-    const description = values.description;
-
-    const skuPrefix = values.skuPrefix.split("|")[0];
-
-    this.skuPrefix  =skuPrefix;
-
-    let address;
-    if(values.province==="all"){
-      address = ["全国"];
-    }else{
-      if(values.city==="all"){
-        address = [values.province,"市辖区"]
-      }else{
-        address = [values.province,values.city]
-      }
-    }
-
-    this.props.dispatch({
-      type:'mall/getTypeName',
-      payload:{
-        query:{
-          limit:10
-        },
-        queryOption:{
-          skuPrefix:skuPrefix
+      this.props.dispatch({
+        type:'mall/getGoodsById',
+        payload:{
+          gid:this.props.location.query.record.gid
         }
-      }
-    }).then(res=>{
-      this.setState({skuPrefix:res});
-    }).catch(err=>err)
+      }).then(res=>{
+        console.log("根据ID获取的商品详情=====================>>>>>>>>>>>>>>",res);
+        values = res;
+        let giftList= [];
+        values.goodsJson.forEach((item)=>{
+          let temp = item.gid +'|'+item.name+'|'+item.count;
+          giftList.push(temp);
+          let tempItem = {count:0,gid:''};
+          tempItem.count = item.count;
+          tempItem.gid = item.gid;
+          console.log("goodsJson===============>>>>>>>>>>",tempItem);
+          this.goodsJson.push(tempItem);
+        });
 
 
-    this.setState({giftList});
-    this.setState({imgs});
-    this.setState({description},()=>{
-      this.props.form.setFieldsValue({
-        description
-      })
-    })
-    this.setState({type:values.type},()=>{
-      if(this.state.type===1){
-        this.props.form.setFieldsValue({
-          goodsValue:values.goodsValue,
-          expireTime,
+        let sizeAcolor,
+          color,
+          size,
+          expireTime;
+        if(values.type == 0){
+          sizeAcolor = values.skuSize.split('-');
+
+          color = sizeAcolor[1];
+
+          size = sizeAcolor[0];
+
+          console.log("color================>>>>>>>>>>>>>>",color);
+        }else{
+          expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
+        }
+
+        const imgs = values.imgs.map(item=>{
+          return {
+            uid: Math.random(-100,0),
+            name: item.url,
+            url: rootUrl + thumbnailPath + item.url,
+            status: "done"
+          }
         })
-      }
-    });
-    this.editorInstance.setContent(description, "html");
 
-    console.log("goodsValue============================>>>>>>>>>>>>>>>",values.goodsValue);
-    this.props.form.setFieldsValue({
-      name: values.name,
-      type: values.type,
-      imgs:imgs,
-      color:color,
-      size:size,
-      address:address,
-      originalPrice:values.originalPrice,
-      price:values.price,
-      stock:values.stock,
-      show:values.show,
-      description,
-      upTime,
-      downTime,
-      postPrice:values.postPrice
-    });
-    console.log("values==================>>>>>>>>>>>>>>>>>",values);
+        const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
+
+        const downTime = moment(new Date(values.downTime),'YYYY/MM/DD hh:mm:ss');
+
+        const description = values.description;
+
+        const skuPrefix = values.skuPrefix.split("|")[0];
+
+        this.skuPrefix  =skuPrefix;
+
+        let address;
+        if(values.province==="all"){
+          address = ["全国"];
+        }else{
+          if(values.city==="all"){
+            address = [values.province,"市辖区"]
+          }else{
+            address = [values.province,values.city]
+          }
+        }
+
+        this.props.dispatch({
+          type:'mall/getTypeName',
+          payload:{
+            query:{
+              limit:10
+            },
+            queryOption:{
+              skuPrefix:skuPrefix
+            }
+          }
+        }).then(res=>{
+          this.setState({skuPrefix:res});
+        }).catch(err=>err)
+
+
+        this.setState({giftList});
+        this.setState({imgs});
+        this.setState({description},()=>{
+          this.props.form.setFieldsValue({
+            description
+          })
+        })
+        this.setState({type:values.type},()=>{
+          if(this.state.type===1){
+            this.props.form.setFieldsValue({
+              goodsValue:values.goodsValue,
+              expireTime,
+            })
+          }
+        });
+        this.editorInstance.setContent(description, "html");
+
+        this.props.form.setFieldsValue({
+          name: values.name,
+          type: values.type,
+          imgs:imgs,
+          color:color,
+          size:size,
+          address:address,
+          originalPrice:values.originalPrice,
+          price:values.price,
+          stock:values.stock,
+          show:values.show,
+          description,
+          upTime,
+          downTime,
+          postPrice:values.postPrice
+        });
+
+      })
+    }
+
+
   }
 
   //图片上传或者删除
@@ -217,6 +231,7 @@ export default class GoodsEdit extends PureComponent {
 
   //提交
   handleSubmit = e => {
+    const _this = this;
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
 
@@ -265,9 +280,14 @@ export default class GoodsEdit extends PureComponent {
           payload:{
             form:values
           }
-        })
+        }).then(res=>{
+          successNotification('编辑成功',()=>{
+            _this.getGoodsParams();
+            return false;
+          })
+        }).catch(err=>err);
 
-        console.log("lastSubmitValue==========================================>>>>>>>>>>>>>>>",values);
+        console.log("lastSubmitValue==========================================>>>>>>>>>>>>>>>",JSON.stringify(values));
       }
     })
   }
@@ -680,7 +700,7 @@ export default class GoodsEdit extends PureComponent {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} value={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
+                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
                         </Col>
                         <Col span={2}>
                           <Button type="primary" icon="close-circle-o" onClick={() => this.deleteGift(item)}>删除</Button>
