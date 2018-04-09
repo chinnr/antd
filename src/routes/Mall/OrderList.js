@@ -130,9 +130,9 @@ export default class OrderList extends PureComponent {
               {getFieldDecorator('status')(
                 <Select>
                   <Option value={0}>未付款</Option>
-                  <Option value={1}>已完成</Option>
                   <Option value={2}>已付款</Option>
-                  <Option value={3}>已确认</Option>
+                  <Option value={1}>已完成</Option>
+                  {/*<Option value={3}>已确认</Option>*/}
                   <Option value={4}>已取消</Option>
                 </Select>
               )}
@@ -196,7 +196,7 @@ export default class OrderList extends PureComponent {
       0:'未付款',
       1:'已完成',
       2:'已付款',
-      3:'已确认',
+      // 3:'已确认',
       4:'已取消',
     };
     return orderStatus[status];
