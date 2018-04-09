@@ -149,10 +149,13 @@ export default class OrderSendOut extends Component {
       if(goodsData&&goodsData.length>0){
         goodsData.forEach(item=>{
           countTotal+=item.count;
-          item.children = item.donate;
-          item.children.forEach(childrenItem=>{
-            countTotal+=childrenItem.count;
-          })
+          if(item.donate&&item.donate.length>0){
+            item.children = item.donate;
+            item.children.forEach(childrenItem=>{
+              countTotal+=childrenItem.count;
+            })
+          }
+
         })
       }
     }else{
