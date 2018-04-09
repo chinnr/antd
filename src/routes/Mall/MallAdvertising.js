@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Modal, Form, Radio, Select, Table, Pagination } from 'antd';
+import { Card, Upload, Button, Modal, Form, Radio, Select, Table, Pagination, Icon, message } from 'antd';
 import { rootUrl, thumbnailPath } from '../../utils/constant';
 import { successNotification } from '../../utils/utils';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -68,7 +68,7 @@ const CreateForm = Form.create()(props => {
     </Modal>
   );
 });
-
+let goodsImg = '';
 @connect(({ mall, loading }) => ({
   mall,
   loading: loading.models.mall
@@ -77,33 +77,56 @@ const CreateForm = Form.create()(props => {
 class MallAdvertising extends PureComponent {
   columns = [
     {
-      title: '商品id',
-      dataIndex: 'gid'
-    },
-    {
-      title: '广告图',
+      title: '商品ID',
+      key: 'gid',
       render: record => (
-        <span>
-          <img style={{ height: 50 }} src={record.img} />
-        </span>
+        <Fragment>
+          <span style={{ marginRight: 20 }}>{record.gid}</span>
+          <a onClick={() => this.showModal(record)}>
+            <Icon type="form" style={{ fontSize: 18 }} />
+          </a>
+        </Fragment>
       )
     },
     {
+      title: '广告图',
+      key: 'img',
+      render: record => (
+        <div>
+          <div style={{display: 'inline-block'}}>
+            <Upload
+              name="file"
+              action={rootUrl + '/api/young/post/upload/image'}
+              multiple={false}
+              onChange={info => this.uploadGoodsImg(info, record)}
+            >
+              <Button size={'small'} style={{ marginRight: 20 }}>
+                <Icon type="upload" /> 修改
+              </Button>
+            </Upload>
+          </div>
+          <img style={{ height: 50 }} src={record.img} />
+        </div>
+      )
+    }
+    /*{
       title: '操作',
       render: (record) => (
         <Fragment>
           <a onClick={() => this.showModal(record)}>编辑</a>
         </Fragment>
       )
-    }
+    }*/
   ];
   record = {};
+
   state = {
     selectedRows: [],
-    visible: false
+    visible: false,
+    fileList: []
   };
 
-  showModal = (record) => {
+  showModal = record => {
     this.record = record;
     this.setState({
       visible: true
@@ -117,20 +140,58 @@ class MallAdvertising extends PureComponent {
   };
 
   /**
+   * 单独上传 商品广告图片
+   * @param info
+   * @param record
+   */
+  uploadGoodsImg = (info, record) => {
+    const _this = this;
+    if (info.file.status === 'done') {
+      console.log('图片上传: ', info);
+      console.log('图片gid: ', record.gid);
+      const form = {
+        gid: record.gid,
+        img: rootUrl + thumbnailPath + info.file.response.filename
+      };
+      console.log('form >>> ', form);
+      const { mall: { advertiseList } } = this.props;
+      const i = advertiseList.indexOf(record);
+      advertiseList.splice(i, 1, form);
+      console.log("i >>> ", i);
+      console.log("advertiseList >>> ", advertiseList);
+      this.props
+        .dispatch({
+          type: 'mall/updateAdvertiseList',
+          payload: {
+            form: advertiseList
+          }
+        })
+        .then(() => {
+          successNotification('修改成功', function() {
+            _this.getAdvertiseList();
+          });
+        })
+        .catch(err => err);
+    } else if (info.file.status === 'error') {
+      message.error('上传图片失败');
+    }
+  };
+
+  /**
    * 修改广告位
    * @returns {*}
    */
   updateAdvertiseList = form => {
     const _this = this;
-    const { mall:{advertiseList} } = this.props;
+    const { mall: { advertiseList } } = this.props;
     const i = advertiseList.indexOf(this.record);
     advertiseList.splice(i, 1, form);
     console.log('修改广告位 form: ', form);
+    console.log('修改广告位 图片: ', goodsImg);
     console.log('修改广告位 advertiseList: ', advertiseList);
     this.setState({
       visible: false
     });
-    // const _this = this;
     this.props
       .dispatch({
         type: 'mall/updateAdvertiseList',
