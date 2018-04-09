@@ -9,6 +9,7 @@ const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const CreateForm = Form.create()(props => {
   const { visible, form, handleAdd, handleCancel, sourceData, onPagination, dataMeta } = props;
+  // console.log("sourceData >>> ", sourceData);
   const { getFieldDecorator, validateFields } = form;
   const formItemLayout = {
     labelCol: { span: 6 },
@@ -29,41 +30,41 @@ const CreateForm = Form.create()(props => {
 
   return (
     <Modal title="编辑广告位" maskClosable={true} visible={visible} onOk={handleOk} onCancel={() => handleCancel()}>
-      <Form>
-        <FormItem>
-          {getFieldDecorator('goods')(
-            <RadioGroup>
-              {sourceData.map((item, i) => {
-                return (
-                  <Radio
-                    value={item.gid + '|' + item.imgs[0].url}
-                    key={i}
-                    style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee', marginBottom: 5 }}
-                  >
-                    <img
-                      style={{ width: 60, height: 60, display: 'inline-block' }}
-                      src={rootUrl + thumbnailPath + item.imgs[0].url}
-                    />
-                    <div
-                      style={{
-                        width: 200,
-                        backgroundColor: '#fff',
-                        display: 'inline-block',
-                        position: 'relative',
-                        height: 40,
-                        marginLeft: 20
-                      }}
+        <Form>
+          <FormItem>
+            {getFieldDecorator('goods')(
+              <RadioGroup>
+                {sourceData.map((item, i) => {
+                  return (
+                    <Radio
+                      value={item.gid + '|' + item.listImg}
+                      key={i}
+                      style={{width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee', marginBottom: 5}}
                     >
-                      <p style={{ margin: 0, position: 'absolute', top: 20 }}>{item.name}</p>
-                      <p style={{ margin: 0, position: 'absolute', top: 40 }}>{item.sku}</p>
-                    </div>
-                  </Radio>
-                );
-              })}
-            </RadioGroup>
-          )}
-        </FormItem>
-      </Form>
+                      <img
+                        style={{width: 60, height: 60, display: 'inline-block'}}
+                        src={ rootUrl + thumbnailPath + item.listImg }
+                      />
+                      <div
+                        style={{
+                          width: 200,
+                          backgroundColor: '#fff',
+                          display: 'inline-block',
+                          position: 'relative',
+                          height: 40,
+                          marginLeft: 20
+                        }}
+                      >
+                        <p style={{margin: 0, position: 'absolute', top: 20}}>{item.name}</p>
+                        <p style={{margin: 0, position: 'absolute', top: 40}}>{item.sku}</p>
+                      </div>
+                    </Radio>
+                  );
+                })}
+              </RadioGroup>
+            )}
+          </FormItem>
+        </Form>
       <Pagination defaultCurrent={1} total={dataMeta.count} onChange={p => onPagination(p)} />
     </Modal>
   );
@@ -82,7 +83,7 @@ class MallAdvertising extends PureComponent {
       render: record => (
         <Fragment>
           <span style={{ marginRight: 20 }}>{record.gid}</span>
-          <a onClick={() => this.showModal(record)}>
+          <a onClick={() => this.showModal(record, 'editAdv')}>
             <Icon type="form" style={{ fontSize: 18 }} />
           </a>
         </Fragment>
@@ -109,25 +110,22 @@ class MallAdvertising extends PureComponent {
         </div>
       )
     }
-    /*{
-      title: '操作',
-      render: (record) => (
-        <Fragment>
-          <a onClick={() => this.showModal(record)}>编辑</a>
-        </Fragment>
-      )
-    }*/
   ];
   record = {};
-
+  btnType = 'new';
   state = {
     selectedRows: [],
     visible: false,
     fileList: []
   };
 
-  showModal = record => {
-    this.record = record;
+  showModal = (record, type) => {
+    if(type === 'editAdv') {
+      this.record = record;
+      this.btnType = 'edit'
+    }else if(type === 'newAdv') {
+      this.btnType = 'new'
+    }
     this.setState({
       visible: true
     });
@@ -186,9 +184,6 @@ class MallAdvertising extends PureComponent {
     const { mall: { advertiseList } } = this.props;
     const i = advertiseList.indexOf(this.record);
     advertiseList.splice(i, 1, form);
-    console.log('修改广告位 form: ', form);
-    console.log('修改广告位 图片: ', goodsImg);
-    console.log('修改广告位 advertiseList: ', advertiseList);
     this.setState({
       visible: false
     });
@@ -201,6 +196,32 @@ class MallAdvertising extends PureComponent {
       })
       .then(() => {
         successNotification('修改成功', function() {
+          _this.getAdvertiseList();
+        });
+      })
+      .catch(err => err);
+  };
+
+  /**
+   * 添加广告位
+   * @param form
+   */
+  addAdvertiseList = (form) => {
+    const _this = this;
+    const { mall: { advertiseList } } = this.props;
+    advertiseList.push(form);
+    this.setState({
+      visible: false
+    });
+    this.props
+      .dispatch({
+        type: 'mall/updateAdvertiseList',
+        payload: {
+          form: advertiseList
+        }
+      })
+      .then(() => {
+        successNotification('添加成功', function() {
           _this.getAdvertiseList();
         });
       })
@@ -249,13 +270,20 @@ class MallAdvertising extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { visible } = this.state;
-    // console.log('advertiseList ', mall.advertiseList);
+    console.log('advertiseList ', mall.advertiseList);
     // console.log('mall.advertiseList  ', mall.advertiseList);
     const list = mall.advertiseList;
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
+            <Button
+              disabled={list.length > 10}
+              type={'primary'}
+              onClick={() => this.showModal({}, 'newAdv')}>
+              添加广告位
+            </Button>
+            <br />
             <Table
               loading={loading}
               rowKey={record => Math.random(1, 100) + record.gid}
@@ -269,7 +297,7 @@ class MallAdvertising extends PureComponent {
             sourceData={mall.goodsList}
             dataMeta={mall.goodsListMeta}
             handleCancel={this.handleCancel}
-            handleAdd={this.updateAdvertiseList}
+            handleAdd={this.btnType === 'edit' ? this.updateAdvertiseList : this.addAdvertiseList}
             onPagination={this.onPagination}
           />
         </Card>
