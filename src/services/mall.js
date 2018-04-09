@@ -400,7 +400,7 @@ export function getAllPayRecord(payload) {
 //更新订单状态
 export function updateOrderState(payload) {
   console.log("!!!!!!!!========>",payload);
-  const update = `mutation($form: UpdateStatusModel) {
+  const update = `mutation stateChange($form: UpdateStatusModel) {
   me {
     Order{
       UpdateOrderState(form:$form)
