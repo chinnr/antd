@@ -375,13 +375,12 @@ export default class GoodsEdit extends PureComponent {
             gid,
             count:0
           });
-          this.giftList = [...this.giftList,...selectValues];
-          this.setState({
-            giftList: this.giftList
-          });
+          this.giftList.push(item);
         }
       });
-
+      this.setState({
+        giftList: [...this.giftList]
+      });
     }
     this.setState({
       [type]: false
