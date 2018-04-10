@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Upload, Button, Modal, Form, Radio, Select, Table, Pagination, Icon, message } from 'antd';
+import { Card, Upload, Button, Modal, Form, Radio, Select, Table, Pagination, Icon, message, Divider } from 'antd';
 import { rootUrl, thumbnailPath } from '../../utils/constant';
 import { successNotification } from '../../utils/utils';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -21,7 +21,8 @@ const CreateForm = Form.create()(props => {
       if (!err) {
         const params = {
           gid: values.goods.split('|')[0],
-          img: rootUrl + thumbnailPath + values.goods.split('|')[1]
+          img: rootUrl + thumbnailPath + values.goods.split('|')[1],
+          sku: values.goods.split('|')[2]
         };
         handleAdd(params);
       }
@@ -30,41 +31,41 @@ const CreateForm = Form.create()(props => {
 
   return (
     <Modal title="编辑广告位" maskClosable={true} visible={visible} onOk={handleOk} onCancel={() => handleCancel()}>
-        <Form>
-          <FormItem>
-            {getFieldDecorator('goods')(
-              <RadioGroup>
-                {sourceData.map((item, i) => {
-                  return (
-                    <Radio
-                      value={item.gid + '|' + item.listImg}
-                      key={i}
-                      style={{width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee', marginBottom: 5}}
+      <Form>
+        <FormItem>
+          {getFieldDecorator('goods')(
+            <RadioGroup>
+              {sourceData.map((item, i) => {
+                return (
+                  <Radio
+                    value={item.gid + '|' + item.listImg + '|' + item.sku}
+                    key={i}
+                    style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: '#eee', marginBottom: 5 }}
+                  >
+                    <img
+                      style={{ width: 60, height: 60, display: 'inline-block' }}
+                      src={rootUrl + thumbnailPath + item.listImg}
+                    />
+                    <div
+                      style={{
+                        width: 200,
+                        backgroundColor: '#fff',
+                        display: 'inline-block',
+                        position: 'relative',
+                        height: 40,
+                        marginLeft: 20
+                      }}
                     >
-                      <img
-                        style={{width: 60, height: 60, display: 'inline-block'}}
-                        src={ rootUrl + thumbnailPath + item.listImg }
-                      />
-                      <div
-                        style={{
-                          width: 200,
-                          backgroundColor: '#fff',
-                          display: 'inline-block',
-                          position: 'relative',
-                          height: 40,
-                          marginLeft: 20
-                        }}
-                      >
-                        <p style={{margin: 0, position: 'absolute', top: 20}}>{item.name}</p>
-                        <p style={{margin: 0, position: 'absolute', top: 40}}>{item.sku}</p>
-                      </div>
-                    </Radio>
-                  );
-                })}
-              </RadioGroup>
-            )}
-          </FormItem>
-        </Form>
+                      <p style={{ margin: 0, position: 'absolute', top: 20 }}>{item.name}</p>
+                      <p style={{ margin: 0, position: 'absolute', top: 40 }}>{item.sku}</p>
+                    </div>
+                  </Radio>
+                );
+              })}
+            </RadioGroup>
+          )}
+        </FormItem>
+      </Form>
       <Pagination defaultCurrent={1} total={dataMeta.count} onChange={p => onPagination(p)} />
     </Modal>
   );
@@ -78,14 +79,11 @@ let goodsImg = '';
 class MallAdvertising extends PureComponent {
   columns = [
     {
-      title: '商品ID',
-      key: 'gid',
+      title: '商品',
+      key: 'sku',
       render: record => (
         <Fragment>
-          <span style={{ marginRight: 20 }}>{record.gid}</span>
-          <a onClick={() => this.showModal(record, 'editAdv')}>
-            <Icon type="form" style={{ fontSize: 18 }} />
-          </a>
+          <span style={{ marginRight: 20 }}>{record.sku}</span>
         </Fragment>
       )
     },
@@ -94,19 +92,31 @@ class MallAdvertising extends PureComponent {
       key: 'img',
       render: record => (
         <div>
-          <div style={{display: 'inline-block'}}>
+          <img style={{ height: 50 }} src={record.img} />
+        </div>
+      )
+    },
+    {
+      title: '操作',
+      key: 'opt',
+      render: record => (
+        <div>
+          <a onClick={() => this.showModal(record, 'editAdv')}>
+            <Icon type="form" style={{ fontSize: 18 }} /> 修改商品
+          </a>
+          <Divider type="vertical" />
+          <div style={{ display: 'inline-block' }}>
             <Upload
               name="file"
               action={rootUrl + '/api/young/post/upload/image'}
               multiple={false}
               onChange={info => this.uploadGoodsImg(info, record)}
             >
-              <Button size={'small'} style={{ marginRight: 20 }}>
-                <Icon type="upload" /> 修改
-              </Button>
+              <a><Icon type="picture" style={{ fontSize: 16 }}/> 修改图片</a>
             </Upload>
           </div>
-          <img style={{ height: 50 }} src={record.img} />
+          <Divider type="vertical" />
+          <a onClick={() => this.deleteAdv(record)}><Icon type="close-circle-o"  style={{ fontSize: 16 }}/>  删除</a>
         </div>
       )
     }
@@ -120,11 +130,11 @@ class MallAdvertising extends PureComponent {
   };
 
   showModal = (record, type) => {
-    if(type === 'editAdv') {
+    if (type === 'editAdv') {
       this.record = record;
-      this.btnType = 'edit'
-    }else if(type === 'newAdv') {
-      this.btnType = 'new'
+      this.btnType = 'edit';
+    } else if (type === 'newAdv') {
+      this.btnType = 'new';
     }
     this.setState({
       visible: true
@@ -155,8 +165,8 @@ class MallAdvertising extends PureComponent {
       const { mall: { advertiseList } } = this.props;
       const i = advertiseList.indexOf(record);
       advertiseList.splice(i, 1, form);
-      console.log("i >>> ", i);
-      console.log("advertiseList >>> ", advertiseList);
+      console.log('i >>> ', i);
+      console.log('advertiseList >>> ', advertiseList);
       this.props
         .dispatch({
           type: 'mall/updateAdvertiseList',
@@ -206,7 +216,7 @@ class MallAdvertising extends PureComponent {
    * 添加广告位
    * @param form
    */
-  addAdvertiseList = (form) => {
+  addAdvertiseList = form => {
     const _this = this;
     const { mall: { advertiseList } } = this.props;
     advertiseList.push(form);
@@ -228,6 +238,32 @@ class MallAdvertising extends PureComponent {
       .catch(err => err);
   };
 
+  /**
+   * 删除广告位
+   * @param record
+   */
+  deleteAdv = (record) => {
+    const _this = this;
+    const { mall: { advertiseList } } = this.props;
+    const i = advertiseList.indexOf(record);
+    advertiseList.splice(i, 1);
+    this.setState({
+      visible: false
+    });
+    this.props
+      .dispatch({
+        type: 'mall/updateAdvertiseList',
+        payload: {
+          form: advertiseList
+        }
+      })
+      .then(() => {
+        successNotification('删除成功', function() {
+          _this.getAdvertiseList();
+        });
+      })
+      .catch(err => err);
+  };
   /**
    * 获取所有商品
    * @param p
@@ -277,10 +313,7 @@ class MallAdvertising extends PureComponent {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button
-              disabled={list.length > 10}
-              type={'primary'}
-              onClick={() => this.showModal({}, 'newAdv')}>
+            <Button disabled={list.length > 10} type={'primary'} onClick={() => this.showModal({}, 'newAdv')}>
               添加广告位
             </Button>
             <br />
