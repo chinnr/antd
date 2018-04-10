@@ -64,8 +64,9 @@ export default class GoodsEdit extends PureComponent {
       goodsType:0,
       description:'',
     }
-    this.goodsJson = [];
-    this.goodsJsonGid = [];
+    this.goodsJson = [];//submit的赠品
+    this.giftList = [];//列表渲染的的赠品
+    this.goodsJsonGid = [];//去重的赠品gid
     this.skuPrefix = '';
     this.gid='';
   }
@@ -108,22 +109,52 @@ export default class GoodsEdit extends PureComponent {
 
   //获取商品详情
   getGoodsById = (values)=>{
-    let giftList= [];
     const _this = this;
+
+    /*
+    * 去重后的gid
+    * */
     values.goodsJson.forEach((item)=>{
       _this.goodsJsonGid.push(item.gid);
-      let temp = item.gid +'|'+item.name+'|'+item.count;
-      giftList.push(temp);
-      let tempItem = {count:0,gid:''};
-      tempItem.count = item.count;
-      tempItem.gid = item.gid;
-      console.log("goodsJson===============>>>>>>>>>>",tempItem);
-      this.goodsJson.push(tempItem);
     });
 
     let aa = Array.from(new Set(this.goodsJsonGid));
     this.goodsJsonGid = aa;
     console.log("goodsJsonGid=================>>>>>>>>>>>>>>>",this.goodsJsonGid);
+
+
+    /*
+    * 通过去重的gid把赠品中的重复赠品合并及把数量相加
+    * */
+    let newGoodsList = [];
+    this.goodsJsonGid.forEach((gid)=>{
+      let newJson = {gid,count:0,name:''};
+        values.goodsJson.forEach(item=>{
+          if(item.gid==newJson.gid){
+            newJson.count+=item.count;
+            newJson.name = item.name;
+          }
+        })
+      newGoodsList.push(newJson);
+    });
+    console.log("newGoodsList=======================>>>>>>>>>>>>>>>>>>>",newGoodsList);
+
+    /*
+    *赠品数据加工
+    * */
+    newGoodsList.forEach((item)=>{
+      /*
+      * giftList做组件的列表渲染，需要name*/
+      let temp = item.gid +'|'+item.name+'|'+item.count;
+      _this.giftList.push(temp);
+
+      /*
+      * this.goodsJson做提交的字段，不需要name*/
+      let tempItem = {count:0,gid:''};
+      tempItem.count = item.count;
+      tempItem.gid = item.gid;
+      this.goodsJson.push(tempItem);
+    });
 
 
     let sizeAcolor,
@@ -142,11 +173,12 @@ export default class GoodsEdit extends PureComponent {
       expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
     }
 
+    console.log("values.img:     ",values.imgs);
     const imgs = values.imgs.map(item=>{
       return {
         uid: Math.random(-100,0),
         name: item.url,
-        url: rootUrl + thumbnailPath + item.url,
+        url: item.url,
         status: "done"
       }
     })
@@ -187,7 +219,7 @@ export default class GoodsEdit extends PureComponent {
     }).catch(err=>err)
 
 
-    this.setState({giftList});
+    this.setState({giftList:this.giftList});
     this.setState({imgs});
     this.setState({description},()=>{
       this.props.form.setFieldsValue({
@@ -223,7 +255,18 @@ export default class GoodsEdit extends PureComponent {
   }
 
   //图片上传或者删除
-  handleChange = ({ fileList }) => {
+  handleChange = (info) => {
+    let fileList = info.fileList;
+    fileList = fileList.map(file => {
+      if (file.response) {
+        file.url = rootUrl + thumbnailPath + file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    console.log("fileList:         ",fileList);
     this.setState({ imgs: fileList})
   };
 
@@ -255,14 +298,15 @@ export default class GoodsEdit extends PureComponent {
         let images = [];
         if(values.imgs.fileList){
           values.imgs.fileList.map(item => {
-            images.push(rootUrl + thumbnailPath+item.name)
+            images.push(item.url)
           });
         }else{
           values.imgs.map(item => {
-            images.push(rootUrl + thumbnailPath+item.name)
+            images.push(item.url)
           });
         }
 
+        // console.log("提交的imgs：        ",images);
         values.gid = this.gid;
         values.imgs = images;
         values.goodsJson = this.goodsJson;
@@ -298,6 +342,9 @@ export default class GoodsEdit extends PureComponent {
           }
         }).then(res=>{
           successNotification('编辑成功',()=>{
+            _this.giftList = [];
+            _this.goodsJsonGid = [];
+            _this.goodsJson = [];
             _this.getGoodsParams();
             return false;
           })
@@ -318,11 +365,24 @@ export default class GoodsEdit extends PureComponent {
   //商品赠品和分类弹窗的确认按钮
   handleOk = (type) => {
     if(type === "goodsListVisible") {
-      this.setState({
-        giftList: this.props.form.getFieldValue("goodsJson")
-      })
+      const selectValues = this.props.form.getFieldValue("goodsJson");
+      console.log("选择的赠品================>>>>>>>>>>>>>>>>>",this.props.form.getFieldValue("goodsJson"));
+      selectValues.forEach((item)=>{
+        const gid = item.split('|')[0];
+        if(this.goodsJsonGid.indexOf(gid)===-1){
+          this.goodsJsonGid.push(gid);
+          this.goodsJson.push({
+            gid,
+            count:0
+          });
+          this.giftList = [...this.giftList,...selectValues];
+          this.setState({
+            giftList: this.giftList
+          });
+        }
+      });
+
     }
-    console.log("goodsJson ==> ", this.props.form.getFieldValue("goodsJson"))
     this.setState({
       [type]: false
     })
@@ -369,15 +429,11 @@ export default class GoodsEdit extends PureComponent {
     }).catch(err => err)
   };
 
-  //添加赠品
+  //修改赠品数量
   addGiftCount = (v, gid) => {
-    console.log("onSelectGift: ", v, gid);
-    const goodsObj = {
-      count: v,
-      gid: gid
-    };
-    this.goodsJson.push(goodsObj);
-    console.log(this.goodsJson);
+    const idx = this.goodsJsonGid.indexOf(gid);
+    this.goodsJson[idx].count = v;
+    console.log('goodsJson:          ',this.goodsJson);
   };
 
   handleDelete= (arr, item) => {
@@ -401,17 +457,20 @@ export default class GoodsEdit extends PureComponent {
 
   //删除赠品
   deleteGift = (item) => {
-    console.log("deleteGift goodsJson: ",  this.props.form.getFieldValue("goodsJson"));
-    console.log("deleteGift item : ",  item);
-    const goodsJson = this.props.form.getFieldValue("goodsJson");
-    const afterDelete = this.handleDelete(goodsJson,item);
-    console.log("afterDelete==>", afterDelete);
+    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
+    this.goodsJson.splice(idx,1);
+    this.goodsJsonGid.splice(idx,1);
+    this.giftList.splice(idx,1);
+
+
     this.setState({
-      giftList: afterDelete
+      giftList: [...this.giftList]
     });
-    this.props.form.setFieldsValue({
-      goodsJson: afterDelete
-    })
+
+
+    console.log("this.goodsJsonGid:  ", this.goodsJsonGid);
+    console.log("this.goodsJson:  ", this.goodsJson);
+    console.log("this.giftList:  ", this.giftList);
   };
 
   //正文图片上传
