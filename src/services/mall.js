@@ -111,9 +111,7 @@ export function updateGoods(payload) {
   const updateGoods = `mutation updateGoods($form: UpdateGoodsInput) {
   me {
     goods{
-      updateGoods(form:$form){
-        gid
-      }
+      updateGoods(form:$form)
     }
   }
 }`;
@@ -198,10 +196,13 @@ export function getGoodsDetail(gid) {
           sku
           skuPrefix
           skuSize
+          goodsValue
           description
           upTime
           downTime
           stock
+          show
+          type
           price
           goodsJson {
             gid
@@ -286,6 +287,12 @@ export function orderList(payload) {
               name
               price
               skuSize
+              donate{
+                gid
+                count
+                name
+                skuSize
+              }
             }
             sku
             status
@@ -394,7 +401,7 @@ export function getAllPayRecord(payload) {
 //更新订单状态
 export function updateOrderState(payload) {
   console.log("!!!!!!!!========>",payload);
-  const update = `mutation($form: UpdateStatusModel) {
+  const update = `mutation stateChange($form: UpdateStatusModel) {
   me {
     Order{
       UpdateOrderState(form:$form)

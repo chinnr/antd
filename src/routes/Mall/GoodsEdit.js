@@ -22,7 +22,7 @@ import {
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import colors from '../../static/colors';
 import styles from './index.less';
-import {doExchange, successNotification} from '../../utils/utils';
+import {successNotification} from '../../utils/utils';
 import options from '../../utils/cascader-address-options';
 import { rootUrl, thumbnailPath } from "../../utils/constant";
 // 引入编辑器以及编辑器样式
@@ -74,24 +74,45 @@ export default class GoodsEdit extends PureComponent {
 
   //获取商品参数
   getGoodsParams = ()=>{
-    let values = {};
+    let gid='';
+    const _this = this;
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
-      values = JSON.parse(localStorage.getItem("goodsInfo")).record;
+      gid = JSON.parse(localStorage.getItem("goodsInfo")).record.gid;
     } else {
       // 有 query
       localStorage.setItem(
         "goodsInfo",
         JSON.stringify(this.props.location.query)
       );
-      values = this.props.location.query.record;
-    }
+      gid = this.props.location.query.record.gid;
 
+    }
+    this.props.dispatch({
+      type:'mall/getGoodsById',
+      payload:{
+        gid
+      }
+    }).then(res=>{
+      console.log("根据ID获取的商品详情=====================>>>>>>>>>>>>>>",res);
+      _this.getGoodsById(res);
+
+    })
+
+
+  }
+
+  //获取商品详情
+  getGoodsById = (values)=>{
     let giftList= [];
     values.goodsJson.forEach((item)=>{
       let temp = item.gid +'|'+item.name+'|'+item.count;
       giftList.push(temp);
-      this.goodsJson.push(item);
+      let tempItem = {count:0,gid:''};
+      tempItem.count = item.count;
+      tempItem.gid = item.gid;
+      console.log("goodsJson===============>>>>>>>>>>",tempItem);
+      this.goodsJson.push(tempItem);
     });
 
 
@@ -173,7 +194,6 @@ export default class GoodsEdit extends PureComponent {
     });
     this.editorInstance.setContent(description, "html");
 
-    console.log("goodsValue============================>>>>>>>>>>>>>>>",values.goodsValue);
     this.props.form.setFieldsValue({
       name: values.name,
       type: values.type,
@@ -190,7 +210,6 @@ export default class GoodsEdit extends PureComponent {
       downTime,
       postPrice:values.postPrice
     });
-    console.log("values==================>>>>>>>>>>>>>>>>>",values);
   }
 
   //图片上传或者删除
@@ -217,6 +236,7 @@ export default class GoodsEdit extends PureComponent {
 
   //提交
   handleSubmit = e => {
+    const _this = this;
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
 
@@ -265,9 +285,14 @@ export default class GoodsEdit extends PureComponent {
           payload:{
             form:values
           }
-        })
+        }).then(res=>{
+          successNotification('编辑成功',()=>{
+            _this.getGoodsParams();
+            return false;
+          })
+        }).catch(err=>err);
 
-        console.log("lastSubmitValue==========================================>>>>>>>>>>>>>>>",values);
+        console.log("lastSubmitValue==========================================>>>>>>>>>>>>>>>",JSON.stringify(values));
       }
     })
   }
@@ -680,7 +705,7 @@ export default class GoodsEdit extends PureComponent {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} value={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
+                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
                         </Col>
                         <Col span={2}>
                           <Button type="primary" icon="close-circle-o" onClick={() => this.deleteGift(item)}>删除</Button>

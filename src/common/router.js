@@ -216,6 +216,9 @@ export const getRouterData = (app) => {
     '/mall/order-detail/:id': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/OrderDetail')),
     },
+    '/mall/order-send/:id': {
+      component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/OrderSendOut')),
+    },
     '/mall/goods-add': {
       component: dynamicWrapper(app, ['mall'], () => import('../routes/Mall/GoodsAdd')),
     },

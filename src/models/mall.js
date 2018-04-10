@@ -27,10 +27,25 @@ export default {
     }
   },
   effects: {
+    *getGoodsById({payload},{call}) {
+      const {data,errors} = yield call(mallService.getGoodsDetail, payload);
+      if(!errors){
+        const res = data.me.goods.getGoodsById;
+        return res;
+
+      }else{
+        throw new Error(errors[0].message);
+      }
+    },
     *updateGoods({payload},{call}) {
       const {data,errors} = yield call(mallService.updateGoods, payload);
       if(!errors){
-        console.log("更新商品======================>>>>>>>>>>>>>>>>",data);
+        const res = data.me.goods.updateGoods;
+        if(typeof res == 'number'){
+          console.log("更新商品======================>>>>>>>>>>>>>>>>",res);
+          return res;
+        }
+
       }else{
         throw new Error(errors[0].message);
       }
@@ -47,17 +62,15 @@ export default {
       }
     },
     *updateOrderState({ payload }, { call, put }){
-      // console.log("form=============================>",payload);
       const { data, errors } = yield call(mallService.updateOrderState, payload);
+      console.log("???????????============>>>>>>>>>>>>>",data);
       if(errors) {
         throw new Error(errors[0].message);
-      }
-      if(data.me){
+      }else{
         const res = data.me.Order.UpdateOrderState;
-        // console.log("updateOrderState!!!!!==========================>>>",res);
-        return res;
-      }
 
+        if(typeof res =="number") return res;
+      }
     },
 
     *getGoodsType({ payload: query }, { call, put }) {
@@ -240,6 +253,7 @@ export default {
         throw new Error(errors[0].message);
       }
       if(data.me) {
+        console.log("recordPay==============>>>>>>>>>>>>>>>>>>>>>>>>>>>>",data);
         yield put({
           type: 'updateState',
           payload: {
