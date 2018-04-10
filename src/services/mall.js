@@ -344,6 +344,7 @@ export function getAdvertiseList() {
         getDiscovery{
           gid
           img
+          sku
         }
       }
     }
