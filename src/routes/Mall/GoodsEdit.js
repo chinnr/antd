@@ -64,8 +64,10 @@ export default class GoodsEdit extends PureComponent {
       goodsType:0,
       description:'',
     }
-    this.goodsJson=[];
+    this.goodsJson = [];
+    this.goodsJsonGid = [];
     this.skuPrefix = '';
+    this.gid='';
   }
 
   componentDidMount() {
@@ -79,6 +81,7 @@ export default class GoodsEdit extends PureComponent {
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
       gid = JSON.parse(localStorage.getItem("goodsInfo")).record.gid;
+      this.gid = gid;
     } else {
       // 有 query
       localStorage.setItem(
@@ -86,6 +89,7 @@ export default class GoodsEdit extends PureComponent {
         JSON.stringify(this.props.location.query)
       );
       gid = this.props.location.query.record.gid;
+      this.gid = gid;
 
     }
     this.props.dispatch({
@@ -105,7 +109,9 @@ export default class GoodsEdit extends PureComponent {
   //获取商品详情
   getGoodsById = (values)=>{
     let giftList= [];
+    const _this = this;
     values.goodsJson.forEach((item)=>{
+      _this.goodsJsonGid.push(item.gid);
       let temp = item.gid +'|'+item.name+'|'+item.count;
       giftList.push(temp);
       let tempItem = {count:0,gid:''};
@@ -114,6 +120,10 @@ export default class GoodsEdit extends PureComponent {
       console.log("goodsJson===============>>>>>>>>>>",tempItem);
       this.goodsJson.push(tempItem);
     });
+
+    let aa = Array.from(new Set(this.goodsJsonGid));
+    this.goodsJsonGid = aa;
+    console.log("goodsJsonGid=================>>>>>>>>>>>>>>>",this.goodsJsonGid);
 
 
     let sizeAcolor,
@@ -253,6 +263,7 @@ export default class GoodsEdit extends PureComponent {
           });
         }
 
+        values.gid = this.gid;
         values.imgs = images;
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
@@ -360,7 +371,7 @@ export default class GoodsEdit extends PureComponent {
 
   //添加赠品
   addGiftCount = (v, gid) => {
-    console.log("onSelectGift: ", v, gid)
+    console.log("onSelectGift: ", v, gid);
     const goodsObj = {
       count: v,
       gid: gid
@@ -705,7 +716,8 @@ export default class GoodsEdit extends PureComponent {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
+                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }}
+                                       onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
                         </Col>
                         <Col span={2}>
                           <Button type="primary" icon="close-circle-o" onClick={() => this.deleteGift(item)}>删除</Button>
