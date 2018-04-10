@@ -63,6 +63,8 @@ class GoodsAdd extends Component {
   };
 
   goodsJson = [];
+  goodsJsonGid = [];
+  giftList = [];
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -266,11 +268,23 @@ class GoodsAdd extends Component {
    */
   handleOk = (type) => {
     if(type === "goodsListVisible") {
+      const selectValues = this.props.form.getFieldValue("goodsJson");
+      selectValues.forEach((item)=>{
+        const gid = item.split('|')[0];
+        if(this.goodsJsonGid.indexOf(gid)===-1){
+          this.goodsJsonGid.push(gid);
+          this.goodsJson.push({
+            gid,
+            count:0
+          });
+          this.giftList.push(item);
+
+        }
+      });
       this.setState({
-        giftList: this.props.form.getFieldValue("goodsJson")
-      })
+        giftList: this.giftList
+      });
     }
-    console.log("goodsJson ==> ", this.props.form.getFieldValue("goodsJson"))
     this.setState({
       [type]: false
     })
@@ -302,12 +316,8 @@ class GoodsAdd extends Component {
    * @param gid
    */
   addGiftCount = (v, gid) => {
-    console.log("onSelectGift: ", v, gid)
-    const goodsObj = {
-      count: v,
-      gid: gid
-    };
-    this.goodsJson.push(goodsObj);
+    const idx = this.goodsJsonGid.indexOf(gid);
+    this.goodsJson[idx].count = v;
   };
 
   /*
@@ -336,17 +346,15 @@ class GoodsAdd extends Component {
    * 删除赠品
    * */
   deleteGift = (item) => {
-    console.log("deleteGift goodsJson: ",  this.props.form.getFieldValue("goodsJson"));
-    console.log("deleteGift item : ",  item);
-    const goodsJson = this.props.form.getFieldValue("goodsJson");
-    const afterDelete = this.handleDelete(goodsJson,item);
-    console.log("afterDelete==>", afterDelete);
+    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
+    this.goodsJson.splice(idx,1);
+    this.goodsJsonGid.splice(idx,1);
+    this.giftList.splice(idx,1);
+
+
     this.setState({
-      giftList: afterDelete
+      giftList: [...this.giftList]
     });
-    this.props.form.setFieldsValue({
-      goodsJson: afterDelete
-    })
   };
 
   /**
@@ -631,18 +639,6 @@ class GoodsAdd extends Component {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
-            {/*<FormItem {...formItemLayout} label="折扣">
-              {getFieldDecorator('discount',{
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入折扣'
-                  }
-                ]
-              })(
-                <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
-              )}
-            </FormItem>*/}
             <FormItem {...formItemLayout} label="折后价">
               {getFieldDecorator('price',{
                 rules: [
@@ -703,7 +699,10 @@ class GoodsAdd extends Component {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} max={10000000} style={{ width: '100%' }} onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
+                          <InputNumber min={0}
+                                       defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000}
+                                       style={{ width: '100%' }}
+                                       onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
                         </Col>
                         <Col span={2}>
                           <Button type="primary" icon="close-circle-o" onClick={() => this.deleteGift(item)}>删除</Button>
