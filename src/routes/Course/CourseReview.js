@@ -19,7 +19,7 @@ export default class CourseReview extends Component {
   state = {
     openCourseDetail: false,
     rejectModal: false,
-    instructors:[]
+    groupCoaches:[]
   };
 
   getCourseId = () => {
@@ -43,7 +43,7 @@ export default class CourseReview extends Component {
       })
       .then(res => {
         let arr = [];
-        res.instructors.forEach(uid => {
+        res.groupCoaches.forEach(uid => {
           this.props
             .dispatch({
               type: "student/getStudentDetail",
@@ -53,7 +53,7 @@ export default class CourseReview extends Component {
               const {icon,realName} = res;
               arr.push({icon,realName});
               this.setState({
-                instructors: [...arr]
+                groupCoaches: [...arr]
               })
             });
         });
@@ -153,7 +153,7 @@ export default class CourseReview extends Component {
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
 
         {JSON.stringify(courseDetail).length > 2 ?
-          <CourseCommon {...courseDetail} ins={this.state.instructors}></CourseCommon>
+          <CourseCommon {...courseDetail} ins={this.state.groupCoaches}></CourseCommon>
           :
           <p>暂无数据</p>
         }
