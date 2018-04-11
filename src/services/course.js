@@ -127,6 +127,7 @@ export function courseDetail(id) {
           bid
         }
         stage
+        groupCoaches
         level
         cover
         content
