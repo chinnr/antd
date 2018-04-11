@@ -104,7 +104,29 @@ export default class BasicProfile extends Component {
         href: '/mall/order-detail'
       }
     ];
-    let goodsData = orderList.length > 0 ? orderList[0].gidJson : [];
+
+    let countTotal = 0;
+    let goodsData;
+    if(orderList.length>0){
+      goodsData = orderList[0].gidJson;
+      if(goodsData&&goodsData.length>0){
+        goodsData.forEach(item=>{
+          countTotal+=item.count;
+          if(item.donate&&item.donate.length>0){
+            item.children = item.donate;
+            item.children.forEach(childrenItem=>{
+              childrenItem
+              countTotal+=childrenItem.count;
+            })
+          }
+
+        })
+      }
+    }else{
+      goodsData=[];
+    }
+
+
     const renderContent = (value, row, index) => {
       const obj = {
         children: value,
@@ -137,8 +159,11 @@ export default class BasicProfile extends Component {
       {
         title: '金额',
         render: record => {
-          const amount = record.price * record.count;
-          return <span>{amount}</span>;
+          if(record.price){
+            const amount = record.price * record.count;
+            return <span>{amount}</span>;
+          }
+          return <span></span>
         }
       }
     ];
@@ -158,6 +183,7 @@ export default class BasicProfile extends Component {
           <Table
             style={{ marginBottom: 24 }}
             pagination={false}
+            defaultExpandAllRows={true}
             dataSource={goodsData}
             columns={goodsColumns}
             rowKey="gid"
@@ -165,7 +191,7 @@ export default class BasicProfile extends Component {
           <DescriptionList>
             <Description term="邮费">6.00</Description>
             <Description term="优惠券">-10.00</Description>
-            <Description term="应付金额"><b>20.00</b></Description>
+            <Description term="应付金额"><b>{orderList.length > 0 && orderList[0].totalMoney}</b></Description>
           </DescriptionList>
         </Card>
         <Card title="支付信息" style={{ marginBottom: 24 }} bordered={false}>
