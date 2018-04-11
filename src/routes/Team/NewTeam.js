@@ -167,6 +167,8 @@ export default class NewTeam extends PureComponent {
               payload: {
                 formHead: {
                   username: values.username,
+                  nickname: values.realName,
+                  realName: values.realName,
                   password: values.password,
                   phone: '86-' + values.phone,
                   level: 'level4'
@@ -209,7 +211,8 @@ export default class NewTeam extends PureComponent {
               payload: {
                 formHead: {
                   username: values.username,
-                  nickname: values.nickname,
+                  nickname: values.realName,
+                  realName: values.realName,
                   password: values.password,
                   phone: '86-' + values.phone,
                   level: 'level4'
@@ -473,16 +476,16 @@ export default class NewTeam extends PureComponent {
               {...formItemLayout}
               validateStatus={teamNameError ? 'error' : ''}
               help={teamNameError || ''}
-              label="团长昵称"
+              label="团长姓名"
             >
-              {getFieldDecorator('nickname', {
+              {getFieldDecorator('realName', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入团长昵称'
+                    message: '请输入团长姓名'
                   }
                 ]
-              })(<Input placeholder="团长昵称" />)}
+              })(<Input placeholder="团长姓名" />)}
             </FormItem>
             <FormItem
               {...formItemLayout}
