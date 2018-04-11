@@ -172,7 +172,7 @@ export default class BasicProfile extends Component {
           <DescriptionList>
             <Description term="支付方式">付小小</Description>
             <Description term="支付账号">18100000000</Description>
-            <Description term="付款时间">菜鸟仓储</Description>
+            <Description term="付款时间">{moment(orderList.length > 0 && orderList[0].payTime).format('YYYY-MM-DD HH:mm:ss')}</Description>
             <Description term="交易号">
               浙江省杭州市西湖区万塘路18号
             </Description>
