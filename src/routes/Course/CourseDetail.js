@@ -11,7 +11,7 @@ export default class CourseDtail extends PureComponent {
   constructor() {
     super();
     this.state = {
-      instructors:[]
+      groupCoaches:[]
     };
   }
 
@@ -36,7 +36,8 @@ export default class CourseDtail extends PureComponent {
       })
       .then(res => {
         let arr = [];
-        res.instructors.forEach(uid => {
+        console.log("教官groupCoaches：      ",res);
+        res.groupCoaches.forEach(uid => {
           this.props
             .dispatch({
               type: "student/getStudentDetail",
@@ -46,7 +47,7 @@ export default class CourseDtail extends PureComponent {
               const {icon,realName} = res;
               arr.push({icon,realName});
               this.setState({
-                instructors: [...arr]
+                groupCoaches: [...arr]
               })
             });
         });
@@ -79,7 +80,7 @@ export default class CourseDtail extends PureComponent {
     //课程详情数据成功请求后
     let common = null;
     if (JSON.stringify(courseDetail).length > 2) {
-      common = <CourseCommon {...courseDetail} ins={this.state.instructors} />;
+      common = <CourseCommon {...courseDetail} ins={this.state.groupCoaches} />;
     } else {
       common = <p>暂无数据</p>;
     }

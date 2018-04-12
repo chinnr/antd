@@ -53,7 +53,7 @@ const CourseCommon = (props)=>{
   if(ins&&ins.length>=1){
     listItem = ins.map((item,index)=>{
       return (
-        <li style={{float:'left',width:'200px'}} key={'listItem'+index.toString()}><img style={{height:'50px',marginRight:'30px'}} src={item.icon}/>{item.realName}</li>
+        <li style={{float:'left',width:'200px'}} key={item.icon+index.toString()}><img style={{height:'50px',marginRight:'30px'}} src={item.icon}/>{item.realName}</li>
       )
     })
   }else{
@@ -73,7 +73,7 @@ const CourseCommon = (props)=>{
   }
 
 
-  console.log("ins=================>>>>>>>",badgeList)
+  console.log("任课教官：            ",ins)
 
   return(
     <div>

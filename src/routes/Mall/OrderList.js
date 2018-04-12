@@ -134,6 +134,7 @@ export default class OrderList extends PureComponent {
                   <Option value={1}>已完成</Option>
                   {/*<Option value={3}>已确认</Option>*/}
                   <Option value={4}>已取消</Option>
+                  {/*<Option value={5}>已发货</Option>*/}
                 </Select>
               )}
             </FormItem>
@@ -188,7 +189,7 @@ export default class OrderList extends PureComponent {
 
   /**
    * 处理订单状态
-   * @param status  0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消
+   * @param status  0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消 5.已发货
    * @returns {*}
    */
   handleOrderStatus = (status) => {
@@ -196,15 +197,16 @@ export default class OrderList extends PureComponent {
       0:'未付款',
       1:'已完成',
       2:'已付款',
-      // 3:'已确认',
+      3:'已确认',
       4:'已取消',
+      5:'已发货',
     };
     return orderStatus[status];
   };
 
   /**
    * 发货
-   * @param id=>id       status=>0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消 5.发货
+   * @param id=>id       status=>0: 已下单 1: 已完成 2: 已付款 3.已确认 4.已取消 5.已发货
    */
   ship = ({id})=>{
     const { dispatch } = this.props;
