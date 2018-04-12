@@ -9,8 +9,6 @@ let routerDataCache;
 
 const modelNotExisted = (app, model) => {
   // eslint-disable-next-line
-  console.log("modelNotExisted=>app:     ",app);
-  console.log("modelNotExisted=>model:     ",model);
   return !app._models.some(({ namespace }) => {
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
@@ -18,7 +16,6 @@ const modelNotExisted = (app, model) => {
 
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {
-  console.log("dynamicWrapper is being done");
   // () => require('module')
   // transformed by babel-plugin-dynamic-import-node-sync
   if (component.toString().indexOf('.then(') < 0) {
