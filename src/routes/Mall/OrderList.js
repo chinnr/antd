@@ -134,7 +134,6 @@ export default class OrderList extends PureComponent {
                   <Option value={1}>已完成</Option>
                   {/*<Option value={3}>已确认</Option>*/}
                   <Option value={4}>已取消</Option>
-                  <Option value={5}>已发货</Option>
                 </Select>
               )}
             </FormItem>
@@ -199,7 +198,6 @@ export default class OrderList extends PureComponent {
       2:'已付款',
       // 3:'已确认',
       4:'已取消',
-      5:'已发货'
     };
     return orderStatus[status];
   };

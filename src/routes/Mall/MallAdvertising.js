@@ -159,7 +159,8 @@ class MallAdvertising extends PureComponent {
       console.log('图片gid: ', record.gid);
       const form = {
         gid: record.gid,
-        img: rootUrl + thumbnailPath + info.file.response.filename
+        img: rootUrl + thumbnailPath + info.file.response.filename,
+        sku: record.sku
       };
       console.log('form >>> ', form);
       const { mall: { advertiseList } } = this.props;
