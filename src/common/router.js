@@ -7,15 +7,18 @@ import OrderList from "../routes/Mall/OrderList";
 
 let routerDataCache;
 
-const modelNotExisted = (app, model) => (
+const modelNotExisted = (app, model) => {
   // eslint-disable-next-line
-  !app._models.some(({ namespace }) => {
+  console.log("modelNotExisted=>app:     ",app);
+  console.log("modelNotExisted=>model:     ",model);
+  return !app._models.some(({ namespace }) => {
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
-);
+};
 
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {
+  console.log("dynamicWrapper is being done");
   // () => require('module')
   // transformed by babel-plugin-dynamic-import-node-sync
   if (component.toString().indexOf('.then(') < 0) {

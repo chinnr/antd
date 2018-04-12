@@ -3,13 +3,26 @@ import { connect } from 'dva';
 import { Card, Badge, Table, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from '../../components/DescriptionList';
+import colors from '../../static/colors';
 import styles from './index.less';
 import moment from 'moment';
 
 const { Description } = DescriptionList;
+const colorMap = {
+  "#ffffff":"白色",
+  "#ff0000":"红色",
+  "#ffa500":"橙色",
+  "#ffff00":"黄色",
+  "#008000":"绿色",
+  "#00ffff":"青色",
+  "#0000ff":"蓝色",
+  "#800080":"紫色",
+  "#000000":"黑色"
+}
 
 @connect(({ mall }) => ({ mall }))
 export default class BasicProfile extends Component {
+  payId = '';
   componentDidMount() {
     const reg = /\/order-detail\/(.+)/;
     const id = this.props.location.pathname.match(reg)[1];
@@ -18,7 +31,7 @@ export default class BasicProfile extends Component {
     };
     console.log('路由参数: ', this.props.location.pathname, id);
     this.getOrderDetail(0, queryOption);
-    this.getAllPayRecord(0, queryOption);
+
   }
 
   /**
@@ -42,8 +55,9 @@ export default class BasicProfile extends Component {
           queryOption: queryOption,
           timeSpan: timeSpan
         }
-      })
-      .catch(err => err);
+      }).then(()=>{
+      this.getAllPayRecord(0, {id:this.payId});
+    }).catch(err => err);
   };
 
   /**
@@ -67,8 +81,7 @@ export default class BasicProfile extends Component {
           queryOption: queryOption,
           timeSpan: timeSpan
         }
-      })
-      .catch(err => err);
+      }).catch(err => err);
   };
 
   /**
@@ -115,7 +128,6 @@ export default class BasicProfile extends Component {
           if(item.donate&&item.donate.length>0){
             item.children = item.donate;
             item.children.forEach(childrenItem=>{
-              childrenItem
               countTotal+=childrenItem.count;
             })
           }
@@ -124,6 +136,11 @@ export default class BasicProfile extends Component {
       }
     }else{
       goodsData=[];
+    }
+
+
+    if(orderList.length>0&&orderList[0].status == 2){
+      this.payId = orderList[0].payId;
     }
 
 
@@ -137,14 +154,21 @@ export default class BasicProfile extends Component {
     };
     const goodsColumns = [
       {
-        title: '商品编号',
-        dataIndex: 'gid',
-        key: 'gid'
-      },
-      {
         title: '商品名称',
         dataIndex: 'name',
         key: 'name'
+      },
+      {
+        title: '商品规格',
+        dataIndex: 'skuSize',
+        key: 'skuSize',
+        render:record=>{
+          if(record){
+            const size = record.split('-');
+            return <span>{size[0]}-{colorMap[size[1]]}</span>
+          }
+          return <span>{record}</span>
+        }
       },
       {
         title: '单价',
@@ -189,32 +213,36 @@ export default class BasicProfile extends Component {
             rowKey="gid"
           />
           <DescriptionList>
-            <Description term="邮费">6.00</Description>
+            <Description term="邮费"><b>{orderList.length > 0 && orderList[0].postPrice>=0?orderList[0].postPrice:"查无数据"}</b></Description>
             <Description term="优惠券">-10.00</Description>
-            <Description term="应付金额"><b>{orderList.length > 0 && orderList[0].totalMoney}</b></Description>
+            <Description term="应付金额"><b>{orderList.length > 0 && orderList[0].totalMoney>=0?orderList[0].totalMoney:"查无数据"}</b></Description>
           </DescriptionList>
         </Card>
-        <Card title="支付信息" style={{ marginBottom: 24 }} bordered={false}>
+        {orderList.length > 0 && orderList[0].status == 2 &&
+        <Card title="支付信息" style={{marginBottom: 24}} bordered={false}>
           <DescriptionList>
-            <Description term="支付方式">付小小</Description>
-            <Description term="支付账号">18100000000</Description>
-            <Description term="付款时间">{moment(orderList.length > 0 && orderList[0].payTime).format('YYYY-MM-DD HH:mm:ss')}</Description>
-            <Description term="交易号">
-              浙江省杭州市西湖区万塘路18号
-            </Description>
-            <Description term="实付金额">无</Description>
+            <Description term="支付方式">{allPayRecord.length > 0 && allPayRecord[0].platformName?allPayRecord[0].platformName:"查无数据"}</Description>
+            <Description term="支付账号">{allPayRecord.length > 0 && allPayRecord[0].account ? allPayRecord[0].account : '查无数据'}</Description>
+            <Description
+              term="付款时间">{orderList.length > 0 && orderList[0].payTime ? moment(orderList[0].payTime).format('YYYY-MM-DD HH:mm:ss') : "查无数据"}</Description>
+            <Description term="交易号">{allPayRecord.length > 0 && allPayRecord[0].out_trade_no ? allPayRecord[0].out_trade_no : '查无数据'}</Description>
+            <Description
+              term="实付金额">{allPayRecord.length > 0 && allPayRecord[0].buyer_pay_amount ? allPayRecord[0].buyer_pay_amount : '查无数据'}</Description>
           </DescriptionList>
         </Card>
+        }
+        {orderList.length>0&&orderList[0].status == 5&&
         <Card title="物流信息" style={{ marginBottom: 24 }} bordered={false}>
           <DescriptionList>
-            <Description term="物流公司">付小小</Description>
-            <Description term="运单号">18100000000</Description>
-            <Description term="发货时间">2018-03-18</Description>
+            <Description term="物流公司">{orderList.length > 0 && orderList[0].sender?orderList[0].sender:"查无数据"}</Description>
+            <Description term="运单号">{orderList.length > 0 && orderList[0].expressNumber?orderList[0].expressNumber:"查无数据"}</Description>
+            <Description term="发货时间">{orderList.length > 0 && orderList[0].sendTime?orderList[0].sendTime:"查无数据"}</Description>
             <Description term="收货地址">
-              {orderList.length > 0 && orderList[0].address}
+              {orderList.length > 0 && orderList[0].address?orderList[0].address:"查无数据"}
             </Description>
           </DescriptionList>
-        </Card>
+        </Card>}
+
       </PageHeaderLayout>
     );
   }
