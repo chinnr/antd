@@ -37,24 +37,19 @@ class Statistics extends Component {
     });
   };
 
-  handleSubmit2 = e => {
+  handleSubmit2 = (e,type) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const notDefaultTime = values.time1;
-        const time = {
-          startTime: notDefaultTime
-            ? moment(values.time1[0]).format("YYYY/MM/DD")
-            : "2017/1/1",
-          endTime: notDefaultTime
-            ? moment(values.time1[1]).format("YYYY/MM/DD")
-            : "2020/12/31"
-        };
-        console.log(time);
-        this.send(time);
+        this.props.dispatch({
+          type:`statistics/getExcel`,
+          payload:`${type}`
+        })
       }
     });
   };
+
+
 
   send(time) {
     this.props.dispatch({
@@ -100,14 +95,14 @@ class Statistics extends Component {
             </Card>
           </Col>
           <Col {...topColResponsiveProps}>
-            <Card bordered={false} title="团部信息统计表">
+            <Card bordered={false} title="团信息">
               <Form
-                onSubmit={this.handleSubmit2}
+                onSubmit={()=>this.handleSubmit2(event,"getTeamExcel")}
                 style={{ textAlign: "center" }}
               >
-                <FormItem {...formItemLayout} label="统计时间">
-                  {getFieldDecorator("time2")(<RangePicker />)}
-                </FormItem>
+                {/*<FormItem {...formItemLayout} label="注册时间">*/}
+                  {/*{getFieldDecorator("time2")(<RangePicker />)}*/}
+                {/*</FormItem>*/}
                 <Button type="primary" htmlType="submit">
                   导出
                 </Button>
@@ -115,11 +110,13 @@ class Statistics extends Component {
             </Card>
           </Col>
           <Col {...topColResponsiveProps}>
-            <Card bordered={false} title="会员数据表">
-              <Form style={{ textAlign: "center" }}>
-                <FormItem {...formItemLayout} label="注册时间">
-                  {getFieldDecorator("time3")(<RangePicker />)}
-                </FormItem>
+            <Card bordered={false} title="用户信息">
+              <Form
+                onSubmit={()=>this.handleSubmit2(event,"getUserExcel")}
+                style={{ textAlign: "center" }}>
+                {/*<FormItem {...formItemLayout} label="注册时间">*/}
+                  {/*{getFieldDecorator("time3")(<RangePicker />)}*/}
+                {/*</FormItem>*/}
                 <Button type="primary" htmlType="submit">
                   导出
                 </Button>
