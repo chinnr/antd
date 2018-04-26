@@ -10,3 +10,21 @@ export function getStatics(form) {
 }`;
   return graphRequest(getStatics, form, "mall-admin");
 }
+
+export function getUserExcel(payload) {
+  const getUser = `mutation getUserExcel {
+  me {
+    usersDownLoad
+  }
+}`
+  return graphRequest(getUser,{},"young-admin")
+}
+
+export function getTeamExcel(payload) {
+  const getTeam = `mutation getTeamExcel {
+  me {
+    groupsDownLoad
+  }
+}`
+  return graphRequest(getTeam,{},"young-admin")
+}

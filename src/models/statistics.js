@@ -29,10 +29,24 @@ export default {
         window.open(
           rootUrl+`/download/young/mall/${statistics}.xlsx`
         );
-        // yield put({
-        //   type: 'updateState',
-        //   payload: {statistics}
-        // })
+      }
+    },
+    *getExcel({payload},{call}){
+      console.log("type:      ",payload);
+      const { data, errors } = yield call(statisticsService[payload],{});
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        let statistics ;
+        if(data.me.usersDownLoad)
+          statistics = data.me.usersDownLoad;
+        else
+          statistics = data.me.groupsDownLoad;
+        console.log("请求成功后的data ---> ", statistics);
+        window.open(
+          rootUrl+`/download/young/${statistics}.xlsx`
+        );
       }
     }
   },

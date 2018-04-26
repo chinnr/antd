@@ -7,12 +7,12 @@ import OrderList from "../routes/Mall/OrderList";
 
 let routerDataCache;
 
-const modelNotExisted = (app, model) => (
+const modelNotExisted = (app, model) => {
   // eslint-disable-next-line
-  !app._models.some(({ namespace }) => {
+  return !app._models.some(({ namespace }) => {
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
-);
+};
 
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {

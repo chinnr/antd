@@ -297,9 +297,12 @@ export function orderList(payload) {
             sku
             status
             statusDelivery
+            sender
             address
             tel
+            expressNumber
             consignee
+            postPrice
             buyTime
             payId
             payTime
