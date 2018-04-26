@@ -12,7 +12,9 @@
       "publicPath": "/"
     },
     "production": {
-      "transform-remove-console": { "exclude": [ "error", "warn"] },
+      "extraBabelPlugins": [
+        "transform-remove-console"
+      ],
       "publicPath": "/"
     }
   },

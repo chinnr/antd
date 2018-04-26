@@ -86,7 +86,6 @@ export function courseList(query) {
           type
           method
           state
-          status
           createdAt
           group {
             name
