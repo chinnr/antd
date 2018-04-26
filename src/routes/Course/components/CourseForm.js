@@ -260,7 +260,7 @@ export default class CourseForm extends PureComponent {
         </FormItem>
         <FormItem {...formItemLayout} label="课程证章">
           {getFieldDecorator("badge", {
-            rules: [{ required: true, message: "请选择课程对应的证章!" }]
+            rules: [{ required: false, message: "请选择课程对应的证章!" }]
           })(
             <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
               {badges.map((item, i) => {
