@@ -116,7 +116,6 @@ export function courseDetail(id) {
         skills
         score
         state
-        status
         type
         method
         note
