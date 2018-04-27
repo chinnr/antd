@@ -99,7 +99,7 @@ export default class CourseForm extends PureComponent {
     this.setState({
       [type] : v
     }, () => {
-      this.getAllBadges(0,{level:_this.state.level, stage:_this.state.stage})
+      this.getAllBadges(0,_this.state.stage, _this.state.level)
     });
   }
 
@@ -108,17 +108,26 @@ export default class CourseForm extends PureComponent {
   }
 
   // 获取证章列表
-  getAllBadges = (p = 0) => {
-    let _this = this;
+  getAllBadges = (p = 0, stage, level) => {
+    console.log("获取证章列表 >>> ", this.state.stage, this.state.level);
     this.props
       .dispatch({
         type: "badge/getAllBadges",
         payload: {
-          query: { limit: 10, page: p },
-          queryOption: {stage: 'stage'+_this.state.stage, level:'level'+_this.state.level}
+          query: { limit: 20, page: p },
+          queryOption: {stage: 'stage'+stage, level:'level'+level}
         }
       })
       .catch(err => err);
+  };
+
+  getMoreBadges = () => {
+    const {badgesMeta: {count, page}} = this.props.badge;
+    let maxPage = count/10 + 1;
+    if(page <= maxPage) {
+      console.log("getMoreBadges >>>", page);
+      this.getAllBadges(page+1)
+    }
   };
 
   /**
@@ -161,7 +170,6 @@ export default class CourseForm extends PureComponent {
 
   // 获取要修改的团信息字段
   getCourseParams = () => {
-    // console.log("获取要修改的团信息字段 ==>", this.props.location);
     let values = {};
     if (this.props.location.query === undefined) {
       // "没有 query, 获取存储的query"
@@ -174,6 +182,9 @@ export default class CourseForm extends PureComponent {
       );
       values = this.props.location.query.record;
     }
+    console.log("获取要修改的团信息字段 ==>", values);
+
+    this.getAllBadges(0, values.stage, values.level);
     let _badges = [];
     values.badgeList.map(item => {
       _badges.push(item.bid);
@@ -238,7 +249,6 @@ export default class CourseForm extends PureComponent {
 
   componentDidMount() {
     this.props.form.validateFields();
-    this.getAllBadges();
     this.getCourseParams();
   }
 
@@ -362,7 +372,10 @@ export default class CourseForm extends PureComponent {
             initialValue: [],
             rules: [{ required: true, message: "请选择课程对应的证章!" }]
           })(
-            <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
+            <Select
+              placeholder="请选择课程对应的证章" mode="multiple"
+              onPopupScroll={() => this.getMoreBadges()}
+              /*onFocus={() => this.getAllBadges()}*/>
               {badges.map((item, i) => {
                 return (
                   <Option

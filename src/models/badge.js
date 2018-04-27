@@ -8,9 +8,17 @@ export default {
   },
   reducers: {
     storeAllBadges(state, { payload }) {
+      let badges = [];
+      if (payload.badgesMeta.page === 0) {
+        badges = payload.badges;
+      } else {
+        badges = state.badges.concat(payload.badges);
+      }
+      const badgesMeta = payload.badgesMeta;
       return {
         ...state,
-        ...payload
+        badges,
+        badgesMeta
       };
     }
   },

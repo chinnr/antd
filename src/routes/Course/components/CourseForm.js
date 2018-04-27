@@ -82,11 +82,20 @@ export default class CourseForm extends PureComponent {
       .dispatch({
         type: "badge/getAllBadges",
         payload: {
-          query: { limit: 10, page: p },
+          query: { limit: 20, page: p },
           queryOption: {stage: 'stage'+_this.state.stage, level:'level'+_this.state.level}
         }
       })
       .catch(err => err);
+  };
+
+  getMoreBadges = () => {
+    const {badgesMeta: {count, page}} = this.props.badge;
+    let maxPage = count/10 + 1;
+    if(page <= maxPage) {
+      console.log("getMoreBadges >>>", page);
+      this.getAllBadges(page+1)
+    }
   };
 
   componentDidMount() {
@@ -262,7 +271,12 @@ export default class CourseForm extends PureComponent {
           {getFieldDecorator("badge", {
             rules: [{ required: false, message: "请选择课程对应的证章!" }]
           })(
-            <Select placeholder="请选择课程对应的证章" mode="multiple" onFocus={() => this.getAllBadges()}>
+            <Select
+              placeholder="请选择课程对应的证章"
+              mode="multiple"
+              onFocus={() => this.getAllBadges()}
+              onPopupScroll={() => this.getMoreBadges()}
+            >
               {badges.map((item, i) => {
                 return (
                   <Option
