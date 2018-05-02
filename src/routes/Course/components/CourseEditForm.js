@@ -65,13 +65,11 @@ export default class CourseForm extends PureComponent {
           });
           values.gallery = _gallery;
         }
-        if(!typeof values.cover === 'string') {
-          values.cover = values.cover.file.response.filename;
-        }else {
-          console.log("cover is string ? ",typeof values.cover);
-        }
 
+        values.cover = values.cover.file.response.filename;
 
+        console.log("values:        ",values);
+        // return
         values.id = localStorage.getItem("courseId");
         this.props.dispatch({
           type: "course/updateCourseTemplate",
