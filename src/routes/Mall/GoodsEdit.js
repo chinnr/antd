@@ -176,11 +176,17 @@ export default class GoodsEdit extends PureComponent {
     }
 
     console.log("values.img:     ",values.imgs);
+    const prefix ='https://api.yichui.net/api/young/post/download/image/thumbnail/';
     const imgs = values.imgs.map(item=>{
+      let url;
+      if(item.url.indexOf(prefix) == -1)
+        url = prefix+item.url;
+      else
+        url = item.url;
       return {
         uid: Math.random(-100,0),
         name: item.url,
-        url: item.url,
+        url,
         status: "done"
       }
     })
