@@ -663,7 +663,7 @@ class GoodsAdd extends Component {
                 })(
                   <BraftEditor
                     {...editorProps}
-                    style={{height: 400}}
+                    style={{height: 800}}
                     ref={instance => (this.editorInstance = instance)}
                     media={{
                       image: true,
