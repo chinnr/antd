@@ -97,7 +97,7 @@ class GoodsAdd extends Component {
       if (!err) {
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
-          images.push(item.name)
+          images.push(item.url)
         });
         values.imgs = images;
         values.show = true;
