@@ -96,12 +96,14 @@ export default class GoodsEdit extends PureComponent {
     this.props.dispatch({
       type:'mall/getGoodsById',
       payload:{
-        gid
+        gid:[gid]
       }
     }).then(res=>{
       console.log("根据ID获取的商品详情=====================>>>>>>>>>>>>>>",res);
-      _this.getGoodsById(res);
-
+      if(typeof res =="undefined"){
+        return
+      }
+      _this.getGoodsById(res[0]);
     })
 
 
@@ -307,6 +309,7 @@ export default class GoodsEdit extends PureComponent {
         }
 
         // console.log("提交的imgs：        ",images);
+        console.log("提交的values.expireTime：        ",moment(values.expireTime,'YYYY/MM/DD hh:mm:ss'));
         values.gid = this.gid;
         values.imgs = images;
         values.goodsJson = this.goodsJson;
