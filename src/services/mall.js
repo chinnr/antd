@@ -188,34 +188,37 @@ export function goodsList(payload) {
 
 // 获取单个商品详情
 export function getGoodsDetail(gid) {
-  const getGoodsDetail = `query goodsDetail($gid: String) {
+  const getGoodsDetail = `query goodsDetail($gid: [String]) {
     me {
       goods {
-        getGoodsById(gid: $gid) {
-          name
-          sku
-          skuPrefix
-          skuSize
-          goodsValue
-          description
-          upTime
-          downTime
-          stock
-          show
-          type
-          price
-          goodsJson {
-            gid
-            count
+        getGoodsByIds(ids: $gid) {
+          data{
             name
+            sku
+            skuPrefix
+            skuSize
+            goodsValue
+            description
+            upTime
+            downTime
+            expireTime
+            stock
+            show
+            type
+            price
+            goodsJson {
+              gid
+              count
+              name
+            }
+            imgs {
+              url
+            }
+            province
+            city
+            originalPrice
+            postPrice
           }
-          imgs {
-            url
-          }
-          province
-          city
-          originalPrice
-          postPrice
         }
       }
     }
