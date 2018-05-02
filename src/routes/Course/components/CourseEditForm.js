@@ -56,7 +56,6 @@ export default class CourseForm extends PureComponent {
         console.log('Received values of form: ', values);
         // console.log("gallery is array ? ",_this.isArray(values.gallery));
 
-
         if(!_this.isArray(values.gallery)) {
           console.log("gallery is not array!");
           let _gallery = [];
@@ -65,13 +64,12 @@ export default class CourseForm extends PureComponent {
           });
           values.gallery = _gallery;
         }
-        if(!typeof values.cover === 'string') {
+        if(typeof values.cover === 'object') {
+          console.log("重新上传了图片 ",typeof values.cover);
           values.cover = values.cover.file.response.filename;
         }else {
-          console.log("cover is string ? ",typeof values.cover);
+          console.log("使用旧的图片 ",typeof values.cover);
         }
-
-
         values.id = localStorage.getItem("courseId");
         this.props.dispatch({
           type: "course/updateCourseTemplate",
