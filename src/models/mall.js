@@ -30,9 +30,8 @@ export default {
     *getGoodsById({payload},{call}) {
       const {data,errors} = yield call(mallService.getGoodsDetail, payload);
       if(!errors){
-        const res = data.me.goods.getGoodsById;
+        const res = data.me.goods.getGoodsByIds.data;
         return res;
-
       }else{
         throw new Error(errors[0].message);
       }
