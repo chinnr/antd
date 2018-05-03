@@ -218,6 +218,7 @@ export function getGoodsDetail(gid) {
             city
             originalPrice
             postPrice
+            listDes
           }
         }
       }
