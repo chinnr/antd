@@ -61,11 +61,13 @@ class GoodsAdd extends Component {
     giftList: [], // 赠品列表,
     skuPrefix: '',
     goodsType: 0,
+    isPackage:false,
   };
 
   goodsJson = [];
   goodsJsonGid = [];
   giftList = [];
+  Package = false;
 
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -97,6 +99,8 @@ class GoodsAdd extends Component {
 
       if (!err) {
         console.log('添加商品参数 -->: ', values);
+        // return;
+
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.url)
@@ -109,14 +113,19 @@ class GoodsAdd extends Component {
         values.upTime = values.upTime.toISOString();
         values.expireTime  = values.downTime.toISOString();
         values.downTime = values.downTime.toISOString();
-        if(values.type === 1) {
-          skuSizeList.push(values.goodsValue.toString());
-          values.skuSizeList = skuSizeList;
+        if(this.Package){
           delete values.skuSizeList;
-        } else {
-          skuSizeList = [values.color, values.size];
-          values.skuSizeList = doExchange(skuSizeList);
+        }else{
+          if(values.type === 1) {
+            skuSizeList.push(values.goodsValue.toString());
+            values.skuSizeList = skuSizeList;
+            delete values.skuSizeList;
+          } else {
+            skuSizeList = [values.color, values.size];
+            values.skuSizeList = doExchange(skuSizeList);
+          }
         }
+
         values.skuPrefix = values.skuPrefix.split("|")[0];
         values.skuPure = values.name;
         if(values.address[0] === '全国'){
@@ -207,10 +216,24 @@ class GoodsAdd extends Component {
    * @param values
    */
   addGoods = (values) => {
+    let isMuti;
+    if(!this.Package){
+      delete values.isPackage;
+      isMuti = 'addGoods';
+    }else{
+      if(this.goodsJson.length===0){
+        successNotification('请至少选择一个商品', function() {
+        });
+        return;
+      }
+      isMuti = 'addSingleGoods';
+    }
+
+    console.log(`mall/${isMuti}`);
     const props = this.props;
     const _this = this;
     props.dispatch({
-      type: 'mall/addGoods',
+      type: `mall/${isMuti}`,
       payload: values
     }).then(() => {
       successNotification('添加商品成功', function() {
@@ -368,11 +391,20 @@ class GoodsAdd extends Component {
     this.setState({goodsType: v});
   };
 
+  /*
+  * 选择是否为套餐
+  * true:是，false:否
+  * */
+  isPackage = (e)=>{
+    const isPackage = e.target.value;
+    this.setState({isPackage});
+    this.Package = isPackage;
+  };
 
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix } = this.state;
+    const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -512,6 +544,16 @@ class GoodsAdd extends Component {
             )}
             <span>&nbsp;&nbsp;{skuPrefix}</span>
             </FormItem>
+            <FormItem {...formItemLayout} label="是否为套餐">
+              {getFieldDecorator('isPackage',{
+                initialValue: false,
+              })(
+                <RadioGroup onChange={e=>this.isPackage(e)}>
+                  <Radio value={false}>否</Radio>
+                  <Radio value={true}>是</Radio>
+                </RadioGroup>
+              )}
+            </FormItem>
             <FormItem
               {...formItemLayout}
               validateStatus={badgeNameError ? 'error' : ''}
@@ -546,13 +588,13 @@ class GoodsAdd extends Component {
               )}
             </FormItem>
             {/*<FormItem {...formItemLayout} label="商品规格">*/}
-              {getFieldDecorator('skuSizeList',{
-                initialValue: false,
-              })(
-                <span></span>
-              )}
+              {/*{getFieldDecorator('skuSizeList',{*/}
+                {/*initialValue: false,*/}
+              {/*})(*/}
+                {/*<span></span>*/}
+              {/*)}*/}
             {/*</FormItem>*/}
-            {goodsType === 0 &&
+            {goodsType === 0 && isPackage===false &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
                   rules: [
@@ -566,7 +608,7 @@ class GoodsAdd extends Component {
                 )}
               </FormItem>
             }
-            {goodsType === 0 &&
+            {goodsType === 0 && isPackage===false &&
               <FormItem {...formItemLayout} label="尺寸">
                 {getFieldDecorator('size', {
                   rules: [
@@ -579,7 +621,7 @@ class GoodsAdd extends Component {
               </FormItem>
             }
 
-            {goodsType === 1 &&
+            {goodsType === 1 && isPackage===false &&
             <FormItem {...formItemLayout} label="虚拟商品价值">
               {getFieldDecorator('goodsValue', {
                 rules: [
@@ -593,7 +635,7 @@ class GoodsAdd extends Component {
               )}
             </FormItem>
             }
-            {goodsType === 1 &&
+            {goodsType === 1 && isPackage===false &&
             <FormItem {...formItemLayout} label="过期时间(天)">
               {getFieldDecorator('cardExpireTime', {
                 rules: [
@@ -689,7 +731,7 @@ class GoodsAdd extends Component {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="赠品">
+            <FormItem {...formItemLayout} label="商品">
               <Button onClick={() => this.showModal("goodsListVisible")}>选择</Button>
               {giftList.length > 0 && giftList.map((item, i) =>{
                 return (

@@ -64,6 +64,7 @@ export default class GoodsEdit extends PureComponent {
       giftList:[],
       goodsType:0,
       description:'',
+      isPackage:false,
     }
     this.goodsJson = [];//submit的赠品
     this.giftList = [];//列表渲染的的赠品
@@ -159,22 +160,27 @@ export default class GoodsEdit extends PureComponent {
       this.goodsJson.push(tempItem);
     });
 
+    this.setState({isPackage:values.isPackage});
 
     let sizeAcolor,
       color,
       size,
       expireTime;
-    if(values.type == 0){
-      sizeAcolor = values.skuSize.split('-');
+    if(!values.isPackage){
+      if(values.type == 0){
+        sizeAcolor = values.skuSize.split('-');
 
-      color = sizeAcolor[1];
+        color = sizeAcolor[1];
 
-      size = sizeAcolor[0];
+        size = sizeAcolor[0];
 
-      console.log("color================>>>>>>>>>>>>>>",color);
-    }else{
-      expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
+        console.log("color================>>>>>>>>>>>>>>",color);
+      }else{
+        expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
+      }
     }
+
+
 
     console.log("values.img:     ",values.imgs);
     const prefix ='https://api.yichui.net/api/young/post/download/image/thumbnail/';
@@ -257,6 +263,7 @@ export default class GoodsEdit extends PureComponent {
       stock:values.stock,
       show:values.show,
       description,
+      isPackage:values.isPackage,
       upTime,
       downTime,
       listDes:values.listDes,
@@ -515,6 +522,15 @@ export default class GoodsEdit extends PureComponent {
     xhr.send(fd);
   };
 
+  /*
+  * 选择是否为套餐
+  * true:是，false:否
+  * */
+  isPackage = (e)=>{
+    const isPackage = e.target.value;
+    this.setState({isPackage});
+  };
+
 
   render (){
     const { mall} = this.props;
@@ -575,6 +591,7 @@ export default class GoodsEdit extends PureComponent {
       skuPrefix,
       giftList,
       description,
+      isPackage,
     } = this.state;
 
 
@@ -614,6 +631,16 @@ export default class GoodsEdit extends PureComponent {
               )}
               <span>&nbsp;&nbsp;{skuPrefix}</span>
             </FormItem>
+            <FormItem {...formItemLayout} label="是否为套餐">
+              {getFieldDecorator('isPackage',{
+                initialValue: false,
+              })(
+                <RadioGroup onChange={e=>this.isPackage(e)}>
+                  <Radio value={false}>否</Radio>
+                  <Radio value={true}>是</Radio>
+                </RadioGroup>
+              )}
+            </FormItem>
             <FormItem {...formItemLayout} label="商品名称">
               {getFieldDecorator("name", {
                 rules: [
@@ -645,7 +672,7 @@ export default class GoodsEdit extends PureComponent {
                 </Upload>
               )}
             </FormItem>
-            {type===0&&<FormItem {...formItemLayout} label="商品颜色">
+            {type===0&&isPackage===false&&<FormItem {...formItemLayout} label="商品颜色">
               {getFieldDecorator("color", {
                 rules: [
                   {
@@ -656,7 +683,7 @@ export default class GoodsEdit extends PureComponent {
               })(<RadioGroup options={colors}/>)}
             </FormItem>}
 
-            {type===0&&<FormItem {...formItemLayout} label="商品尺寸">
+            {type===0&&isPackage===false&&<FormItem {...formItemLayout} label="商品尺寸">
               {getFieldDecorator("size", {
                 rules: [
                   {
@@ -667,7 +694,7 @@ export default class GoodsEdit extends PureComponent {
               })(<RadioGroup options={sizeOptions}/>)}
             </FormItem>}
 
-            {type === 1 &&
+            {type === 1 && isPackage===false &&
             <FormItem {...formItemLayout} label="虚拟商品价值">
               {getFieldDecorator('goodsValue', {
                 rules: [
@@ -681,7 +708,7 @@ export default class GoodsEdit extends PureComponent {
               )}
             </FormItem>
             }
-            {type === 1 &&
+            {type === 1 && isPackage===false &&
             <FormItem {...formItemLayout} label="过期时间">
               {getFieldDecorator('expireTime', {
                 rules: [
