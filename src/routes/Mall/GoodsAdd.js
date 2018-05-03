@@ -144,7 +144,7 @@ class GoodsAdd extends Component {
     let fileList = info.fileList;
     fileList = fileList.map(file => {
       if (file.response) {
-        file.url = rootUrl + thumbnailPath + file.response.filename;
+        file.url = file.response.filename;
         file.uid = file.response.filename;
         file.name = file.response.filename;
         file.status = file.response.status;
@@ -538,7 +538,7 @@ class GoodsAdd extends Component {
                  ]
               })(
                 <Upload {...propsObj} fileList={fileList} listType="picture-card" onPreview={this.handlePreview}>
-                  {fileList.length >= 3 ? null : uploadButton}
+                  {fileList.length >= 5 ? null : uploadButton}
                 </Upload>
               )}
             </FormItem>
