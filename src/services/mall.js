@@ -218,6 +218,7 @@ export function getGoodsDetail(gid) {
             city
             originalPrice
             postPrice
+            isPackage
             listDes
           }
         }
@@ -258,6 +259,20 @@ export function goodsAdd(form) {
     me {
       goods {
         createMutiGoods(form:$form)
+      }
+    }
+  }`;
+  return graphRequest(goodsAdd, {form}, "mall-admin");
+}
+
+// 添加单个商品
+export function singleGoodsAdd(form) {
+  const goodsAdd = `mutation singleGoodsAdd($form: CreateGoodsInput){
+    me {
+      goods {
+        createGoods(form:$form){
+          gid
+        }
       }
     }
   }`;
