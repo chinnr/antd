@@ -91,7 +91,8 @@ export default class CourseIntroduce extends Component {
         <h3>课程详细信息: </h3>
         <div style={{ borderWidth: 1, borderColor: '#ddd', borderStyle: 'solid' }}>
           <BraftEditor
-            height={400}
+            controls={[]}
+            height={700}
             placeholder={'输入课程详细信息!'}
             ref={instance => (this.editorInstance = instance)}
             language="zh"
@@ -105,17 +106,17 @@ export default class CourseIntroduce extends Component {
               image: true,
               uploadFn: param => this.uploadFn(param)
             }}
-            extendControls={[
-              {
-                type: 'split'
-              },
-              {
-                type: 'button',
-                text: '首行缩进',
-                className: 'preview-button',
-                onClick: () => this.textIndent()
-              }
-            ]}
+            // extendControls={[
+            //   {
+            //     type: 'split'
+            //   },
+            //   {
+            //     type: 'button',
+            //     text: '首行缩进',
+            //     className: 'preview-button',
+            //     onClick: () => this.textIndent()
+            //   }
+            // ]}
           />
         </div>
       </div>
