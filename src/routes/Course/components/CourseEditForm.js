@@ -433,7 +433,7 @@ export default class CourseForm extends PureComponent {
             </Upload>
           )}
         </FormItem>
-        <FormItem style={{ marginTop: 32 }}>
+        <FormItem {...formItemLayout} label="课程详细信息" style={{ marginTop: 32 }}>
           {getFieldDecorator("description", {
           })(
             <CourseIntroduce form={this.props.form} description={this.description}/>
