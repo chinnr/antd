@@ -33,6 +33,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
+const { TextArea } = Input;
 
 const sizeOptions = [
   { label: 'S', value: 'S' },
@@ -93,8 +94,9 @@ class GoodsAdd extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log('添加商品参数 -->: ', values.address);
+
       if (!err) {
+        console.log('添加商品参数 -->: ', values);
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.url)
@@ -365,6 +367,7 @@ class GoodsAdd extends Component {
     // console.log("选择商品分类==>", v);
     this.setState({goodsType: v});
   };
+
 
   render() {
     const { mall, loading } = this.props;
@@ -746,6 +749,12 @@ class GoodsAdd extends Component {
                   <Radio value={false}>显示</Radio>
                   <Radio value={true}>不显示</Radio> {/*  ['XXL-red','XXL-blue']  */}
                 </RadioGroup>
+              )}
+            </FormItem>
+
+            <FormItem {...formItemLayout} label="商品列表简短介绍">
+              {getFieldDecorator('listDes')(
+                <TextArea />
               )}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>

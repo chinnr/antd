@@ -33,6 +33,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
+const {TextArea} = Input;
 const sizeOptions = [
   { label: 'S', value: 'S' },
   { label: 'M', value: 'M' },
@@ -107,7 +108,7 @@ export default class GoodsEdit extends PureComponent {
     })
 
 
-  }
+  };
 
   //获取商品详情
   getGoodsById = (values)=>{
@@ -189,7 +190,7 @@ export default class GoodsEdit extends PureComponent {
         url,
         status: "done"
       }
-    })
+    });
 
     const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
 
@@ -224,7 +225,7 @@ export default class GoodsEdit extends PureComponent {
       }
     }).then(res=>{
       this.setState({skuPrefix:res});
-    }).catch(err=>err)
+    }).catch(err=>err);
 
 
     this.setState({giftList:this.giftList});
@@ -233,7 +234,7 @@ export default class GoodsEdit extends PureComponent {
       this.props.form.setFieldsValue({
         description
       })
-    })
+    });
     this.setState({type:values.type},()=>{
       if(this.state.type===1){
         this.props.form.setFieldsValue({
@@ -247,10 +248,10 @@ export default class GoodsEdit extends PureComponent {
     this.props.form.setFieldsValue({
       name: values.name,
       type: values.type,
-      imgs:imgs,
-      color:color,
-      size:size,
-      address:address,
+      imgs,
+      color,
+      size,
+      address,
       originalPrice:values.originalPrice,
       price:values.price,
       stock:values.stock,
@@ -258,9 +259,10 @@ export default class GoodsEdit extends PureComponent {
       description,
       upTime,
       downTime,
-      postPrice:values.postPrice
+      listDes:values.listDes,
+      postPrice:values.postPrice,
     });
-  }
+  };
 
   //图片上传或者删除
   handleChange = (info) => {
@@ -314,8 +316,6 @@ export default class GoodsEdit extends PureComponent {
           });
         }
 
-        // console.log("提交的imgs：        ",images);
-        console.log("提交的values.expireTime：        ",moment(values.expireTime,'YYYY/MM/DD hh:mm:ss'));
         values.gid = this.gid;
         values.imgs = images;
         values.goodsJson = this.goodsJson;
@@ -362,7 +362,7 @@ export default class GoodsEdit extends PureComponent {
         console.log("lastSubmitValue==========================================>>>>>>>>>>>>>>>",JSON.stringify(values));
       }
     })
-  }
+  };
 
   //商品赠品和分类的弹窗
   showModal = (type) => {
@@ -827,6 +827,11 @@ export default class GoodsEdit extends PureComponent {
                   <Radio value={false}>显示</Radio>
                   <Radio value={true}>不显示</Radio> {/*  ['XXL-red','XXL-blue']  */}
                 </RadioGroup>
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="商品列表简短介绍">
+              {getFieldDecorator('listDes')(
+                <TextArea />
               )}
             </FormItem>
 
