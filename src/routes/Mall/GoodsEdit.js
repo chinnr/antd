@@ -65,7 +65,7 @@ export default class GoodsEdit extends PureComponent {
       goodsType:0,
       description:'',
       isPackage:false,
-    }
+    };
     this.goodsJson = [];//submit的赠品
     this.giftList = [];//列表渲染的的赠品
     this.goodsJsonGid = [];//去重的赠品gid
@@ -350,6 +350,13 @@ export default class GoodsEdit extends PureComponent {
         delete values.size;
         delete values.address;
         delete values.goodsType;
+        if(this.state.isPackage){
+          if(this.goodsJson.length===0){
+            successNotification('请至少选择一个商品', function() {
+            });
+            return;
+          }
+        }
 
         this.props.dispatch({
           type:'mall/updateGoods',
@@ -796,7 +803,7 @@ export default class GoodsEdit extends PureComponent {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="赠品">
+            <FormItem {...formItemLayout} label="商品">
               <Button onClick={() => this.showModal("goodsListVisible")}>选择</Button>
               {giftList.length > 0 && giftList.map((item, i) =>{
                 return (
