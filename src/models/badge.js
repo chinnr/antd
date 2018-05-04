@@ -9,12 +9,15 @@ export default {
   reducers: {
     storeAllBadges(state, { payload }) {
       let badges = [];
-      if (payload.badgesMeta.page === 0) {
-        badges = payload.badges;
-      } else {
-        badges = state.badges.concat(payload.badges);
-      }
+      // if (payload.badgesMeta.page === 0) {
+      //   badges = payload.badges;
+      // } else {
+      //   badges = state.badges.concat(payload.badges);
+      // }
+
+      badges = payload.badges;
       const badgesMeta = payload.badgesMeta;
+
       return {
         ...state,
         badges,
