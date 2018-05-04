@@ -59,7 +59,14 @@ export default class BadgeFilterForm extends PureComponent {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       if(!err) {
+        if(fieldsValue.stage === "all")
+          delete fieldsValue.stage;
+        if(fieldsValue.level === "all")
+          delete fieldsValue.level;
+        if(fieldsValue.class === "all")
+          delete fieldsValue.class;
         console.log("fieldsValue==>", fieldsValue);
+
         this.props.onSearch(fieldsValue);
       }
     });
@@ -93,6 +100,7 @@ export default class BadgeFilterForm extends PureComponent {
                 ]
               })(
                 <Select placeholder="请选择证章级别">
+                  <Option value="all">全部</Option>
                   <Option value="level1">海狸</Option>
                   <Option value="level2">小狼</Option>
                   <Option value="level3">探索</Option>
@@ -113,6 +121,7 @@ export default class BadgeFilterForm extends PureComponent {
                 ]
               })(
                 <Select placeholder="请选择证章阶段">
+                  <Option value="all">全部</Option>
                   <Option value="stage1">一阶</Option>
                   <Option value="stage2">二阶</Option>
                   <Option value="stage3">三阶</Option>
@@ -134,6 +143,7 @@ export default class BadgeFilterForm extends PureComponent {
                 ]
               })(
                 <Select placeholder="请选择证章分类">
+                  <Option value="all">全部</Option>
                   <Option value="class1">基础章</Option>
                   <Option value="class2">兴趣章</Option>
                   <Option value="class3">技能章</Option>
