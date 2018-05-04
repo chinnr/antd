@@ -337,12 +337,18 @@ export default class GoodsEdit extends PureComponent {
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
-        if(values.type === 1) {
-          values.skuSize = values.goodsValue;
-          values.expireTime  = new Date(values.expireTime).toISOString();
-        } else {
-          values.skuSize = values.size + '-' + values.color;
+        if(values.isPackage===true){
+          delete values.skuSize;
+          delete values.expireTime;
+        }else{
+          if(values.type === 1) {
+            values.skuSize = values.goodsValue;
+            values.expireTime  = new Date(values.expireTime).toISOString();
+          } else {
+            values.skuSize = values.size + '-' + values.color;
+          }
         }
+
         values.skuPrefix = this.skuPrefix;
         values.skuPure = values.name;
         if(values.address[0] === '全国'){
