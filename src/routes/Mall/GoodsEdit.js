@@ -185,7 +185,7 @@ export default class GoodsEdit extends PureComponent {
 
 
     console.log("values.img:     ",values.imgs);
-    const prefix ='https://api.yichui.net/api/young/post/download/image/thumbnail/';
+    const prefix =rootUrl+thumbnailPath;
     const imgs = values.imgs.map(item=>{
       let url;
       if(item.url.indexOf(prefix) == -1)
@@ -298,7 +298,11 @@ export default class GoodsEdit extends PureComponent {
 
   //图片预览
   handlePreview = file => {
-    console.log(file.url);
+
+    const prefix =rootUrl+thumbnailPath;
+    if(file.url.indexOf(prefix) === -1)
+      file.url = prefix + file.url;
+    console.log("预览地址：       ",file.url);
     this.setState({
       previewImage: file.url,
       previewVisible: true
