@@ -179,7 +179,7 @@ class GoodsAdd extends Component {
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
-      const imgUrl = rootUrl+'/api/young/post/download/image/origin/' + fileName;
+      const imgUrl = rootUrl+thumbnailPath + fileName;
       param.success({ url: imgUrl });
     };
 
