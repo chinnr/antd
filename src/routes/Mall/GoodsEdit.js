@@ -163,18 +163,20 @@ export default class GoodsEdit extends PureComponent {
     this.setState({isPackage:values.isPackage});
 
     let sizeAcolor,
-      color,
-      size,
+      color = '',
+      size = '',
       expireTime;
-    if(!values.isPackage){
+    if(values.isPackage===false){
       if(values.type == 0){
-        sizeAcolor = values.skuSize.split('-');
+        if(values.skuSize!==null){
+          sizeAcolor = values.skuSize.split('-');
 
-        color = sizeAcolor[1];
+          color = sizeAcolor[1];
 
-        size = sizeAcolor[0];
+          size = sizeAcolor[0];
 
-        console.log("color================>>>>>>>>>>>>>>",color);
+          console.log("color================>>>>>>>>>>>>>>",color);
+        }
       }else{
         expireTime = moment(new Date(values.expireTime),'YYYY/MM/DD hh:mm:ss');
       }
@@ -242,7 +244,10 @@ export default class GoodsEdit extends PureComponent {
       })
     });
     this.setState({type:values.type},()=>{
-      if(this.state.type===1){
+      if(this.state.type===1&&values.isPackage===false){
+        if(values.goodsValue===null){
+          values.goodsValue = '';
+        }
         this.props.form.setFieldsValue({
           goodsValue:values.goodsValue,
           expireTime,
@@ -255,8 +260,6 @@ export default class GoodsEdit extends PureComponent {
       name: values.name,
       type: values.type,
       imgs,
-      color,
-      size,
       address,
       originalPrice:values.originalPrice,
       price:values.price,
@@ -269,6 +272,12 @@ export default class GoodsEdit extends PureComponent {
       listDes:values.listDes,
       postPrice:values.postPrice,
     });
+    if(values.isPackage===false){
+      this.props.form.setFieldsValue({
+        color,
+        size,
+      });
+    }
   };
 
   //图片上传或者删除
