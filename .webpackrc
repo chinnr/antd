@@ -1,7 +1,6 @@
 {
   "entry": "src/index.js",
   "extraBabelPlugins": [
-    "transform-decorators-legacy",
     ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }]
   ],
   "env": {
@@ -15,7 +14,7 @@
       "extraBabelPlugins": [
         "transform-remove-console"
       ],
-      "publicPath": "/"
+      "publicPath": "./"
     }
   },
   "ignoreMomentLocale": true,
