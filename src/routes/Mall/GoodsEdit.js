@@ -407,8 +407,8 @@ export default class GoodsEdit extends PureComponent {
         delete values.address;
         delete values.goodsType;
 
-        console.log("更新商品信息：      ",values);
-        return;
+        // console.log("更新商品信息：      ",values);
+        // return;
 
         if(this.state.isPackage){
           if(this.goodsJson.length===0){

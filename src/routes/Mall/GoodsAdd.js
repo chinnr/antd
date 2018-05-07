@@ -55,6 +55,7 @@ class GoodsAdd extends Component {
     previewVisible: false,
     previewImage: '',
     fileList: [],
+    listImg:[],
     showSku: false,
     goodsTypesVisible: false,
     goodsListVisible: false,
@@ -98,17 +99,17 @@ class GoodsAdd extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
 
       if (!err) {
-        console.log('添加商品参数 -->: ', values);
-        // return;
+
+
 
         let images = [], skuSizeList = [];
         values.imgs.fileList.map(item => {
           images.push(item.url)
         });
         values.imgs = images;
-        values.show = true;
+        // values.show = true;
         values.sizeImg = '';
-        values.listImg = images[0];
+        values.listImg = values.listImg.fileList[0].url;
         values.goodsJson = this.goodsJson;
         values.upTime = values.upTime.toISOString();
         values.expireTime  = values.downTime.toISOString();
@@ -122,7 +123,15 @@ class GoodsAdd extends Component {
             delete values.skuSizeList;
           } else {
             skuSizeList = [values.color, values.size];
-            values.skuSizeList = doExchange(skuSizeList);
+            values.skuSizeList = doExchange(skuSizeList);//["M-#f000","S-#000"]
+            values.skuSizeList = values.skuSizeList.map((item)=>{
+              let obj = {};
+              obj.size = item;
+              obj.isShow = values.show;
+              return obj;
+            });
+            // console.log("values.skuSizeList:          ",values.skuSizeList);
+
           }
         }
 
@@ -142,13 +151,15 @@ class GoodsAdd extends Component {
         delete values.size;
         delete values.address;
         delete values.goodsType;
+        // console.log('添加商品参数 -->: ', values);
+        // return;
         this.addGoods(values);
       }
     });
   };
 
   /**
-   * 商品图片上传
+   * 商品轮播图片上传
    * @param info
    */
   handleChange = info => {
@@ -167,6 +178,25 @@ class GoodsAdd extends Component {
   };
 
   /**
+   * 商品封面图片上传
+   * @param info
+   */
+  listImghandleChange = info => {
+    let listImg = info.fileList;
+    listImg = listImg.map(file => {
+      if (file.response) {
+        file.url = file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    console.log("商品封面图片上传: ",listImg);
+    this.setState({ listImg });
+  };
+
+  /**
    * 正文图片上传
    * @param param
    */
@@ -179,7 +209,7 @@ class GoodsAdd extends Component {
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
-      const imgUrl = rootUrl+'/api/young/post/download/image/origin/' + fileName;
+      const imgUrl = rootUrl+thumbnailPath + fileName;
       param.success({ url: imgUrl });
     };
 
@@ -357,8 +387,6 @@ class GoodsAdd extends Component {
     };
     Array.prototype.remove = function(val) {
       const index = this.indexOf(val);
-      // console.log("remove index ", index);
-      // console.log("remove val ", val);
       if (index > -1) {
         this.splice(index, 1);
       }
@@ -404,7 +432,7 @@ class GoodsAdd extends Component {
   render() {
     const { mall, loading } = this.props;
     // console.log("mall ===> ", mall);
-    const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage } = this.state;
+    const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage,listImg } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
       height: 200,
@@ -424,6 +452,13 @@ class GoodsAdd extends Component {
       name: 'file',
       action: rootUrl+'/api/young/post/upload/image',
       onChange: this.handleChange,
+      multiple: true
+    };
+
+    const propsObj2 = {
+      name: 'file',
+      action: rootUrl+'/api/young/post/upload/image',
+      onChange: this.listImghandleChange,
       multiple: true
     };
 
@@ -587,13 +622,27 @@ class GoodsAdd extends Component {
                 </Upload>
               )}
             </FormItem>
-            {/*<FormItem {...formItemLayout} label="商品规格">*/}
-              {/*{getFieldDecorator('skuSizeList',{*/}
-                {/*initialValue: false,*/}
-              {/*})(*/}
-                {/*<span></span>*/}
-              {/*)}*/}
-            {/*</FormItem>*/}
+            <FormItem {...formItemLayout} label="商品封面">
+              {getFieldDecorator('listImg', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品封面'
+                  }
+                ]
+              })(
+                <Upload {...propsObj2} fileList={listImg} listType="picture-card" onPreview={this.handlePreview}>
+                  {listImg.length >= 1 ? null : uploadButton}
+                </Upload>
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="商品规格">
+              {getFieldDecorator('skuSizeList',{
+                initialValue: false,
+              })(
+                <span></span>
+              )}
+            </FormItem>
             {goodsType === 0 && isPackage===false &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
@@ -788,8 +837,8 @@ class GoodsAdd extends Component {
                 initialValue: true,
               })(
                 <RadioGroup>
-                  <Radio value={false}>显示</Radio>
-                  <Radio value={true}>不显示</Radio> {/*  ['XXL-red','XXL-blue']  */}
+                  <Radio value={true}>显示</Radio>
+                  <Radio value={false}>不显示</Radio>
                 </RadioGroup>
               )}
             </FormItem>
