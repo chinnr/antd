@@ -64,6 +64,7 @@ export function getAllTeams(payload) {
             uid
             name
             icon
+            realName
           }
           head {
             phone
