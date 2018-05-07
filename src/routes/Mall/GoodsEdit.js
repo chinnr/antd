@@ -55,6 +55,7 @@ export default class GoodsEdit extends PureComponent {
     super();
     this.state = {
       imgs:[],
+      listImg:[],
       previewImage:'',
       previewVisible: false,
       type:0,
@@ -113,6 +114,8 @@ export default class GoodsEdit extends PureComponent {
 
   //获取商品详情
   getGoodsById = (values)=>{
+    console.log("商品详情：         ",values);
+
     const _this = this;
 
     /*
@@ -138,7 +141,7 @@ export default class GoodsEdit extends PureComponent {
             newJson.count+=item.count;
             newJson.name = item.name;
           }
-        })
+        });
       newGoodsList.push(newJson);
     });
     console.log("newGoodsList=======================>>>>>>>>>>>>>>>>>>>",newGoodsList);
@@ -159,6 +162,10 @@ export default class GoodsEdit extends PureComponent {
       tempItem.gid = item.gid;
       this.goodsJson.push(tempItem);
     });
+
+    if(values.isPackage===null){
+      values.isPackage = false;
+    }
 
     this.setState({isPackage:values.isPackage});
 
@@ -200,6 +207,15 @@ export default class GoodsEdit extends PureComponent {
       }
     });
 
+    const listImg = [{
+      uid: Math.random(-100,0),
+      name: values.listImg,
+      url:rootUrl+thumbnailPath+values.listImg,
+      status: "done"
+    }];
+
+    console.log("!!!!!!!:           ",values.listImg);
+
     const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
 
     const downTime = moment(new Date(values.downTime),'YYYY/MM/DD hh:mm:ss');
@@ -238,6 +254,7 @@ export default class GoodsEdit extends PureComponent {
 
     this.setState({giftList:this.giftList});
     this.setState({imgs});
+    this.setState({listImg});
     this.setState({description},()=>{
       this.props.form.setFieldsValue({
         description
@@ -259,6 +276,7 @@ export default class GoodsEdit extends PureComponent {
     this.props.form.setFieldsValue({
       name: values.name,
       type: values.type,
+      listImg,
       imgs,
       address,
       originalPrice:values.originalPrice,
@@ -295,6 +313,23 @@ export default class GoodsEdit extends PureComponent {
     });
     console.log("fileList:         ",fileList);
     this.setState({ imgs: fileList})
+  };
+
+  //封面图片上传或者删除
+  listImghandleChange = (info) => {
+    let listImg = info.fileList;
+    listImg = listImg.map(file => {
+      if (file.response) {
+        file.url = file.response.filename;
+        file.uid = file.response.filename;
+        file.name = file.response.filename;
+
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    console.log("listImg:         ",listImg);
+    this.setState({ listImg})
   };
 
   //图片预览
@@ -339,6 +374,7 @@ export default class GoodsEdit extends PureComponent {
 
         values.gid = this.gid;
         values.imgs = images;
+        values.listImg = values.listImg[0].url;
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
@@ -370,6 +406,10 @@ export default class GoodsEdit extends PureComponent {
         delete values.size;
         delete values.address;
         delete values.goodsType;
+
+        console.log("更新商品信息：      ",values);
+        return;
+
         if(this.state.isPackage){
           if(this.goodsJson.length===0){
             successNotification('请至少选择一个商品', function() {
@@ -619,6 +659,7 @@ export default class GoodsEdit extends PureComponent {
       giftList,
       description,
       isPackage,
+      listImg,
     } = this.state;
 
 
@@ -696,6 +737,27 @@ export default class GoodsEdit extends PureComponent {
                   onChange={this.handleChange}
                 >
                   {imgs.length >= 5 ? null : uploadButton}
+                </Upload>
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="商品封面">
+              {getFieldDecorator("listImg", {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品封面'
+                  }
+                ]
+              })(
+                <Upload
+                  multiple={true}
+                  action={rootUrl + "/api/young/post/upload/image"}
+                  fileList={listImg}
+                  listType="picture-card"
+                  onPreview={this.handlePreview}
+                  onChange={this.handleChange}
+                >
+                  {listImg.length >= 1 ? null : uploadButton}
                 </Upload>
               )}
             </FormItem>
@@ -878,8 +940,8 @@ export default class GoodsEdit extends PureComponent {
                 initialValue: true,
               })(
                 <RadioGroup>
-                  <Radio value={false}>显示</Radio>
-                  <Radio value={true}>不显示</Radio> {/*  ['XXL-red','XXL-blue']  */}
+                  <Radio value={true}>显示</Radio>
+                  <Radio value={false}>不显示</Radio>
                 </RadioGroup>
               )}
             </FormItem>
