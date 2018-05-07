@@ -214,6 +214,7 @@ export function getGoodsDetail(gid) {
             imgs {
               url
             }
+            listImg
             province
             city
             originalPrice
