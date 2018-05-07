@@ -138,24 +138,6 @@ export default class TableForm extends PureComponent {
             }
           })
           .then(() => {
-            //把选中的指定教练通过uid从studentList中筛选出来
-            // let findCoachs = this.props.student.studentList.filter((item)=>{
-            //   for(let i=0;i<values.uids.length;i++){
-            //     if(values.uids[i]==item.uid){
-            //       return true;
-            //       break;
-            //     }
-            //   }
-            // });
-            // console.log("选中的教官=============》》》》》》》》》",findCoachs);
-            //
-            // console.log("this.state.data==============>>>>>>>>",this.state.data);
-            // const lastCoachs = this.filterSameCoach(this.state.data,findCoachs)
-            // console.log("最终选中的教官================>>>>>>>>>>",lastCoachs);
-            // this.setState({data:lastCoachs});
-
-            // _this.getAllCoach();
-
             successNotification('指派教官成功!', function() {
               _this.getCoachList();
               return false;
@@ -167,41 +149,6 @@ export default class TableForm extends PureComponent {
     });
   };
 
-  //把key重复的教官去重
-  //params  arr1:this.state.data(已指派的教官)         arr2:新指派教官的数据
-  filterSameCoach = (arr1,arr2)=> {
-    let keyArr = [],
-      concatArr = [...arr1,...arr2];
-    concatArr.forEach((item)=>{
-      console.log("item================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",item);
-      keyArr.push(item.uid);
-    })
-    let set = Array.from(new Set(keyArr));
-    console.log("set============================================>>>>>>>>>>>>>>>>>>>>>>>>>",set);
-
-    let lastCoachs = this.props.student.studentList.filter((item)=>{
-      for(let i=0;i<set.length;i++){
-        if(set[i]==item.uid){
-          return true;
-          break;
-        }
-      }
-    });
-    console.log("lastCoachs=======================================================>>>>>>>>>>>>>",lastCoachs);
-
-    lastCoachs = lastCoachs.map((item)=>{
-      return {
-        name:item.base.profile.realName,
-        phone:item.base.phone,
-        key:item.uid,
-        icon:item.base.profile.icon
-      }
-    })
-
-
-    console.log("合并后的数据===============>>>>>>>>>", lastCoachs);
-    return lastCoachs;
-  }
 
 
 
