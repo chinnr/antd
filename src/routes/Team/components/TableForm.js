@@ -27,8 +27,8 @@ export default class TableForm extends PureComponent {
       }
     }, {
       title: '教官名字',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'realName',
+      key: 'realName',
     }, {
       title: '电话号码',
       dataIndex: 'phone',
