@@ -167,7 +167,6 @@ export default class GoodsEdit extends PureComponent {
       values.isPackage = false;
     }
 
-    this.setState({isPackage:values.isPackage});
 
     let sizeAcolor,
       color = '',
@@ -189,10 +188,8 @@ export default class GoodsEdit extends PureComponent {
       }
     }
 
-
-
-    console.log("values.img:     ",values.imgs);
     const prefix =rootUrl+thumbnailPath;
+
     const imgs = values.imgs.map(item=>{
       let url;
       if(item.url.indexOf(prefix) == -1)
@@ -213,8 +210,6 @@ export default class GoodsEdit extends PureComponent {
       url:rootUrl+thumbnailPath+values.listImg,
       status: "done"
     }];
-
-    console.log("!!!!!!!:           ",values.listImg);
 
     const upTime = moment(new Date(values.upTime),'YYYY/MM/DD hh:mm:ss');
 
@@ -237,6 +232,7 @@ export default class GoodsEdit extends PureComponent {
       }
     }
 
+    //setState
     this.props.dispatch({
       type:'mall/getTypeName',
       payload:{
@@ -250,8 +246,7 @@ export default class GoodsEdit extends PureComponent {
     }).then(res=>{
       this.setState({skuPrefix:res});
     }).catch(err=>err);
-
-
+    this.setState({isPackage:values.isPackage});
     this.setState({giftList:this.giftList});
     this.setState({imgs});
     this.setState({listImg});
@@ -273,6 +268,7 @@ export default class GoodsEdit extends PureComponent {
     });
     this.editorInstance.setContent(description, "html");
 
+    //setFieldsValue
     this.props.form.setFieldsValue({
       name: values.name,
       type: values.type,
@@ -312,7 +308,7 @@ export default class GoodsEdit extends PureComponent {
       return file;
     });
     console.log("fileList:         ",fileList);
-    this.setState({ imgs: fileList})
+    this.setState({ imgs: fileList});
   };
 
   //封面图片上传或者删除
@@ -328,8 +324,8 @@ export default class GoodsEdit extends PureComponent {
       }
       return file;
     });
-    console.log("listImg:         ",listImg);
-    this.setState({ listImg})
+    console.log("封面图片上传或者删除>>>",listImg);
+    this.setState({ listImg});
   };
 
   //图片预览
@@ -357,24 +353,28 @@ export default class GoodsEdit extends PureComponent {
   handleSubmit = e => {
     const _this = this;
     e.preventDefault();
+    this.props.form.setFieldsValue({
+      listImg: this.state.listImg
+    });
     this.props.form.validateFieldsAndScroll((err, values) => {
 
       if (!err) {
-        console.log("submitValue============================>>>>>>>>>>>>>>",values);
+        console.log("submitValue>>>>",values);
+
         let images = [];
         if(values.imgs.fileList){
           values.imgs.fileList.map(item => {
-            images.push(item.url)
+            images.push(item.name)
           });
         }else{
           values.imgs.map(item => {
-            images.push(item.url)
+            images.push(item.name)
           });
         }
 
         values.gid = this.gid;
         values.imgs = images;
-        values.listImg = values.listImg[0].url;
+        values.listImg = values.listImg.length===1?values.listImg[0].name:'';
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
@@ -750,12 +750,11 @@ export default class GoodsEdit extends PureComponent {
                 ]
               })(
                 <Upload
-                  multiple={true}
                   action={rootUrl + "/api/young/post/upload/image"}
                   fileList={listImg}
                   listType="picture-card"
                   onPreview={this.handlePreview}
-                  onChange={this.handleChange}
+                  onChange={this.listImghandleChange}
                 >
                   {listImg.length >= 1 ? null : uploadButton}
                 </Upload>
