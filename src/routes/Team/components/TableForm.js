@@ -11,7 +11,7 @@ export default class TableForm extends PureComponent {
     super(props);
 
     this.state = {
-      data: props.value,
+      data: [],
       loading: false,
       coachFormVisible:false
     };
@@ -49,6 +49,7 @@ export default class TableForm extends PureComponent {
   }
   componentWillMount(){
     this.getAllCoach();
+    this.getCoachList();
   }
 
   remove(key) {
@@ -57,6 +58,37 @@ export default class TableForm extends PureComponent {
     this.props.onChange(newData);
   }
 
+
+  //获取常驻教官
+  getCoachList=()=>{
+    this.setState({
+      loading:true
+    });
+    this.props
+      .dispatch({
+        type: 'team/getAllTeams',
+        payload: {
+          query: {
+            limit: 10,
+            page: 0,
+            keyJson: JSON.stringify({gid:this.props.gid})
+          }
+        }
+      })
+      .then(res=>{
+        console.log(this.props.team.teams[0].coachList);
+        this.props.team.teams[0].coachList.forEach(item=>{
+          item.key = Math.random(0,20000);
+        });
+        this.setState({
+          data:[...this.props.team.teams[0].coachList]
+        })
+        this.setState({
+          loading:false
+        });
+      })
+      .catch(err => err);
+  }
 
 
   //添加指定教官
@@ -125,7 +157,7 @@ export default class TableForm extends PureComponent {
             // _this.getAllCoach();
 
             successNotification('指派教官成功!', function() {
-              window.location.reload();
+              _this.getCoachList();
               return false;
             });
           })
