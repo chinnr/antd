@@ -636,13 +636,6 @@ class GoodsAdd extends Component {
                 </Upload>
               )}
             </FormItem>
-            <FormItem {...formItemLayout} label="商品规格">
-              {getFieldDecorator('skuSizeList',{
-                initialValue: false,
-              })(
-                <span></span>
-              )}
-            </FormItem>
             {goodsType === 0 && isPackage===false &&
               <FormItem {...formItemLayout} label="颜色">
                 {getFieldDecorator('color', {
