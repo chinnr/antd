@@ -210,6 +210,7 @@ export function getGoodsDetail(gid) {
               gid
               count
               name
+              skuPure
             }
             imgs {
               url
