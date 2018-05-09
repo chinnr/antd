@@ -66,7 +66,7 @@ class GoodsAdd extends Component {
   };
 
   goodsJson = [];
-  goodsJsonGid = [];
+  goodsJsonSkuPure = [];
   giftList = [];
   Package = false;
 
@@ -325,9 +325,10 @@ class GoodsAdd extends Component {
     if(type === "goodsListVisible") {
       const selectValues = this.props.form.getFieldValue("goodsJson");
       selectValues.forEach((item)=>{
-        const gid = item.split('|')[0];
-        if(this.goodsJsonGid.indexOf(gid)===-1){
-          this.goodsJsonGid.push(gid);
+        const gid = item.split('|')[2];
+        const skuPure =  item.split('|')[0];
+        if(this.goodsJsonSkuPure.indexOf(skuPure)===-1){
+          this.goodsJsonSkuPure.push(skuPure);
           this.goodsJson.push({
             gid,
             count:0
@@ -366,12 +367,12 @@ class GoodsAdd extends Component {
   };
 
   /**
-   * 添加赠品
+   * 赠品数量修改
    * @param v
-   * @param gid
+   * @param skuPure
    */
-  addGiftCount = (v, gid) => {
-    const idx = this.goodsJsonGid.indexOf(gid);
+  addGiftCount = (v, skuPure) => {
+    const idx = this.goodsJsonSkuPure.indexOf(skuPure);
     this.goodsJson[idx].count = v;
   };
 
@@ -399,9 +400,9 @@ class GoodsAdd extends Component {
    * 删除赠品
    * */
   deleteGift = (item) => {
-    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
+    const idx = this.goodsJsonSkuPure.indexOf(item.split('|')[0]);
     this.goodsJson.splice(idx,1);
-    this.goodsJsonGid.splice(idx,1);
+    this.goodsJsonSkuPure.splice(idx,1);
     this.giftList.splice(idx,1);
 
 
@@ -431,8 +432,6 @@ class GoodsAdd extends Component {
 
   render() {
     const { mall, loading } = this.props;
-    console.log("赠品mall:            ",mall.goodsList);
-    // console.log("mall ===> ", mall);
     const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage,listImg } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
