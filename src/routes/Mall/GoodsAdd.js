@@ -431,6 +431,7 @@ class GoodsAdd extends Component {
 
   render() {
     const { mall, loading } = this.props;
+    console.log("赠品mall:            ",mall.goodsList);
     // console.log("mall ===> ", mall);
     const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage,listImg } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
@@ -533,7 +534,7 @@ class GoodsAdd extends Component {
                   {mall.goodsList.map((item, i) => {
                     return (
                       <Col span={12} key={i}>
-                        <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
+                        <Checkbox value={item.skuPure+"|"+item.name+"|"+item.gid}>{item.name}</Checkbox>
                       </Col>
                     )
                   })}
@@ -788,7 +789,7 @@ class GoodsAdd extends Component {
                         </Col>
                         <Col span={14}>
                           <InputNumber min={0}
-                                       defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000}
+                                       defaultValue={0} max={10000000}
                                        style={{ width: '100%' }}
                                        onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
                         </Col>
