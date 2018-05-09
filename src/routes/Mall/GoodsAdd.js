@@ -124,10 +124,10 @@ class GoodsAdd extends Component {
           } else {
             skuSizeList = [values.color, values.size];
             values.skuSizeList = doExchange(skuSizeList);//["M-#f000","S-#000"]
-            values.skuSizeList = values.skuSizeList.map((item)=>{
+            values.skuSizeList = values.skuSizeList.map((item,index)=>{
               let obj = {};
               obj.size = item;
-              obj.isShow = values.show;
+              obj.isShow = (index===0?values.show:false);
               return obj;
             });
             // console.log("values.skuSizeList:          ",values.skuSizeList);
