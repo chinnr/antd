@@ -316,7 +316,7 @@ class MallAdvertising extends PureComponent {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button disabled={list.length > 10} type={'primary'} onClick={() => this.showModal({}, 'newAdv')}>
+            <Button disabled={list.length > 20} type={'primary'} onClick={() => this.showModal({}, 'newAdv')}>
               添加广告位
             </Button>
             <br />
