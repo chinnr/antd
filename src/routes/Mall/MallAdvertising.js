@@ -88,6 +88,15 @@ class MallAdvertising extends PureComponent {
       )
     },
     {
+      title: '描述',
+      key: 'advType',
+      render: record => (
+        <Fragment>
+          <span style={{ marginRight: 20 }}>{record.advType}</span>
+        </Fragment>
+      )
+    },
+    {
       title: '广告图',
       key: 'img',
       render: record => (
@@ -267,6 +276,7 @@ class MallAdvertising extends PureComponent {
       })
       .catch(err => err);
   };
+
   /**
    * 获取所有商品
    * @param p
@@ -312,6 +322,24 @@ class MallAdvertising extends PureComponent {
     console.log('advertiseList ', mall.advertiseList);
     // console.log('mall.advertiseList  ', mall.advertiseList);
     const list = mall.advertiseList;
+    list.map((item, i) => {
+      if(i === 0 ){
+        item['advType'] = "首页商品广告"
+      }else if(i >= 1 && i<=3) {
+        item['advType'] = "召唤轮播商品广告"
+      }else if(i === 4) {
+        item['advType'] = "资讯页商品广告"
+      }else if(i>=5 && i <=9) {
+        item['advType'] = "商城轮播商品广告"
+      }else if(i>=10 && i <=11) {
+        item['advType'] = "商城推荐广告"
+      }else if(i>=12 && i <=15) {
+        item['advType'] = "单品推荐广告"
+      }else {
+        item['advType'] = "其他广告"
+      }
+      return item;
+    });
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
