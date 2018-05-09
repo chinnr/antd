@@ -21,7 +21,7 @@ const CreateForm = Form.create()(props => {
       if (!err) {
         const params = {
           gid: values.goods.split('|')[0],
-          img: rootUrl + thumbnailPath + values.goods.split('|')[1],
+          img: values.goods.split('|')[1],
           sku: values.goods.split('|')[2]
         };
         handleAdd(params);
@@ -92,7 +92,7 @@ class MallAdvertising extends PureComponent {
       key: 'img',
       render: record => (
         <div>
-          <img style={{ height: 50 }} src={record.img} />
+          <img style={{ height: 50 }} src={record.img.indexOf(thumbnailPath) > -1 ? record.img : rootUrl+thumbnailPath+record.img} />
         </div>
       )
     },
@@ -159,7 +159,7 @@ class MallAdvertising extends PureComponent {
       console.log('图片gid: ', record.gid);
       const form = {
         gid: record.gid,
-        img: rootUrl + thumbnailPath + info.file.response.filename,
+        img: info.file.response.filename,
         sku: record.sku
       };
       console.log('form >>> ', form);
@@ -224,6 +224,8 @@ class MallAdvertising extends PureComponent {
     this.setState({
       visible: false
     });
+    console.log("添加广告位: ", advertiseList);
+
     this.props
       .dispatch({
         type: 'mall/updateAdvertiseList',
@@ -314,7 +316,7 @@ class MallAdvertising extends PureComponent {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button disabled={list.length > 10} type={'primary'} onClick={() => this.showModal({}, 'newAdv')}>
+            <Button disabled={list.length > 20} type={'primary'} onClick={() => this.showModal({}, 'newAdv')}>
               添加广告位
             </Button>
             <br />
