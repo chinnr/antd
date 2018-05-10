@@ -9,7 +9,7 @@ import {
   Card,
   Icon,
   Popconfirm,
-  notification,
+  InputNumber,
   Tooltip
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -299,7 +299,7 @@ export default class NewBadge extends PureComponent {
                     message: '请输入证章排序值'
                   }
                 ]
-              })(<Input placeholder="数值越大排的越前面,默认为100"/>)}
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为100"/>)}
             </FormItem>
             <FormItem {...formItemLayout} label="证章简介">
               {getFieldDecorator('description', {
