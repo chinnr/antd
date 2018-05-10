@@ -222,6 +222,7 @@ export function getGoodsDetail(gid) {
             postPrice
             isPackage
             listDes
+            priority
           }
         }
       }
