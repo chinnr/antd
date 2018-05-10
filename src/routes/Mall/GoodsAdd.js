@@ -114,6 +114,11 @@ class GoodsAdd extends Component {
         values.upTime = values.upTime.toISOString();
         values.expireTime  = values.downTime.toISOString();
         values.downTime = values.downTime.toISOString();
+        console.log("values.priority:     ",values.priority);
+        if(!values.priority)
+          values.priority =1000;
+
+        // values.priority = values.priority?1000:parseInt(values.priority);
         if(this.Package){
           delete values.skuSizeList;
         }else{
@@ -151,8 +156,8 @@ class GoodsAdd extends Component {
         delete values.size;
         delete values.address;
         delete values.goodsType;
-        // console.log('添加商品参数 -->: ', values);
-        // return;
+        console.log('添加商品参数 -->: ', values);
+        return;
         this.addGoods(values);
       }
     });
@@ -737,6 +742,17 @@ class GoodsAdd extends Component {
               })(
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="商品排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 1000,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入商品排序值'
+                  }
+                ]
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为1000"/>)}
             </FormItem>
             <FormItem label="产品描述">
               <div className={styles.editorWrap}>
