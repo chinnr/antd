@@ -61,6 +61,7 @@ export function getAllBadges(payload) {
             grayImg
             description
             significance
+            priority
           }
           meta {
             count
