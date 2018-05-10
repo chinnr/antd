@@ -69,7 +69,7 @@ export default class GoodsEdit extends PureComponent {
     };
     this.goodsJson = [];//submit的赠品
     this.giftList = [];//列表渲染的的赠品
-    this.goodsJsonGid = [];//去重的赠品gid
+    this.goodsJsonSkuPure = [];//去重的赠品skuPure
     this.skuPrefix = '';
     this.gid='';
   }
@@ -119,27 +119,28 @@ export default class GoodsEdit extends PureComponent {
     const _this = this;
 
     /*
-    * 去重后的gid
+    * 去重后的skuPure
     * */
     values.goodsJson.forEach((item)=>{
-      _this.goodsJsonGid.push(item.gid);
+      _this.goodsJsonSkuPure.push(item.skuPure);
     });
 
-    let aa = Array.from(new Set(this.goodsJsonGid));
-    this.goodsJsonGid = aa;
-    console.log("goodsJsonGid=================>>>>>>>>>>>>>>>",this.goodsJsonGid);
+    let aa = Array.from(new Set(this.goodsJsonSkuPure));
+    this.goodsJsonSkuPure = aa;
+    console.log("goodsJsonSkuPure=================>>>>>>>>>>>>>>>",this.goodsJsonSkuPure);
 
 
     /*
-    * 通过去重的gid把赠品中的重复赠品合并及把数量相加
+    * 通过去重的skuPure把赠品中的重复赠品合并及把数量相加
     * */
     let newGoodsList = [];
-    this.goodsJsonGid.forEach((gid)=>{
-      let newJson = {gid,count:0,name:''};
+    this.goodsJsonSkuPure.forEach((skuPure)=>{
+      let newJson = {skuPure,count:0,name:'',gid:''};
         values.goodsJson.forEach(item=>{
-          if(item.gid==newJson.gid){
+          if(item.skuPure==newJson.skuPure){
             newJson.count+=item.count;
             newJson.name = item.name;
+            newJson.gid = item.gid;
           }
         });
       newGoodsList.push(newJson);
@@ -152,7 +153,7 @@ export default class GoodsEdit extends PureComponent {
     newGoodsList.forEach((item)=>{
       /*
       * giftList做组件的列表渲染，需要name*/
-      let temp = item.gid +'|'+item.name+'|'+item.count;
+      let temp = item.skuPure +'|'+item.name+'|'+item.gid+'|'+item.count;
       _this.giftList.push(temp);
 
       /*
@@ -162,6 +163,7 @@ export default class GoodsEdit extends PureComponent {
       tempItem.gid = item.gid;
       this.goodsJson.push(tempItem);
     });
+    console.log("this.giftList=======================>>>>>>>>>>>>>>>>>>>",this.giftList);
 
     if(values.isPackage===null){
       values.isPackage = false;
@@ -285,6 +287,7 @@ export default class GoodsEdit extends PureComponent {
       downTime,
       listDes:values.listDes,
       postPrice:values.postPrice,
+      priority:values.priority,
     });
     if(values.isPackage===false){
       this.props.form.setFieldsValue({
@@ -319,7 +322,6 @@ export default class GoodsEdit extends PureComponent {
         file.url = file.response.filename;
         file.uid = file.response.filename;
         file.name = file.response.filename;
-
         file.status = file.response.status;
       }
       return file;
@@ -378,6 +380,10 @@ export default class GoodsEdit extends PureComponent {
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
+        values.skuPrefix = this.skuPrefix;
+        values.skuPure = values.name;
+        if(!values.priority)
+          values.priority =1000;
         if(values.isPackage===true){
           delete values.skuSize;
           delete values.expireTime;
@@ -390,8 +396,7 @@ export default class GoodsEdit extends PureComponent {
           }
         }
 
-        values.skuPrefix = this.skuPrefix;
-        values.skuPure = values.name;
+
         if(values.address[0] === '全国'){
           values.province = 'all';
           values.city = 'all';
@@ -426,7 +431,7 @@ export default class GoodsEdit extends PureComponent {
         }).then(res=>{
           successNotification('编辑成功',()=>{
             _this.giftList = [];
-            _this.goodsJsonGid = [];
+            _this.goodsJsonSkuPure = [];
             _this.goodsJson = [];
             _this.getGoodsParams();
             return false;
@@ -449,11 +454,12 @@ export default class GoodsEdit extends PureComponent {
   handleOk = (type) => {
     if(type === "goodsListVisible") {
       const selectValues = this.props.form.getFieldValue("goodsJson");
-      console.log("选择的赠品================>>>>>>>>>>>>>>>>>",this.props.form.getFieldValue("goodsJson"));
+      console.log("选择的赠品================>>>>>>>>>>>>>>>>>",selectValues);
       selectValues.forEach((item)=>{
-        const gid = item.split('|')[0];
-        if(this.goodsJsonGid.indexOf(gid)===-1){
-          this.goodsJsonGid.push(gid);
+        const gid = item.split('|')[2];
+        const skuPure = item.split('|')[0];
+        if(this.goodsJsonSkuPure.indexOf(skuPure)===-1){
+          this.goodsJsonSkuPure.push(skuPure);
           this.goodsJson.push({
             gid,
             count:0
@@ -513,7 +519,7 @@ export default class GoodsEdit extends PureComponent {
 
   //修改赠品数量
   addGiftCount = (v, gid) => {
-    const idx = this.goodsJsonGid.indexOf(gid);
+    const idx = this.goodsJsonSkuPure.indexOf(gid);
     this.goodsJson[idx].count = v;
     console.log('goodsJson:          ',this.goodsJson);
   };
@@ -539,9 +545,9 @@ export default class GoodsEdit extends PureComponent {
 
   //删除赠品
   deleteGift = (item) => {
-    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
+    const idx = this.goodsJsonSkuPure.indexOf(item.split('|')[0]);
     this.goodsJson.splice(idx,1);
-    this.goodsJsonGid.splice(idx,1);
+    this.goodsJsonSkuPure.splice(idx,1);
     this.giftList.splice(idx,1);
 
 
@@ -550,7 +556,7 @@ export default class GoodsEdit extends PureComponent {
     });
 
 
-    console.log("this.goodsJsonGid:  ", this.goodsJsonGid);
+    console.log("this.goodsJsonSkuPure:  ", this.goodsJsonSkuPure);
     console.log("this.goodsJson:  ", this.goodsJson);
     console.log("this.giftList:  ", this.giftList);
   };
@@ -850,6 +856,17 @@ export default class GoodsEdit extends PureComponent {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
+            <FormItem {...formItemLayout} label="商品排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 1000,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入商品排序值'
+                  }
+                ]
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为1000"/>)}
+            </FormItem>
             <FormItem label="产品描述">
               <div className={styles.editorWrap}>
                 {getFieldDecorator('description',{
@@ -898,7 +915,7 @@ export default class GoodsEdit extends PureComponent {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }}
+                          <InputNumber min={0} defaultValue={item.split('|')[3]?item.split('|')[3]:0} max={10000000} style={{ width: '100%' }}
                                        onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
                         </Col>
                         <Col span={2}>
@@ -1003,7 +1020,7 @@ export default class GoodsEdit extends PureComponent {
                 {mall.goodsList.map((item, i) => {
                   return (
                     <Col span={12} key={i}>
-                      <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
+                      <Checkbox value={item.skuPure+"|"+item.name+"|"+item.gid}>{item.name}</Checkbox>
                     </Col>
                   )
                 })}

@@ -9,7 +9,7 @@ import {
   Card,
   Icon,
   Popconfirm,
-  notification,
+  InputNumber,
   Tooltip
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -134,7 +134,10 @@ export default class NewBadge extends PureComponent {
           let _uid = localStorage.getItem('uid');
           values['uid'] = _uid;
         }
-        console.log('values==>', values);
+        if(!values.priority)
+          values.priority =100;
+
+        console.log('提交的values==>', values);
         localStorage.getItem('badgeParams')
           ? this.submitBadge(values, 'updateBadge')
           : this.submitBadge(values, 'createBadge');
@@ -287,6 +290,17 @@ export default class NewBadge extends PureComponent {
                   <Option value="class5">服务章</Option>
                 </Select>
               )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="证章排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 100,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入证章排序值'
+                  }
+                ]
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为100"/>)}
             </FormItem>
             <FormItem {...formItemLayout} label="证章简介">
               {getFieldDecorator('description', {

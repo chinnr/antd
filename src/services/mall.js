@@ -210,6 +210,7 @@ export function getGoodsDetail(gid) {
               gid
               count
               name
+              skuPure
             }
             imgs {
               url
@@ -221,6 +222,7 @@ export function getGoodsDetail(gid) {
             postPrice
             isPackage
             listDes
+            priority
           }
         }
       }

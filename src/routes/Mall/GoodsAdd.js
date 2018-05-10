@@ -66,7 +66,7 @@ class GoodsAdd extends Component {
   };
 
   goodsJson = [];
-  goodsJsonGid = [];
+  goodsJsonSkuPure = [];
   giftList = [];
   Package = false;
 
@@ -114,6 +114,11 @@ class GoodsAdd extends Component {
         values.upTime = values.upTime.toISOString();
         values.expireTime  = values.downTime.toISOString();
         values.downTime = values.downTime.toISOString();
+        console.log("values.priority:     ",values.priority);
+        if(!values.priority)
+          values.priority =1000;
+
+        // values.priority = values.priority?1000:parseInt(values.priority);
         if(this.Package){
           delete values.skuSizeList;
         }else{
@@ -325,9 +330,10 @@ class GoodsAdd extends Component {
     if(type === "goodsListVisible") {
       const selectValues = this.props.form.getFieldValue("goodsJson");
       selectValues.forEach((item)=>{
-        const gid = item.split('|')[0];
-        if(this.goodsJsonGid.indexOf(gid)===-1){
-          this.goodsJsonGid.push(gid);
+        const gid = item.split('|')[2];
+        const skuPure =  item.split('|')[0];
+        if(this.goodsJsonSkuPure.indexOf(skuPure)===-1){
+          this.goodsJsonSkuPure.push(skuPure);
           this.goodsJson.push({
             gid,
             count:0
@@ -366,12 +372,12 @@ class GoodsAdd extends Component {
   };
 
   /**
-   * 添加赠品
+   * 赠品数量修改
    * @param v
-   * @param gid
+   * @param skuPure
    */
-  addGiftCount = (v, gid) => {
-    const idx = this.goodsJsonGid.indexOf(gid);
+  addGiftCount = (v, skuPure) => {
+    const idx = this.goodsJsonSkuPure.indexOf(skuPure);
     this.goodsJson[idx].count = v;
   };
 
@@ -399,9 +405,9 @@ class GoodsAdd extends Component {
    * 删除赠品
    * */
   deleteGift = (item) => {
-    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
+    const idx = this.goodsJsonSkuPure.indexOf(item.split('|')[0]);
     this.goodsJson.splice(idx,1);
-    this.goodsJsonGid.splice(idx,1);
+    this.goodsJsonSkuPure.splice(idx,1);
     this.giftList.splice(idx,1);
 
 
@@ -431,7 +437,6 @@ class GoodsAdd extends Component {
 
   render() {
     const { mall, loading } = this.props;
-    // console.log("mall ===> ", mall);
     const { fileList, previewVisible, previewImage, goodsType, giftList, skuPrefix,isPackage,listImg } = this.state;
     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched, getFieldValue } = this.props.form;
     const editorProps = {
@@ -533,7 +538,7 @@ class GoodsAdd extends Component {
                   {mall.goodsList.map((item, i) => {
                     return (
                       <Col span={12} key={i}>
-                        <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
+                        <Checkbox value={item.skuPure+"|"+item.name+"|"+item.gid}>{item.name}</Checkbox>
                       </Col>
                     )
                   })}
@@ -738,6 +743,17 @@ class GoodsAdd extends Component {
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
             </FormItem>
+            <FormItem {...formItemLayout} label="商品排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 1000,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入商品排序值'
+                  }
+                ]
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为1000"/>)}
+            </FormItem>
             <FormItem label="产品描述">
               <div className={styles.editorWrap}>
                 {getFieldDecorator('description',{
@@ -788,7 +804,7 @@ class GoodsAdd extends Component {
                         </Col>
                         <Col span={14}>
                           <InputNumber min={0}
-                                       defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000}
+                                       defaultValue={0} max={10000000}
                                        style={{ width: '100%' }}
                                        onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
                         </Col>
