@@ -287,6 +287,7 @@ export default class GoodsEdit extends PureComponent {
       downTime,
       listDes:values.listDes,
       postPrice:values.postPrice,
+      priority:values.priority,
     });
     if(values.isPackage===false){
       this.props.form.setFieldsValue({
@@ -321,7 +322,6 @@ export default class GoodsEdit extends PureComponent {
         file.url = file.response.filename;
         file.uid = file.response.filename;
         file.name = file.response.filename;
-
         file.status = file.response.status;
       }
       return file;
@@ -380,6 +380,10 @@ export default class GoodsEdit extends PureComponent {
         values.goodsJson = this.goodsJson;
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
+        values.skuPrefix = this.skuPrefix;
+        values.skuPure = values.name;
+        if(!values.priority)
+          values.priority =1000;
         if(values.isPackage===true){
           delete values.skuSize;
           delete values.expireTime;
@@ -392,8 +396,7 @@ export default class GoodsEdit extends PureComponent {
           }
         }
 
-        values.skuPrefix = this.skuPrefix;
-        values.skuPure = values.name;
+
         if(values.address[0] === '全国'){
           values.province = 'all';
           values.city = 'all';
@@ -852,6 +855,17 @@ export default class GoodsEdit extends PureComponent {
               })(
                 <InputNumber min={0} max={10000000} style={{ width: '100%' }} />
               )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="商品排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 1000,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入商品排序值'
+                  }
+                ]
+              })(<InputNumber style={{ width: '100%' }} min={0} max={10000000} placeholder="数值越大排的越前面,默认为1000"/>)}
             </FormItem>
             <FormItem label="产品描述">
               <div className={styles.editorWrap}>
