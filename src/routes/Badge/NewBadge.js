@@ -134,8 +134,9 @@ export default class NewBadge extends PureComponent {
           let _uid = localStorage.getItem('uid');
           values['uid'] = _uid;
         }
+        if(!values.priority)
+          values.priority =100;
 
-        values.priority = values.priority==""?100:parseInt(values.priority);
         console.log('提交的values==>', values);
         localStorage.getItem('badgeParams')
           ? this.submitBadge(values, 'updateBadge')
