@@ -134,7 +134,9 @@ export default class NewBadge extends PureComponent {
           let _uid = localStorage.getItem('uid');
           values['uid'] = _uid;
         }
-        console.log('values==>', values);
+
+        values.priority = values.priority==""?100:parseInt(values.priority);
+        console.log('提交的values==>', values);
         localStorage.getItem('badgeParams')
           ? this.submitBadge(values, 'updateBadge')
           : this.submitBadge(values, 'createBadge');
@@ -287,6 +289,17 @@ export default class NewBadge extends PureComponent {
                   <Option value="class5">服务章</Option>
                 </Select>
               )}
+            </FormItem>
+            <FormItem {...formItemLayout} label="证章排序值">
+              {getFieldDecorator('priority', {
+                initialValue: 100,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入证章排序值'
+                  }
+                ]
+              })(<Input placeholder="数值越大排的越前面,默认为100"/>)}
             </FormItem>
             <FormItem {...formItemLayout} label="证章简介">
               {getFieldDecorator('description', {
