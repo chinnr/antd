@@ -156,8 +156,8 @@ class GoodsAdd extends Component {
         delete values.size;
         delete values.address;
         delete values.goodsType;
-        console.log('添加商品参数 -->: ', values);
-        return;
+        // console.log('添加商品参数 -->: ', values);
+        // return;
         this.addGoods(values);
       }
     });
