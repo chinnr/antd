@@ -43,7 +43,6 @@ const sizeOptions = [
   { label: 'XXL', value: 'XXL' },
   { label: 'XXXL', value: 'XXXL' }
 ];
-let uuid = 0;
 
 @connect(({ mall, loading }) => ({
   mall,
