@@ -374,10 +374,11 @@ export function getAdvertiseList() {
   const getAdvertiseList = `query advertisementConfig{
     pub {
       advertisementConfig {
-        getDiscovery{
+        getDiscovery {
           gid
           img
           sku
+          type
         }
       }
     }

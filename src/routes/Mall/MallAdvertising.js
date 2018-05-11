@@ -322,7 +322,8 @@ class MallAdvertising extends PureComponent {
     console.log('advertiseList ', mall.advertiseList);
     // console.log('mall.advertiseList  ', mall.advertiseList);
     const list = mall.advertiseList;
-    list.map((item, i) => {
+    let _list = JSON.parse(JSON.stringify(list));
+    _list.map((item, i) => {
       if(i === 0 ){
         item['advType'] = "首页商品广告"
       }else if(i >= 1 && i<=3) {
@@ -351,7 +352,7 @@ class MallAdvertising extends PureComponent {
             <Table
               loading={loading}
               rowKey={record => Math.random(1, 100) + record.gid}
-              dataSource={list}
+              dataSource={_list}
               columns={this.columns}
               pagination={false}
             />
