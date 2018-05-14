@@ -44,7 +44,7 @@ const CourseCommon = (props)=>{
   //课程风采
   const listImg = gallery.map((item,index)=>{
     return(
-      <Col span={6}><img src={rootUrl+thumbnailPath+item} key={'listImg'+index.toString()} alt="" style={{ width:'100%', marginTop:8, marginBottom:8 }} /></Col>
+      <Col key={Math.random(0,20000)+index.toString()} span={6}><img src={rootUrl+thumbnailPath+item} key={'listImg'+index.toString()} alt="" style={{ width:'100%', marginTop:8, marginBottom:8 }} /></Col>
     )
   })
 
