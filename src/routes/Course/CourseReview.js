@@ -13,7 +13,7 @@ const { Description } = DescriptionList;
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 
-@connect(({ course }) => ({ course }))
+@connect(({ course, student }) => ({ course, student }))
 @Form.create()
 export default class CourseReview extends Component {
   state = {
@@ -34,15 +34,17 @@ export default class CourseReview extends Component {
     return _id;
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const _id = this.getCourseId();
     this.props
       .dispatch({
-        type: 'course/courseDetail',
+        type: "course/courseDetail",
         payload: { id: _id }
       })
       .then(res => {
         let arr = [];
+        console.log("教官groupCoaches：      ",res);
+
         res.groupCoaches.forEach(uid => {
           this.props
             .dispatch({
@@ -51,6 +53,7 @@ export default class CourseReview extends Component {
             })
             .then(res => {
               const {icon,realName} = res;
+              console.log("执行成功了!!!!!!!!",{icon,realName});
               arr.push({icon,realName});
               this.setState({
                 groupCoaches: [...arr]
@@ -59,7 +62,30 @@ export default class CourseReview extends Component {
         });
       })
       .catch(err => err);
+
+
   }
+
+  getCoaches = (dataList) => {
+
+    let arr = [];
+    console.log("========getCoaches=========");
+    dataList.groupCoaches.forEach(uid => {
+      console.log("sdkjhfdskjGJHGJHGJH");
+      this.props.dispatch({
+          type: "student/getStudentDetail",
+          payload: uid
+        })
+        .then(res => {
+          const {icon,realName} = res;
+          arr.push({icon,realName});
+          console.log("adasdaddasds:      ",arr);
+          this.setState({
+            groupCoaches: [...arr]
+          })
+        }).catch(err=>{console.log("fail:    ",err);});
+    });
+  };
 
   // 点击展开课程详细信息
   toggleCourseDetail = () => {
@@ -148,15 +174,17 @@ export default class CourseReview extends Component {
     const { openCourseDetail, rejectModal } = this.state;
     const { getFieldDecorator } = this.props.form;
 
-    console.log("cccccccccccccccccccccc===========>>>>",courseDetail);
+    //课程详情数据成功请求后
+    let common = null;
+    if (JSON.stringify(courseDetail).length > 2) {
+      common = <CourseCommon {...courseDetail} ins={this.state.groupCoaches} />;
+    } else {
+      common = <p>暂无数据</p>;
+    }
+
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
-
-        {JSON.stringify(courseDetail).length > 2 ?
-          <CourseCommon {...courseDetail} ins={this.state.groupCoaches}></CourseCommon>
-          :
-          <p>暂无数据</p>
-        }
+        {common}
 
         <div style={{textAlign:'center'}}>
           <Button
