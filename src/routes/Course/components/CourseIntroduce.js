@@ -91,7 +91,7 @@ export default class CourseIntroduce extends Component {
         <h3>课程详细信息: </h3>
         <div style={{ borderWidth: 1, borderColor: '#ddd', borderStyle: 'solid' }}>
           <BraftEditor
-            controls={[]}
+            // controls={[]}
             height={700}
             placeholder={'输入课程详细信息!'}
             ref={instance => (this.editorInstance = instance)}
