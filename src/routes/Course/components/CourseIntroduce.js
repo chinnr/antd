@@ -87,8 +87,9 @@ export default class CourseIntroduce extends Component {
   render() {
     const {description} = this.props;
     return (
-      <div>
-        <div style={{ borderWidth: 1, borderColor: '#ddd', borderStyle: 'solid',borderRadius:"5px" }}>
+      <div style={{ paddingLeft: 50, paddingRight: 50 }}>
+        <h3>课程详细信息: </h3>
+        <div style={{ borderWidth: 1, borderColor: '#ddd', borderStyle: 'solid' }}>
           <BraftEditor
             controls={[]}
             height={700}
