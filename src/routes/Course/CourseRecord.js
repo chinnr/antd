@@ -47,11 +47,11 @@ export default class CourseRecord extends PureComponent {
     const _state = state.toString();
     let stateObj = {
       '-2': '审核失败',
-      '-1': '草稿',
+      // '-1': '草稿',
       0: '待审核',
       1: '审核通过',
-      2: '进行中',
-      3: '已过期'
+      // 2: '进行中',
+      // 3: '已过期'
     };
     return stateObj[_state];
   };
