@@ -128,11 +128,11 @@ export default class CourseRecord extends PureComponent {
         >
           <RadioButton value="all">全部</RadioButton>
           <RadioButton value={-2}>审核失败</RadioButton>
-          <RadioButton value={-1}>草稿</RadioButton>
+          {/*<RadioButton value={-1}>草稿</RadioButton>*/}
           <RadioButton value={0}>待审核</RadioButton>
           <RadioButton value={1}>审核通过</RadioButton>
-          <RadioButton value={2}>进行中</RadioButton>
-          <RadioButton value={3}>已过期</RadioButton>
+          {/*<RadioButton value={2}>进行中</RadioButton>*/}
+          {/*<RadioButton value={3}>已过期</RadioButton>*/}
         </RadioGroup>
         <Search
           className={styles.extraContentSearch}
