@@ -324,6 +324,10 @@ export default {
               payload: uid
             });
             dispatch({
+              type: 'getUserVirtualGoods',
+              payload: uid
+            });
+            dispatch({
               type: 'getStudentDetail',
               payload: uid
             })
