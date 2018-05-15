@@ -231,7 +231,7 @@ export function getGoodsDetail(gid) {
   return graphRequest(getGoodsDetail, gid, "mall-admin");
 }
 
-// 获取卡券列表
+// 获取某个用户的卡券
 export function virtualGoods(query, adminVirtual) {
   const virtualGoodsQuery = `
     query getUserVirtualGoods($query: FormQuery!, $adminVirtual: AdminVirtualQuery) {
@@ -292,6 +292,23 @@ export function deleteGoods(gid) {
     }
   }`;
   return graphRequest(deleteGoods, gid, "mall-admin");
+}
+
+//获取虚拟物品
+export function virtualList(payload) {
+  const virtualList = `query virtualList($QueryVirtual: QueryVirtual,$FormQuery:FormQuery) {
+  me{
+    virtualGoods{
+      getAll(query:$FormQuery,queryOption:$QueryVirtual){
+        data{
+          value
+          uid
+        }
+      }
+    }
+  }
+}`;
+  return graphRequest(virtualList, payload, "mall-admin");
 }
 
 // 订单列表管理
