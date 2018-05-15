@@ -95,7 +95,8 @@ export default class BasicProfile extends Component {
       1: '已完成',
       2: '已付款',
       3: '已确认',
-      4: '已取消'
+      4: '已取消',
+      5: '已发货'
     };
     return orderStatus[status];
   };
