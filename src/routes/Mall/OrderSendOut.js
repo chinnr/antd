@@ -10,6 +10,17 @@ import moment from 'moment';
 const { Description } = DescriptionList;
 const FormItem = Form.Item;
 const {Option} = Select;
+const colorMap = {
+  "#ffffff":"白色",
+  "#ff0000":"红色",
+  "#ffa500":"橙色",
+  "#ffff00":"黄色",
+  "#008000":"绿色",
+  "#00ffff":"青色",
+  "#0000ff":"蓝色",
+  "#800080":"紫色",
+  "#000000":"黑色"
+};
 
 @Form.create()
 @connect(({ mall }) => ({ mall }))
@@ -103,10 +114,16 @@ export default class OrderSendOut extends Component {
 
     const goodsColumns = [
       {
-        title: '商品编号',
-        dataIndex: 'gid',
-        key: 'gid',
-        width:'40%'
+        title: '商品规格',
+        dataIndex: 'skuSize',
+        key: 'skuSize',
+        render:record=>{
+          if(record){
+            const size = record.split('-');
+            return <span>{size[0]}-{colorMap[size[1]]}</span>
+          }
+          return <span>{record}</span>
+        }
       },
       {
         title: '商品名称',
