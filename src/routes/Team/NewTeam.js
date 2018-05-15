@@ -333,8 +333,6 @@ export default class NewTeam extends PureComponent {
                   <Option value="level2">小狼</Option>
                   <Option value="level3">探索</Option>
                   <Option value="level4">乐扶</Option>
-                  <Option value="level4">乐扶</Option>
-                  <Option value="level5">阶段5</Option>
                 </Select>
               )}
             </FormItem>
