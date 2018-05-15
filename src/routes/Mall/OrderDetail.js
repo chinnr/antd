@@ -23,6 +23,9 @@ const colorMap = {
 @connect(({ mall }) => ({ mall }))
 export default class BasicProfile extends Component {
   payId = '';
+  state = {
+    virtual:''
+  };
   componentDidMount() {
     const reg = /\/order-detail\/(.+)/;
     const id = this.props.location.pathname.match(reg)[1];
@@ -55,8 +58,34 @@ export default class BasicProfile extends Component {
           queryOption: queryOption,
           timeSpan: timeSpan
         }
-      }).then(()=>{
+      }).then((res)=>{
       this.getAllPayRecord(0, {id:this.payId});
+      let id = res[0].cardId;
+      console.log("cardId:     ",id);
+      if(!id) {
+        console.log("没有cardId");
+        this.setState({
+          virtual:0
+        });
+        return
+      } else{
+        id = parseInt(id);
+      }
+
+      this.props
+        .dispatch({
+          type: 'mall/virtualList',
+          payload: {
+            QueryVirtual: {
+              id
+            }
+          }
+        }).then(res=>{
+        console.log("carId result:",res);
+        this.setState({
+          virtual:res.value
+        });
+      }).catch(err=>console.log(err))
     }).catch(err => err);
   };
 
@@ -117,7 +146,7 @@ export default class BasicProfile extends Component {
 
   render() {
     const { mall: { orderList, orderListMeta, allPayRecord, allPayRecordMeta } } = this.props;
-    console.log("this.props order detail==>", this.props.mall);
+    const {virtual} = this.state;
     const breadcrumbList = [
       {
         title: '首页',
@@ -231,7 +260,7 @@ export default class BasicProfile extends Component {
           />
           <DescriptionList>
             <Description term="邮费"><b>{orderList.length > 0 && orderList[0].postPrice>=0?orderList[0].postPrice:"查无数据"}</b></Description>
-            <Description term="优惠券">-10.00</Description>
+            <Description term="优惠券"><b>{virtual}</b></Description>
             <Description term="应付金额"><b>{orderList.length > 0 && orderList[0].totalMoney>=0?orderList[0].totalMoney:"查无数据"}</b></Description>
           </DescriptionList>
         </Card>
