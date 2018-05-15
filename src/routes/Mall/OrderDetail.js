@@ -101,6 +101,20 @@ export default class BasicProfile extends Component {
     return orderStatus[status];
   };
 
+  getTaskTime = (strDate)=>{
+    let date = new Date(strDate);
+    let y = date.getFullYear();
+    let m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    let d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    let h = date.getHours();
+    let minute = date.getMinutes();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    let str = y+"-"+m+"-"+d+" "+h+":"+minute;
+    return str;
+  };
+
   render() {
     const { mall: { orderList, orderListMeta, allPayRecord, allPayRecordMeta } } = this.props;
     console.log("this.props order detail==>", this.props.mall);
@@ -192,6 +206,8 @@ export default class BasicProfile extends Component {
         }
       }
     ];
+
+    console.log("orderDetail:        ",orderList);
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card title="订单信息" style={{ marginBottom: 24 }} bordered={false}>
@@ -237,7 +253,7 @@ export default class BasicProfile extends Component {
           <DescriptionList>
             <Description term="物流公司">{orderList.length > 0 && orderList[0].sender?orderList[0].sender:"查无数据"}</Description>
             <Description term="运单号">{orderList.length > 0 && orderList[0].expressNumber?orderList[0].expressNumber:"查无数据"}</Description>
-            <Description term="发货时间">{orderList.length > 0 && orderList[0].sendTime?orderList[0].sendTime:"查无数据"}</Description>
+            <Description term="发货时间">{orderList.length > 0 && orderList[0].sendTime?this.getTaskTime(orderList[0].sendTime):"查无数据"}</Description>
             <Description term="收货地址">
               {orderList.length > 0 && orderList[0].address?orderList[0].address:"查无数据"}
             </Description>
