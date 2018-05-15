@@ -108,13 +108,18 @@ export default class CourseRecord extends PureComponent {
   handleSearch = (v, p, type) => {
     console.log('handleSearch ==> ', v.target.value);
     let keyJson = {};
-    if (type === 'state' && v !== 'all') {
+    if (type === 'state' && v.target.value === -3) {
+      this.courseList(p + 1);
+    }else{
       keyJson = { state: v.target.value };
+      this.courseList(p + 1, keyJson);
     }
-    if (type === 'state' && v === 'all') {
-      keyJson = {};
-    }
-    this.courseList(p + 1, keyJson);
+    // if (type === 'state' && v !== 'all') {
+    //   keyJson = { state: v.target.value };
+    //   this.courseList(p + 1, keyJson);
+    // }
+
+
   };
 
   render() {
@@ -126,7 +131,7 @@ export default class CourseRecord extends PureComponent {
           defaultValue="all"
           onChange={v => this.handleSearch(v, page, 'state')}
         >
-          <RadioButton value="all">全部</RadioButton>
+          <RadioButton value={-3}>全部</RadioButton>
           <RadioButton value={-2}>审核失败</RadioButton>
           {/*<RadioButton value={-1}>草稿</RadioButton>*/}
           <RadioButton value={0}>待审核</RadioButton>
