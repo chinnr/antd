@@ -204,6 +204,18 @@ export default {
             orderListMeta: data.me.order.getAll.meta
           }
         })
+        return data.me.order.getAll.data;
+      }
+    },
+
+    *virtualList({ payload }, { call, put }) {
+      const { data, errors } = yield call(mallService.virtualList, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        const  res = data.me.virtualGoods.getAll.data;
+        return res;
       }
     },
 
