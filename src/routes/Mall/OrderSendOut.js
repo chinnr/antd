@@ -76,9 +76,11 @@ export default class OrderSendOut extends Component {
           id:parseInt(this.id),
           status:5,
           expressNumber:[values.expressNumber],
-          sender:values.sender
-        }
-
+          sender:values.sender,
+          sendTime:new Date(Date.now())
+        };
+        // console.log("发货详情：   ",data);
+        // return;
         dispatch({
           type:'mall/updateOrderState',
           payload:{
