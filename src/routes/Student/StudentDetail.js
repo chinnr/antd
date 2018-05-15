@@ -1,9 +1,8 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Form, Radio, Select, Modal, Button, InputNumber, Divider, Avatar } from 'antd';
 import DescriptionList from '../../components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import {routerRedux} from "dva/router";
 import {successNotification} from "../../utils/utils";
 import {rootUrl, thumbnailPath} from "../../utils/constant";
 import styles from './StudentDetail.less';
@@ -107,6 +106,20 @@ class StudentDetail extends PureComponent {
     this.setState({
       visible: false
     });
+  };
+
+  getTaskTime = (strDate)=>{
+    let date = new Date(strDate);
+    let y = date.getFullYear();
+    let m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    let d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    let h = date.getHours();
+    let minute = date.getMinutes();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    let str = y+"-"+m+"-"+d+" "+h+":"+minute;
+    return str;
   };
 
   /**
@@ -247,7 +260,7 @@ class StudentDetail extends PureComponent {
         >
           {myVirtualGoods.length>=1&&myVirtualGoods.map((item,index)=>{
             return(
-              <p key={Math.random(0,10000)}>{index+1}，面值：{item.value}  数量：{item.count}</p>
+              <p key={Math.random(0,10000)}>{index+1}，面值：{item.value}  数量：{item.count} 有效期：{this.getTaskTime(item.cardExpireTime)}</p>
             )
           })}
         </Card>
