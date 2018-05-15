@@ -320,6 +320,8 @@ export function orderList(payload) {
             status
             statusDelivery
             sender
+            sendTime
+            cardId
             address
             tel
             expressNumber
