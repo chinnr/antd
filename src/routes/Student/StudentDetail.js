@@ -163,7 +163,8 @@ class StudentDetail extends PureComponent {
 
   render() {
     const { visible } = this.state;
-    const { loading, goodsList, mallLoading, studentDetail, virtualGoodsCount } = this.props;
+    const { loading, goodsList, mallLoading, studentDetail, virtualGoodsCount,myVirtualGoods } = this.props;
+    console.log("优惠券：     ",myVirtualGoods);
 
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
     const levelObj = {
@@ -238,6 +239,17 @@ class StudentDetail extends PureComponent {
             handleAdd={this.donateVirtualGoods}
             onPagination={this.onPagination}
           />
+        </Card>
+        <Card
+          style={{ marginBottom: 24 }}
+          title="优惠券信息"
+          bordered={false}
+        >
+          {myVirtualGoods.length>=1&&myVirtualGoods.map((item,index)=>{
+            return(
+              <p key={Math.random(0,10000)}>{index+1}，面值：{item.value}  数量：{item.count}</p>
+            )
+          })}
         </Card>
       </PageHeaderLayout>
     );
