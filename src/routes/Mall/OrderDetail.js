@@ -165,26 +165,6 @@ export default class BasicProfile extends Component {
       }
     ];
 
-    let countTotal = 0;
-    let goodsData;
-    if(orderList.length>0){
-      goodsData = orderList[0].gidJson;
-      if(goodsData&&goodsData.length>0){
-        goodsData.forEach(item=>{
-          countTotal+=item.count;
-          if(item.donate&&item.donate.length>0){
-            item.children = item.donate;
-            item.children.forEach(childrenItem=>{
-              countTotal+=childrenItem.count;
-            })
-          }
-
-        })
-      }
-    }else{
-      goodsData=[];
-    }
-
 
     if(orderList.length>0&&orderList[0].status == 2){
       this.payId = orderList[0].payId;
@@ -238,8 +218,26 @@ export default class BasicProfile extends Component {
         }
       }
     ];
+    let countTotal = 0;
+    let goodsData;
+    if(orderList.length>0){
+      goodsData = orderList[0].gidJson;
+      if(goodsData&&goodsData.length>0){
+        goodsData.forEach(item=>{
+          countTotal+=item.count;
+          if(item.donate&&item.donate.length>0){
+            item.children = item.donate;
+            item.children.forEach(childrenItem=>{
+              countTotal+=childrenItem.count;
+            })
+          }
 
-    console.log("orderDetail:        ",orderList);
+        })
+      }
+    }else{
+      goodsData=[];
+    }
+    console.log("商品信息:        ",goodsData);
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card title="订单信息" style={{ marginBottom: 24 }} bordered={false}>
@@ -259,7 +257,9 @@ export default class BasicProfile extends Component {
             defaultExpandAllRows={true}
             dataSource={goodsData}
             columns={goodsColumns}
-            rowKey="gid"
+            rowKey={(record=>{
+              return record.gid+Math.random(0,10000)
+            })}
           />
           <DescriptionList>
             <Description term="邮费"><b>{orderList.length > 0 && orderList[0].postPrice>=0?orderList[0].postPrice:"查无数据"}</b></Description>
