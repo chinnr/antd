@@ -9,15 +9,14 @@ export default {
   reducers: {
     storeAllBadges(state, { payload }) {
       let badges = [];
-      // if (payload.badgesMeta.page === 0) {
-      //   badges = payload.badges;
-      // } else {
-      //   badges = state.badges.concat(payload.badges);
-      // }
+      if (payload.badgesMeta.page === 0) {
+        badges = payload.badges;
+      } else {
+        console.log("合并 badges ")
 
-      badges = payload.badges;
+        badges = state.badges.concat(payload.badges);
+      }
       const badgesMeta = payload.badgesMeta;
-
       return {
         ...state,
         badges,
@@ -60,7 +59,7 @@ export default {
         const err = errors[0].message;
         throw new Error(err);
       } else {
-        console.log("getAllBadges ==>  ", data);
+        // console.log("getAllBadges ==>  ", data);
         const badges = data.me.badge.getAllBadge.data;
         const badgesMeta = data.me.badge.getAllBadge.meta;
         yield put({
