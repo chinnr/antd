@@ -59,7 +59,10 @@ export default class BasicProfile extends Component {
           timeSpan: timeSpan
         }
       }).then((res)=>{
-      this.getAllPayRecord(0, {id:this.payId});
+      // console.log("orderDetail:     ",res);
+      if(res[0].payId){
+        this.getAllPayRecord(0, {id:res[0].payId});
+      }
       let id = res[0].cardId;
       console.log("cardId:     ",id);
       if(!id) {
@@ -264,7 +267,7 @@ export default class BasicProfile extends Component {
             <Description term="应付金额"><b>{orderList.length > 0 && orderList[0].totalMoney>=0?orderList[0].totalMoney:"查无数据"}</b></Description>
           </DescriptionList>
         </Card>
-        {orderList.length > 0 && orderList[0].status == 2 &&
+        {orderList.length > 0 && orderList[0].status !== 0 &&
         <Card title="支付信息" style={{marginBottom: 24}} bordered={false}>
           <DescriptionList>
             <Description term="支付方式">{allPayRecord.length > 0 && allPayRecord[0].platformName?allPayRecord[0].platformName:"查无数据"}</Description>
@@ -277,7 +280,7 @@ export default class BasicProfile extends Component {
           </DescriptionList>
         </Card>
         }
-        {orderList.length>0&&orderList[0].status == 5&&
+        {orderList.length>0&&orderList[0].status === 1&&
         <Card title="物流信息" style={{ marginBottom: 24 }} bordered={false}>
           <DescriptionList>
             <Description term="物流公司">{orderList.length > 0 && orderList[0].sender?orderList[0].sender:"查无数据"}</Description>
