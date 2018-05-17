@@ -381,7 +381,7 @@ export default class GoodsEdit extends PureComponent {
         values.upTime = new Date(values.upTime).toISOString();
         values.downTime = new Date(values.downTime).toISOString();
         values.skuPrefix = this.skuPrefix;
-        values.skuPure = values.name;
+        // values.skuPure = values.name;
         if(!values.priority)
           values.priority =1000;
         if(values.isPackage===true){
