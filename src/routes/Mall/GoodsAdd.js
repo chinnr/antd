@@ -19,7 +19,7 @@ import {
   Pagination
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { thumbnailPath, rootUrl } from '../../utils/constant';
+import {rootUrl,originPath } from '../../utils/constant';
 import options from '../../utils/cascader-address-options';
 import styles from './index.less';
 import {doExchange, successNotification} from '../../utils/utils';
@@ -84,7 +84,7 @@ class GoodsAdd extends Component {
    */
   handlePreview = file => {
     this.setState({
-      previewImage: rootUrl + thumbnailPath + file.response.filename,
+      previewImage: rootUrl + originPath + file.response.filename,
       previewVisible: true
     });
   };
@@ -213,7 +213,7 @@ class GoodsAdd extends Component {
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
-      const imgUrl = rootUrl+thumbnailPath + fileName;
+      const imgUrl = rootUrl+originPath + fileName;
       param.success({ url: imgUrl });
     };
 

@@ -24,7 +24,7 @@ import colors from '../../static/colors';
 import styles from './index.less';
 import {successNotification} from '../../utils/utils';
 import options from '../../utils/cascader-address-options';
-import { rootUrl, thumbnailPath } from "../../utils/constant";
+import { rootUrl, originPath } from "../../utils/constant";
 // 引入编辑器以及编辑器样式
 import BraftEditor from 'braft-editor';
 import 'braft-editor/dist/braft.css';
@@ -190,7 +190,7 @@ export default class GoodsEdit extends PureComponent {
       }
     }
 
-    const prefix =rootUrl+thumbnailPath;
+    const prefix =rootUrl+originPath;
 
     const imgs = values.imgs.map(item=>{
       let url;
@@ -209,7 +209,7 @@ export default class GoodsEdit extends PureComponent {
     const listImg = [{
       uid: Math.random(-100,0),
       name: values.listImg,
-      url:rootUrl+thumbnailPath+values.listImg,
+      url:rootUrl+originPath+values.listImg,
       status: "done"
     }];
 
@@ -333,7 +333,7 @@ export default class GoodsEdit extends PureComponent {
   //图片预览
   handlePreview = file => {
 
-    const prefix =rootUrl+thumbnailPath;
+    const prefix =rootUrl+originPath;
     if(file.url.indexOf(prefix) === -1)
       file.url = prefix + file.url;
     console.log("预览地址：       ",file.url);
@@ -571,7 +571,7 @@ export default class GoodsEdit extends PureComponent {
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
       const fileName = JSON.parse(xhr.responseText).filename;
-      const imgUrl = rootUrl+thumbnailPath + fileName;
+      const imgUrl = rootUrl+originPath + fileName;
       param.success({ url: imgUrl });
     };
 
