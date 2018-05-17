@@ -173,16 +173,17 @@ class MallAdvertising extends PureComponent {
       };
       console.log('form >>> ', form);
       const { mall: { advertiseList } } = this.props;
-      delete this.record.advType;
+      delete record.advType;
       let copyList = [];
       advertiseList.map(item => {
         copyList.push(JSON.stringify(item));
       });
-      const i = copyList.indexOf(JSON.stringify(this.record));
+      const i = copyList.indexOf(JSON.stringify(record));
       // const i = advertiseList.indexOf(record);
       advertiseList.splice(i, 1, form);
-      console.log('i >>> ', i);
-      console.log('advertiseList >>> ', advertiseList);
+      console.log("copyList >>> ", copyList);
+      console.log("修改的图片 >>> ", record);
+      console.log("修改的图片索引 >>> ", i);
       this.props
         .dispatch({
           type: 'mall/updateAdvertiseList',
