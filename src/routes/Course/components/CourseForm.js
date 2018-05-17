@@ -43,7 +43,7 @@ export default class CourseForm extends PureComponent {
     const props = this.props;
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
         this.props.dispatch({
           type: "course/createCourseTemplate",
           payload: values
@@ -62,7 +62,7 @@ export default class CourseForm extends PureComponent {
   };
 
   onSelect(v, type) {
-    console.log("onSelect: ", v, type);
+    // console.log("onSelect: ", v, type);
     let _this = this;
     this.setState({
       [type] : v
@@ -75,14 +75,14 @@ export default class CourseForm extends PureComponent {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
 
-  // 获取团列表
+  // 获取证章列表
   getAllBadges = (p = 0) => {
     let _this = this;
     this.props
       .dispatch({
         type: "badge/getAllBadges",
         payload: {
-          query: { limit: 20, page: p },
+          query: { limit: 10, page: p },
           queryOption: {stage: 'stage'+_this.state.stage, level:'level'+_this.state.level}
         }
       })
@@ -91,8 +91,9 @@ export default class CourseForm extends PureComponent {
 
   getMoreBadges = () => {
     const {badgesMeta: {count, page}} = this.props.badge;
-    let maxPage = count/10 + 1;
-    if(page <= maxPage) {
+    let maxPage = Math.ceil(count / 10);
+    console.log("最大页数 >>. ", maxPage);
+    if(page < maxPage) {
       console.log("getMoreBadges >>>", page);
       this.getAllBadges(page+1)
     }
@@ -105,7 +106,7 @@ export default class CourseForm extends PureComponent {
 
   // 图片上传
   uploadImage = (filename, type) => {
-    console.log("uploadImage==>", type);
+    // console.log("uploadImage==>", type);
     if(type === 'cover'){
       this.setState({cover : filename})
       this.props.form.setFieldsValue({
@@ -151,7 +152,7 @@ export default class CourseForm extends PureComponent {
 
   render() {
     const { badges } = this.props.badge;
-    console.log("state gallery==>", this.state.gallery);
+    // console.log("state gallery==>", this.state.gallery);
     const {
       getFieldDecorator,
       getFieldsError,
