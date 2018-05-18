@@ -440,51 +440,51 @@ export default class NewTeam extends PureComponent {
                 ]
               })(<Input placeholder="所属公司" />)}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={usernameError ? 'error' : ''}
-              help={usernameError || ''}
-              label="团长账号"
-            >
-              {getFieldDecorator('username', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入团长账号'
-                  }
-                ]
-              })(<Input placeholder="团长账号" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={passwordError ? 'error' : ''}
-              help={passwordError || ''}
-              label="团长密码"
-            >
-              {getFieldDecorator('password', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入团长密码'
-                  }
-                ]
-              })(<Input placeholder="团长密码" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              validateStatus={teamNameError ? 'error' : ''}
-              help={teamNameError || ''}
-              label="团长姓名"
-            >
-              {getFieldDecorator('realName', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入团长姓名'
-                  }
-                ]
-              })(<Input placeholder="团长姓名" />)}
-            </FormItem>
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*validateStatus={usernameError ? 'error' : ''}*/}
+              {/*help={usernameError || ''}*/}
+              {/*label="团长账号"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('username', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请输入团长账号'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input placeholder="团长账号" />)}*/}
+            {/*</FormItem>*/}
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*validateStatus={passwordError ? 'error' : ''}*/}
+              {/*help={passwordError || ''}*/}
+              {/*label="团长密码"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('password', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请输入团长密码'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input placeholder="团长密码" />)}*/}
+            {/*</FormItem>*/}
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*validateStatus={teamNameError ? 'error' : ''}*/}
+              {/*help={teamNameError || ''}*/}
+              {/*label="团长姓名"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('realName', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请输入团长姓名'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input placeholder="团长姓名" />)}*/}
+            {/*</FormItem>*/}
             <FormItem
               {...formItemLayout}
               validateStatus={phoneError ? 'error' : ''}
