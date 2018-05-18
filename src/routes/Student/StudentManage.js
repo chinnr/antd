@@ -284,7 +284,7 @@ class StudentManage extends PureComponent {
       {
         title: '姓名',
         key: 'name',
-        render: (record) => (<span>{record.base.profile.realName}</span>)
+        render: (record) => (<span>{record.base&&record.base.profile.realName}</span>)
       },
       {
         title: '团属',
@@ -294,7 +294,7 @@ class StudentManage extends PureComponent {
       {
         title: '电话号码',
         key: 'phone',
-        render: (record) => (<span>{record.base.phone}</span>)
+        render: (record) => (<span>{record.base&&record.base.phone}</span>)
       },
       {
         title: '操作',
