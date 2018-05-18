@@ -39,7 +39,7 @@ export default class TableForm extends PureComponent {
       render: (text, record) => {
         return (
           <span>
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
+            <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record)}>
               <a>删除</a>
             </Popconfirm>
           </span>
@@ -52,10 +52,28 @@ export default class TableForm extends PureComponent {
     this.getCoachList();
   }
 
-  remove(key) {
-    const newData = this.state.data.filter(item => item.key !== key);
-    this.setState({ data: newData });
-    this.props.onChange(newData);
+  remove(record) {
+    console.log("record:  ",record);
+    const uid = record.uid;
+    const _this = this;
+    // const newData = this.state.data.filter(item => item.key !== key);
+    // this.setState({ data: newData });
+    this.props
+      .dispatch({
+        type: 'team/addCoach',
+        payload: {
+          gid: this.props.gid,
+          uids: [uid],
+          isOn: false
+        }
+      })
+      .then(() => {
+        successNotification('删除教官成功!', function() {
+          _this.getCoachList();
+          return false;
+        });
+      })
+      .catch(err => {});
   }
 
 
