@@ -11,14 +11,30 @@ export function deleteTeam(gid) {
   return graphRequest(deleteTeam,gid,'young-admin');
 }
 
+//通过phone查询user
+export function queryByPhone(payload) {
+  const queryByPhone = `query queryPhone($phone:String!) {
+  me{
+    userOneByPhone(phone:$phone){
+      uid
+    }
+  }
+}`;
+
+  return graphRequest(queryByPhone, payload, 'young-admin');
+}
+
 // 创建团
 export function createTeam(argv) {
-  const createTeamMutation = `mutation newHead($formHead: FormHeadRegister!,$formGroup: FormGroupNew!){
+  const createTeamMutation = `mutation newGroup($uid: String!,$formGroup: FormGroupNew!){
     me{
-      newHead(formHead: $formHead, formGroup: $formGroup){
+      newGroup(uid: $uid, form: $formGroup){
         uid
-        number
-        level
+        name
+        province
+        city
+        district
+        address
       }
     }
   }`;

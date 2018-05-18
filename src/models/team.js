@@ -39,6 +39,19 @@ export default {
         return deleteMsg;
       }
     },
+
+    *queryPhone({ payload }, { call, put }){
+      console.log("phone!!!!!!!");
+      const { data, errors } = yield call(teamService.queryByPhone, payload);
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log('user==>', data);
+        return data.me.userOneByPhone.uid;
+      }
+    },
+
     *createTeam({ payload }, { call, put }) {
       const { data, errors } = yield call(teamService.createTeam, payload);
       if (errors) {

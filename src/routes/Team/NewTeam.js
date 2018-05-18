@@ -163,38 +163,74 @@ export default class NewTeam extends PureComponent {
           console.log('表单 values ', values);
           this.props
             .dispatch({
-              type: 'team/createTeam',
-              payload: {
-                formHead: {
-                  username: values.username,
-                  nickname: values.realName,
-                  realName: values.realName,
-                  password: values.password,
-                  phone: '86-' + values.phone,
-                  level: 'level4'
-                },
-                formGroup: {
-                  name: values.name,
-                  type: values.type === 'main' ? '' : values.type,
-                  groupLevel: values.groupLevel,
-                  createdTime: values.createdTime.toISOString(),
-                  province: this.dragLocationInfo.province,
-                  city: this.dragLocationInfo.city,
-                  district: this.dragLocationInfo.district,
-                  address: this.dragLocationInfo.format,
-                  longitude: this.dragLocationInfo.longitude,
-                  latitude: this.dragLocationInfo.latitude,
-                  provinceLim: values.area[0],
-                  cityLim: values.area[1]
-                }
+              type: 'team/queryPhone',
+              payload:{
+                phone:values.phone
               }
-            })
-            .then(() => {
+            }).then(res=>{
+            console.log("uid:      ",res);
+            this.props
+              .dispatch({
+                type: 'team/createTeam',
+                payload: {
+                  uid: res,
+                  formGroup: {
+                    name: values.name,
+                    type: values.type === 'main' ? '' : values.type,
+                    groupLevel: values.groupLevel,
+                    createdTime: values.createdTime.toISOString(),
+                    province: this.addressInfo.province,
+                    city: this.addressInfo.city,
+                    district: this.addressInfo.district,
+                    address: this.addressInfo.format,
+                    longitude: this.addressInfo.longitude,
+                    latitude: this.addressInfo.latitude,
+                    provinceLim: values.area[0],
+                    cityLim: values.area[1]
+                  }
+                }
+              }).then(() => {
+              console.log("新建团队成功")
               successNotification('新建团队成功!', function() {
                 return false;
               });
             })
-            .catch(err => err);
+              .catch(err => err);
+          }).catch(err=>console.log(err));
+          // this.props
+          //   .dispatch({
+          //     type: 'team/createTeam',
+          //     payload: {
+          //       formHead: {
+          //         username: values.username,
+          //         nickname: values.realName,
+          //         realName: values.realName,
+          //         password: values.password,
+          //         phone: '86-' + values.phone,
+          //         level: 'level4'
+          //       },
+          //       formGroup: {
+          //         name: values.name,
+          //         type: values.type === 'main' ? '' : values.type,
+          //         groupLevel: values.groupLevel,
+          //         createdTime: values.createdTime.toISOString(),
+          //         province: this.dragLocationInfo.province,
+          //         city: this.dragLocationInfo.city,
+          //         district: this.dragLocationInfo.district,
+          //         address: this.dragLocationInfo.format,
+          //         longitude: this.dragLocationInfo.longitude,
+          //         latitude: this.dragLocationInfo.latitude,
+          //         provinceLim: values.area[0],
+          //         cityLim: values.area[1]
+          //       }
+          //     }
+          //   })
+          //   .then(() => {
+          //     successNotification('新建团队成功!', function() {
+          //       return false;
+          //     });
+          //   })
+          //   .catch(err => err);
         }
       });
     } else {
@@ -207,38 +243,42 @@ export default class NewTeam extends PureComponent {
           console.log('values: ', values);
           this.props
             .dispatch({
-              type: 'team/createTeam',
-              payload: {
-                formHead: {
-                  username: values.username,
-                  nickname: values.realName,
-                  realName: values.realName,
-                  password: values.password,
-                  phone: '86-' + values.phone,
-                  level: 'level4'
-                },
-                formGroup: {
-                  name: values.name,
-                  type: values.type === 'main' ? '' : values.type,
-                  groupLevel: values.groupLevel,
-                  createdTime: values.createdTime.toISOString(),
-                  province: this.addressInfo.province,
-                  city: this.addressInfo.city,
-                  district: this.addressInfo.district,
-                  address: this.addressInfo.format,
-                  longitude: this.addressInfo.longitude,
-                  latitude: this.addressInfo.latitude,
-                  provinceLim: values.area[0],
-                  cityLim: values.area[1]
-                }
+              type: 'team/queryPhone',
+              payload:{
+                phone:values.phone
               }
-            }).then(() => {
-            console.log("新建团队成功")
-            successNotification('新建团队成功!', function() {
-              return false;
-            });
-          })
-            .catch(err => err);
+            }).then(res=>{
+              console.log("res:      ",res);
+            this.props
+              .dispatch({
+                type: 'team/createTeam',
+                payload: {
+                  uid: res,
+                  formGroup: {
+                    name: values.name,
+                    type: values.type === 'main' ? '' : values.type,
+                    groupLevel: values.groupLevel,
+                    createdTime: values.createdTime.toISOString(),
+                    province: this.addressInfo.province,
+                    city: this.addressInfo.city,
+                    district: this.addressInfo.district,
+                    address: this.addressInfo.format,
+                    longitude: this.addressInfo.longitude,
+                    latitude: this.addressInfo.latitude,
+                    provinceLim: values.area[0],
+                    cityLim: values.area[1]
+                  }
+                }
+              }).then(() => {
+              console.log("新建团队成功")
+              successNotification('新建团队成功!', function() {
+                return false;
+              });
+            })
+              .catch(err => err);
+          }).catch(err=>console.log(err));
+
+
         }
       });
     }
