@@ -173,10 +173,17 @@ class MallAdvertising extends PureComponent {
       };
       console.log('form >>> ', form);
       const { mall: { advertiseList } } = this.props;
-      const i = advertiseList.indexOf(record);
+      delete record.advType;
+      let copyList = [];
+      advertiseList.map(item => {
+        copyList.push(JSON.stringify(item));
+      });
+      const i = copyList.indexOf(JSON.stringify(record));
+      // const i = advertiseList.indexOf(record);
       advertiseList.splice(i, 1, form);
-      console.log('i >>> ', i);
-      console.log('advertiseList >>> ', advertiseList);
+      console.log("copyList >>> ", copyList);
+      console.log("修改的图片 >>> ", record);
+      console.log("修改的图片索引 >>> ", i);
       this.props
         .dispatch({
           type: 'mall/updateAdvertiseList',
@@ -202,7 +209,13 @@ class MallAdvertising extends PureComponent {
   updateAdvertiseList = form => {
     const _this = this;
     const { mall: { advertiseList } } = this.props;
-    const i = advertiseList.indexOf(this.record);
+    delete this.record.advType;
+    let copyList = [];
+    advertiseList.map(item => {
+      copyList.push(JSON.stringify(item));
+    });
+    const i = copyList.indexOf(JSON.stringify(this.record));
+    // const i = advertiseList.indexOf(this.record);
     advertiseList.splice(i, 1, form);
     this.setState({
       visible: false
@@ -257,8 +270,21 @@ class MallAdvertising extends PureComponent {
   deleteAdv = (record) => {
     const _this = this;
     const { mall: { advertiseList } } = this.props;
-    const i = advertiseList.indexOf(record);
+    delete record.advType;
+    let copyList = [];
+    advertiseList.map(item => {
+      console.log("item >>> ", item);
+      copyList.push(JSON.stringify(item));
+    });
+    const i = copyList.indexOf(JSON.stringify(record));
+    console.log("copyList >>> ", copyList);
+    console.log("删除的图片索引 >>> ", i);
     advertiseList.splice(i, 1);
+    // console.log("所有的图片 >>> ", advertiseList);
+    // console.log("要删除的图片 >>> ", record);
+    // console.log("删除的图片索引 >>> ", i);
+    console.log("删除后的图片 >>> ", advertiseList);
+    // return ;
     this.setState({
       visible: false
     });
@@ -319,7 +345,7 @@ class MallAdvertising extends PureComponent {
   render() {
     const { mall, loading } = this.props;
     const { visible } = this.state;
-    console.log('advertiseList ', mall.advertiseList);
+    // console.log('advertiseList ', mall.advertiseList);
     // console.log('mall.advertiseList  ', mall.advertiseList);
     const list = mall.advertiseList;
     let _list = JSON.parse(JSON.stringify(list));
