@@ -568,6 +568,19 @@ export default class NewTeam extends PureComponent {
                 ]
               })(<Input placeholder="团长姓名"/>)}
             </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="团长电话"
+            >
+              {getFieldDecorator('phone', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入团长电话'
+                  }
+                ]
+              })(<Input placeholder="团长电话"/>)}
+            </FormItem>
 
 
             {/*<Row>*/}
