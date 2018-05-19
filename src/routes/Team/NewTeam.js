@@ -570,16 +570,16 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="团长电话"
+              label="团长联系方式"
             >
               {getFieldDecorator('phone', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入团长电话'
+                    message: '请输入团长联系方式'
                   }
                 ]
-              })(<Input placeholder="团长电话"/>)}
+              })(<Input placeholder="团长联系方式"/>)}
             </FormItem>
 
 
@@ -590,16 +590,16 @@ export default class NewTeam extends PureComponent {
 
             {/*<FormItem*/}
             {/*{...formItemLayout}*/}
-            {/*label="团长电话"*/}
+            {/*label="团长联系方式"*/}
             {/*>*/}
             {/*{getFieldDecorator('phone', {*/}
             {/*rules: [*/}
             {/*{*/}
             {/*required: true,*/}
-            {/*message: '请输入团长电话'*/}
+            {/*message: '请输入团长联系方式'*/}
             {/*}*/}
             {/*]*/}
-            {/*})(<Input placeholder="团长电话" />)}*/}
+            {/*})(<Input placeholder="团长联系方式" />)}*/}
             {/*<Button type="primary" style={{position:'absolute',right:'-74px',top:'-8px'}} onClick={this.checkPhone}>检查</Button>*/}
             {/*</FormItem>*/}
             {/*<FormItem*/}
@@ -610,7 +610,7 @@ export default class NewTeam extends PureComponent {
             {/*rules: [*/}
             {/*{*/}
             {/*required: true,*/}
-            {/*message: '请检查团长电话'*/}
+            {/*message: '请检查团长联系方式'*/}
             {/*}*/}
             {/*]*/}
             {/*})(<Input disabled={true} placeholder="团长编号" />)}*/}
@@ -623,7 +623,7 @@ export default class NewTeam extends PureComponent {
             {/*rules: [*/}
             {/*{*/}
             {/*required: true,*/}
-            {/*message: '请检查团长电话'*/}
+            {/*message: '请检查团长联系方式'*/}
             {/*}*/}
             {/*]*/}
             {/*})(<Input disabled={true} placeholder="团长姓名" />)}*/}
