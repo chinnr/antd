@@ -168,12 +168,12 @@ export default class NewTeam extends PureComponent {
                 phone:values.phone
               }
             }).then(res=>{
-            console.log("uid:      ",res);
+            console.log("uid:      ",res.uid);
             this.props
               .dispatch({
                 type: 'team/createTeam',
                 payload: {
-                  uid: res,
+                  uid: res.uid,
                   formGroup: {
                     name: values.name,
                     type: values.type === 'main' ? '' : values.type,
@@ -248,12 +248,12 @@ export default class NewTeam extends PureComponent {
                 phone:values.phone
               }
             }).then(res=>{
-              console.log("res:      ",res);
+              console.log("uid:      ",res.uid);
             this.props
               .dispatch({
                 type: 'team/createTeam',
                 payload: {
-                  uid: res,
+                  uid: res.uid,
                   formGroup: {
                     name: values.name,
                     type: values.type === 'main' ? '' : values.type,
