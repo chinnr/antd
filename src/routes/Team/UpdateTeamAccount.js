@@ -294,7 +294,7 @@ export default class UpdateTeamAccount extends PureComponent {
               {...formItemLayout}
               validateStatus={phoneError ? 'error' : ''}
               help={phoneError || ''}
-              label="团长电话"
+              label="团长联系方式"
             >
               {getFieldDecorator('phone', {
                 rules: [
@@ -303,7 +303,7 @@ export default class UpdateTeamAccount extends PureComponent {
                     message: '请输入团长电话'
                   }
                 ]
-              })(<Input placeholder="团长电话" />)}
+              })(<Input placeholder="团长联系方式" />)}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
