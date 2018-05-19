@@ -144,6 +144,7 @@ export default class UpdateTeamAccount extends PureComponent {
     });
 
     this.props.form.setFieldsValue({
+      username:values.username,
       name: values.name,
       nickname: values.nickname,
       phone: values.head.phone ? values.head.phone.replace('86-', '') : '',
