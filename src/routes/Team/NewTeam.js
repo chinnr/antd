@@ -163,76 +163,76 @@ export default class NewTeam extends PureComponent {
         if (!err) {
           console.log('你拖动了标记, 将采用新标记', this.dragLocationInfo);
           console.log('表单 values ', values);
-          this.props
-            .dispatch({
-              type: 'team/queryPhone',
-              payload:{
-                phone:values.phone
-              }
-            }).then(res=>{
-            console.log("uid:      ",res.uid);
-            this.props
-              .dispatch({
-                type: 'team/createTeam',
-                payload: {
-                  uid: res.uid,
-                  formGroup: {
-                    name: values.name,
-                    type: values.type === 'main' ? '' : values.type,
-                    groupLevel: values.groupLevel,
-                    createdTime: values.createdTime.toISOString(),
-                    province: this.addressInfo.province,
-                    city: this.addressInfo.city,
-                    district: this.addressInfo.district,
-                    address: this.addressInfo.format,
-                    longitude: this.addressInfo.longitude,
-                    latitude: this.addressInfo.latitude,
-                    provinceLim: values.area[0],
-                    cityLim: values.area[1]
-                  }
-                }
-              }).then(() => {
-              console.log("新建团队成功")
-              successNotification('新建团队成功!', function() {
-                return false;
-              });
-            })
-              .catch(err => err);
-          }).catch(err=>console.log(err));
           // this.props
           //   .dispatch({
-          //     type: 'team/createTeam',
-          //     payload: {
-          //       formHead: {
-          //         username: values.username,
-          //         nickname: values.realName,
-          //         realName: values.realName,
-          //         password: values.password,
-          //         phone: '86-' + values.phone,
-          //         level: 'level4'
-          //       },
-          //       formGroup: {
-          //         name: values.name,
-          //         type: values.type === 'main' ? '' : values.type,
-          //         groupLevel: values.groupLevel,
-          //         createdTime: values.createdTime.toISOString(),
-          //         province: this.dragLocationInfo.province,
-          //         city: this.dragLocationInfo.city,
-          //         district: this.dragLocationInfo.district,
-          //         address: this.dragLocationInfo.format,
-          //         longitude: this.dragLocationInfo.longitude,
-          //         latitude: this.dragLocationInfo.latitude,
-          //         provinceLim: values.area[0],
-          //         cityLim: values.area[1]
-          //       }
+          //     type: 'team/queryPhone',
+          //     payload:{
+          //       phone:values.phone
           //     }
-          //   })
-          //   .then(() => {
+          //   }).then(res=>{
+          //   console.log("uid:      ",res.uid);
+          //   this.props
+          //     .dispatch({
+          //       type: 'team/createTeam',
+          //       payload: {
+          //         uid: res.uid,
+          //         formGroup: {
+          //           name: values.name,
+          //           type: values.type === 'main' ? '' : values.type,
+          //           groupLevel: values.groupLevel,
+          //           createdTime: values.createdTime.toISOString(),
+          //           province: this.addressInfo.province,
+          //           city: this.addressInfo.city,
+          //           district: this.addressInfo.district,
+          //           address: this.addressInfo.format,
+          //           longitude: this.addressInfo.longitude,
+          //           latitude: this.addressInfo.latitude,
+          //           provinceLim: values.area[0],
+          //           cityLim: values.area[1]
+          //         }
+          //       }
+          //     }).then(() => {
+          //     console.log("新建团队成功")
           //     successNotification('新建团队成功!', function() {
           //       return false;
           //     });
           //   })
-          //   .catch(err => err);
+          //     .catch(err => err);
+          // }).catch(err=>console.log(err));
+          this.props
+            .dispatch({
+              type: 'team/createTeam',
+              payload: {
+                formHead: {
+                  username: values.username,
+                  nickname: values.realName,
+                  realName: values.realName,
+                  password: values.password,
+                  phone: '86-' + values.phone,
+                  level: 'level4'
+                },
+                formGroup: {
+                  name: values.name,
+                  type: values.type === 'main' ? '' : values.type,
+                  groupLevel: values.groupLevel,
+                  createdTime: values.createdTime.toISOString(),
+                  province: this.dragLocationInfo.province,
+                  city: this.dragLocationInfo.city,
+                  district: this.dragLocationInfo.district,
+                  address: this.dragLocationInfo.format,
+                  longitude: this.dragLocationInfo.longitude,
+                  latitude: this.dragLocationInfo.latitude,
+                  provinceLim: values.area[0],
+                  cityLim: values.area[1]
+                }
+              }
+            })
+            .then(() => {
+              successNotification('新建团队成功!', function() {
+                return false;
+              });
+            })
+            .catch(err => err);
         }
       });
     } else {
@@ -243,43 +243,77 @@ export default class NewTeam extends PureComponent {
         }
         if (!err) {
           console.log('values: ', values);
+          // this.props
+          //   .dispatch({
+          //     type: 'team/queryPhone',
+          //     payload:{
+          //       phone:values.phone
+          //     }
+          //   }).then(res=>{
+          //     console.log("uid:      ",res.uid);
+          //   this.props
+          //     .dispatch({
+          //       type: 'team/createTeam',
+          //       payload: {
+          //         uid: res.uid,
+          //         formGroup: {
+          //           name: values.name,
+          //           type: values.type === 'main' ? '' : values.type,
+          //           groupLevel: values.groupLevel,
+          //           createdTime: values.createdTime.toISOString(),
+          //           province: this.addressInfo.province,
+          //           city: this.addressInfo.city,
+          //           district: this.addressInfo.district,
+          //           address: this.addressInfo.format,
+          //           longitude: this.addressInfo.longitude,
+          //           latitude: this.addressInfo.latitude,
+          //           provinceLim: values.area[0],
+          //           cityLim: values.area[1]
+          //         }
+          //       }
+          //     }).then(() => {
+          //     console.log("新建团队成功")
+          //     successNotification('新建团队成功!', function() {
+          //       return false;
+          //     });
+          //   })
+          //     .catch(err => err);
+          // }).catch(err=>console.log(err));
+
           this.props
             .dispatch({
-              type: 'team/queryPhone',
-              payload:{
-                phone:values.phone
-              }
-            }).then(res=>{
-              console.log("uid:      ",res.uid);
-            this.props
-              .dispatch({
-                type: 'team/createTeam',
-                payload: {
-                  uid: res.uid,
-                  formGroup: {
-                    name: values.name,
-                    type: values.type === 'main' ? '' : values.type,
-                    groupLevel: values.groupLevel,
-                    createdTime: values.createdTime.toISOString(),
-                    province: this.addressInfo.province,
-                    city: this.addressInfo.city,
-                    district: this.addressInfo.district,
-                    address: this.addressInfo.format,
-                    longitude: this.addressInfo.longitude,
-                    latitude: this.addressInfo.latitude,
-                    provinceLim: values.area[0],
-                    cityLim: values.area[1]
-                  }
+              type: 'team/createTeam',
+              payload: {
+                formHead: {
+                  username: values.username,
+                  nickname: values.realName,
+                  realName: values.realName,
+                  password: values.password,
+                  phone: '86-' + values.phone,
+                  level: 'level4'
+                },
+                formGroup: {
+                  name: values.name,
+                  type: values.type === 'main' ? '' : values.type,
+                  groupLevel: values.groupLevel,
+                  createdTime: values.createdTime.toISOString(),
+                  province: this.addressInfo.province,
+                  city: this.addressInfo.city,
+                  district: this.addressInfo.district,
+                  address: this.addressInfo.format,
+                  longitude: this.addressInfo.longitude,
+                  latitude: this.addressInfo.latitude,
+                  provinceLim: values.area[0],
+                  cityLim: values.area[1]
                 }
-              }).then(() => {
-              console.log("新建团队成功")
-              successNotification('新建团队成功!', function() {
-                return false;
-              });
-            })
-              .catch(err => err);
-          }).catch(err=>console.log(err));
-
+              }
+            }).then(() => {
+            console.log("新建团队成功")
+            successNotification('新建团队成功!', function() {
+              return false;
+            });
+          })
+            .catch(err => err);
 
         }
       });
@@ -489,51 +523,98 @@ export default class NewTeam extends PureComponent {
                 ]
               })(<Input placeholder="所属公司" />)}
             </FormItem>
-            <Row>
-              <Col xs={24} sm={24} md={7} lg={7} xl={7}><h1 className={styles.binding}>绑定团长</h1></Col>
-              <Col md={17} lg={17} xl={17}></Col>
-            </Row>
+            <FormItem
+            {...formItemLayout}
+            validateStatus={usernameError ? 'error' : ''}
+            help={usernameError || ''}
+            label="团长账号"
+            >
+            {getFieldDecorator('username', {
+            rules: [
+            {
+            required: true,
+            message: '请输入团长账号'
+            }
+            ]
+            })(<Input placeholder="团长账号" />)}
+            </FormItem>
+            <FormItem
+            {...formItemLayout}
+            validateStatus={passwordError ? 'error' : ''}
+            help={passwordError || ''}
+            label="团长密码"
+            >
+            {getFieldDecorator('password', {
+            rules: [
+            {
+            required: true,
+            message: '请输入团长密码'
+            }
+            ]
+            })(<Input placeholder="团长密码" />)}
+            </FormItem>
+            <FormItem
+            {...formItemLayout}
+            validateStatus={teamNameError ? 'error' : ''}
+            help={teamNameError || ''}
+            label="团长姓名"
+            >
+            {getFieldDecorator('realName', {
+            rules: [
+            {
+            required: true,
+            message: '请输入团长姓名'
+            }
+            ]
+            })(<Input placeholder="团长姓名" />)}
+            </FormItem>
 
-            <FormItem
-              {...formItemLayout}
-              label="团长电话"
-            >
-              {getFieldDecorator('phone', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入团长电话'
-                  }
-                ]
-              })(<Input placeholder="团长电话" />)}
-              <Button type="primary" style={{position:'absolute',right:'-74px',top:'-8px'}} onClick={this.checkPhone}>检查</Button>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="团长编号"
-            >
-              {getFieldDecorator('userNumber', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请检查团长电话'
-                  }
-                ]
-              })(<Input disabled={true} placeholder="团长编号" />)}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="团长姓名"
-            >
-              {getFieldDecorator('userName', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请检查团长电话'
-                  }
-                ]
-              })(<Input disabled={true} placeholder="团长姓名" />)}
-            </FormItem>
+
+            {/*<Row>*/}
+              {/*<Col xs={24} sm={24} md={7} lg={7} xl={7}><h1 className={styles.binding}>绑定团长</h1></Col>*/}
+              {/*<Col md={17} lg={17} xl={17}></Col>*/}
+            {/*</Row>*/}
+
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*label="团长电话"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('phone', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请输入团长电话'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input placeholder="团长电话" />)}*/}
+              {/*<Button type="primary" style={{position:'absolute',right:'-74px',top:'-8px'}} onClick={this.checkPhone}>检查</Button>*/}
+            {/*</FormItem>*/}
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*label="团长编号"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('userNumber', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请检查团长电话'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input disabled={true} placeholder="团长编号" />)}*/}
+            {/*</FormItem>*/}
+            {/*<FormItem*/}
+              {/*{...formItemLayout}*/}
+              {/*label="团长姓名"*/}
+            {/*>*/}
+              {/*{getFieldDecorator('userName', {*/}
+                {/*rules: [*/}
+                  {/*{*/}
+                    {/*required: true,*/}
+                    {/*message: '请检查团长电话'*/}
+                  {/*}*/}
+                {/*]*/}
+              {/*})(<Input disabled={true} placeholder="团长姓名" />)}*/}
+            {/*</FormItem>*/}
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"
