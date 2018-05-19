@@ -17,6 +17,12 @@ export function queryByPhone(payload) {
   me{
     userOneByPhone(phone:$phone){
       uid
+      number
+      base{
+        profile{
+          realName
+        }
+      }
     }
   }
 }`;
