@@ -48,7 +48,7 @@ export default {
         throw new Error(err);
       } else {
         console.log('user==>', data);
-        return data.me.userOneByPhone.uid;
+        return data.me.userOneByPhone;
       }
     },
 
