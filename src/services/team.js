@@ -31,16 +31,31 @@ export function queryByPhone(payload) {
 }
 
 // 创建团
+// export function createTeam(argv) {
+//   const createTeamMutation = `mutation newGroup($uid: String!,$formGroup: FormGroupNew!){
+//     me{
+//       newGroup(uid: $uid, form: $formGroup){
+//         uid
+//         name
+//         province
+//         city
+//         district
+//         address
+//       }
+//     }
+//   }`;
+//
+//   return graphRequest(createTeamMutation, argv, 'young-admin');
+// }
+
+// 创建团
 export function createTeam(argv) {
-  const createTeamMutation = `mutation newGroup($uid: String!,$formGroup: FormGroupNew!){
+  const createTeamMutation = `mutation newHead($formHead: FormHeadRegister!,$formGroup: FormGroupNew!){
     me{
-      newGroup(uid: $uid, form: $formGroup){
+      newHead(formHead: $formHead, formGroup: $formGroup){
         uid
-        name
-        province
-        city
-        district
-        address
+        number
+        level
       }
     }
   }`;
