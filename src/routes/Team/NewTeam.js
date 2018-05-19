@@ -10,7 +10,9 @@ import {
   Modal,
   Radio,
   Cascader,
-  Spin
+  Spin,
+  Row,
+  Col
 } from 'antd';
 import moment from 'moment';
 import { Map, Marker } from 'react-amap';
@@ -284,6 +286,27 @@ export default class NewTeam extends PureComponent {
     }
   };
 
+  checkPhone = ()=>{
+    console.log("check");
+    const{form} = this.props;
+    const phone = form.getFieldValue("phone");
+    this.props
+      .dispatch({
+        type: 'team/queryPhone',
+        payload:{
+          phone
+        }
+      }).then(res=>{
+        console.log(res);
+        form.setFieldsValue({
+          userName:res.base.profile.realName,
+          userNumber:res.number
+        })
+    }).catch(err=>{
+      alert(err)
+    })
+  };
+
   hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
   }
@@ -345,8 +368,6 @@ export default class NewTeam extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              validateStatus={teamNameError ? 'error' : ''}
-              help={teamNameError || ''}
               label="团名称"
             >
               {getFieldDecorator('name', {
@@ -361,8 +382,6 @@ export default class NewTeam extends PureComponent {
 
             <FormItem
               {...formItemLayout}
-              validateStatus={groupLevelError ? 'error' : ''}
-              help={groupLevelError || ''}
               label="团部级别"
             >
               {getFieldDecorator('groupLevel', {
@@ -378,8 +397,6 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
               label="成立时间"
             >
               {getFieldDecorator('createdTime', {
@@ -399,8 +416,6 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
               label="团类型"
             >
               {getFieldDecorator('type', {
@@ -420,8 +435,6 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={createTimeError ? 'error' : ''}
-              help={createTimeError || ''}
               label="地区"
             >
               {getFieldDecorator('area', {
@@ -436,8 +449,6 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={addressError ? 'error' : ''}
-              help={addressError || ''}
               label="团部地址"
             >
               {getFieldDecorator('address', {
@@ -467,8 +478,6 @@ export default class NewTeam extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              validateStatus={usernameError ? 'error' : ''}
-              help={usernameError || ''}
               label="所属公司"
             >
               {getFieldDecorator('company', {
@@ -480,55 +489,13 @@ export default class NewTeam extends PureComponent {
                 ]
               })(<Input placeholder="所属公司" />)}
             </FormItem>
-            {/*<FormItem*/}
-              {/*{...formItemLayout}*/}
-              {/*validateStatus={usernameError ? 'error' : ''}*/}
-              {/*help={usernameError || ''}*/}
-              {/*label="团长账号"*/}
-            {/*>*/}
-              {/*{getFieldDecorator('username', {*/}
-                {/*rules: [*/}
-                  {/*{*/}
-                    {/*required: true,*/}
-                    {/*message: '请输入团长账号'*/}
-                  {/*}*/}
-                {/*]*/}
-              {/*})(<Input placeholder="团长账号" />)}*/}
-            {/*</FormItem>*/}
-            {/*<FormItem*/}
-              {/*{...formItemLayout}*/}
-              {/*validateStatus={passwordError ? 'error' : ''}*/}
-              {/*help={passwordError || ''}*/}
-              {/*label="团长密码"*/}
-            {/*>*/}
-              {/*{getFieldDecorator('password', {*/}
-                {/*rules: [*/}
-                  {/*{*/}
-                    {/*required: true,*/}
-                    {/*message: '请输入团长密码'*/}
-                  {/*}*/}
-                {/*]*/}
-              {/*})(<Input placeholder="团长密码" />)}*/}
-            {/*</FormItem>*/}
-            {/*<FormItem*/}
-              {/*{...formItemLayout}*/}
-              {/*validateStatus={teamNameError ? 'error' : ''}*/}
-              {/*help={teamNameError || ''}*/}
-              {/*label="团长姓名"*/}
-            {/*>*/}
-              {/*{getFieldDecorator('realName', {*/}
-                {/*rules: [*/}
-                  {/*{*/}
-                    {/*required: true,*/}
-                    {/*message: '请输入团长姓名'*/}
-                  {/*}*/}
-                {/*]*/}
-              {/*})(<Input placeholder="团长姓名" />)}*/}
-            {/*</FormItem>*/}
+            <Row>
+              <Col xs={24} sm={24} md={7} lg={7} xl={7}><h1 className={styles.binding}>绑定团长</h1></Col>
+              <Col md={17} lg={17} xl={17}></Col>
+            </Row>
+
             <FormItem
               {...formItemLayout}
-              validateStatus={phoneError ? 'error' : ''}
-              help={phoneError || ''}
               label="团长电话"
             >
               {getFieldDecorator('phone', {
@@ -539,12 +506,40 @@ export default class NewTeam extends PureComponent {
                   }
                 ]
               })(<Input placeholder="团长电话" />)}
+              <Button type="primary" style={{position:'absolute',right:'-74px',top:'-8px'}} onClick={this.checkPhone}>检查</Button>
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="团长编号"
+            >
+              {getFieldDecorator('userNumber', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请检查团长电话'
+                  }
+                ]
+              })(<Input disabled={true} placeholder="团长编号" />)}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="团长姓名"
+            >
+              {getFieldDecorator('userName', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请检查团长电话'
+                  }
+                ]
+              })(<Input disabled={true} placeholder="团长姓名" />)}
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={submitting}
+                disabled={this.hasErrors(getFieldsError())}
               >
                 提交
               </Button>
