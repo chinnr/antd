@@ -57,7 +57,7 @@ export default class TeamList extends Component {
         render: (text, record) => moment(record.createdAt).format('YYYY-MM-DD')
       },*/
       {
-        title: '团长电话',
+        title: '团长联系方式',
         dataIndex: 'phone',
         key: 'phone',
         render: (text, record) => (record.head.phone ? record.head.phone.replace('86-', '') : '')
