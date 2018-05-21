@@ -279,6 +279,13 @@ export default class TeamList extends Component {
         if (fieldsValue.type === 'main') {
           fieldsValue.type = '';
         }
+        if(fieldsValue.city === "") {
+          // fieldsValue.city = null;
+          delete fieldsValue.city
+        }
+        if(fieldsValue.groupLevel === "") {
+          fieldsValue.groupLevel = null;
+        }
         this.keyJson = fieldsValue;
         this.getAllTeams(teamsMeta.page ,this.keyJson)
       }
