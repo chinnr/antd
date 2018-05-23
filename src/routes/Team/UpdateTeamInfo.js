@@ -288,6 +288,7 @@ export default class UpdateTeamInfo extends PureComponent {
       );
       values = this.props.location.query.record;
     }
+    console.log("团部信息：    ",values);
     this.setState({
       teamIcon: [
         {
@@ -308,6 +309,17 @@ export default class UpdateTeamInfo extends PureComponent {
       fileList: fileList
     });
 
+    let address;
+    if(values.province==="all"){
+      address = ["全国"];
+    }else{
+      if(values.city==="all"){
+        address = [values.province,"市辖区"]
+      }else{
+        address = [values.province,values.city]
+      }
+    }
+
     let keys = Object.keys(values);
     // console.log("values --> ", moment(new Date(values.createdTime), 'YYYY-MM-DD'))
     // console.log("keys --> ", keys)
@@ -321,6 +333,7 @@ export default class UpdateTeamInfo extends PureComponent {
       address: values.address,
       company: values.description.company,
       brief: values.description.brief,
+      district:address,
       type: values.type === "" ? "main" : "temp",
       createdTime: moment(new Date(values.createdTime), "YYYY-MM-DD"),
       icon: [
