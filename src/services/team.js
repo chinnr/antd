@@ -91,6 +91,7 @@ export function getAllTeams(payload) {
           numJoin
           name
           city
+          province
           address
           district
           groupLevel
