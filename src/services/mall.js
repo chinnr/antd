@@ -397,7 +397,6 @@ export function getAdvertiseList() {
           gid
           img
           sku
-          type
         }
       }
     }
