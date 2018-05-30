@@ -156,7 +156,8 @@ export default class UpdateTeamInfo extends PureComponent {
           });
           const _description = {
             icon: values.icon.file.response.filename,
-            mien: _mien
+            mien: _mien,
+            brief: values.brief
           };
           this.props
             .dispatch({
@@ -233,7 +234,8 @@ export default class UpdateTeamInfo extends PureComponent {
 
                 const _description = {
                   icon: _icon,
-                  mien: _mien
+                  mien: _mien,
+                  brief: values.brief,
                 };
                 console.log("description",_description);
                 props
