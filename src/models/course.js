@@ -7,7 +7,13 @@ export default {
     courseTemplatePubListMeta: {},
     courseList: [],
     courseListMeta: {},
-    courseDetail: {}
+    courseDetail: {},
+    courseObj: {},
+    briefArray: [{
+      title: "",
+      picture: [],
+      text: ""
+    }],
   },
   reducers: {
     // 存储模板列表信息到 store
@@ -28,6 +34,13 @@ export default {
 
     // 存储课程详细信息到 store
     storeCourseDetail(state, { payload }) {
+      return {
+        ...state,
+        ...payload
+      };
+    },
+
+    updateState(state, { payload }) {
       return {
         ...state,
         ...payload
