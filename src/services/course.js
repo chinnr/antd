@@ -124,6 +124,11 @@ export function courseDetail(id) {
           name
           bid
         }
+        brief{
+          picture
+          title
+          text
+        }
         stage
         groupCoaches
         level
