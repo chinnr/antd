@@ -27,7 +27,7 @@ const CourseCommon = (props)=>{
     courseLocation,
     collectLocation,
     payExpCoupons,
-    description,
+    brief,
     note,
     gallery,
     ins,
@@ -128,7 +128,22 @@ const CourseCommon = (props)=>{
       </Card>
 
       <Card className={style.listCard} title='详细信息'>
-        <div dangerouslySetInnerHTML={{__html: description}}></div>
+        {brief.map((item)=>{
+          return(
+            <div key={Math.random(0,20000)} style={{marginBottom:20}}>
+              <div>{item.title}</div>
+              <div style={{textAlign:'center'}}>
+                {item.picture.map(img=>{
+                  return(
+                    <img key={Math.random(100,6000)} src={rootUrl+thumbnailPath+img} alt=""/>
+                  )
+                })}
+              </div>
+
+              <div>{item.text}</div>
+            </div>
+          )
+        })}
       </Card>
 
       <Card className={style.galleryCard} title='课程风采'>
