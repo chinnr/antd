@@ -128,12 +128,12 @@ const CourseCommon = (props)=>{
       </Card>
 
       <Card className={style.listCard} title='详细信息'>
-        {brief.map((item)=>{
+        {brief&&brief.length>0&&brief.map((item)=>{
           return(
             <div key={Math.random(0,20000)} style={{marginBottom:20}}>
               <div>{item.title}</div>
               <div style={{textAlign:'center'}}>
-                {item.picture.map(img=>{
+                {item.picture&&item.picture.length>0&&item.picture.map(img=>{
                   return(
                     <img key={Math.random(100,6000)} src={rootUrl+thumbnailPath+img} alt=""/>
                   )
