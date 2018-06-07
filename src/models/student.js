@@ -33,6 +33,42 @@ export default {
         })
       }
     },
+    *getStudentListByAge({ payload: v,age:a }, { call, put }) {
+      const { data, error } = yield call(studentService.studentListByAge, v,a);
+      console.log('student list by age  data ', data)
+      if(error) {
+        throw new Error(errors);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            studentList: data.me.usersByAge.data,
+            page: data.me.usersByAge.meta.page,
+            count: data.me.usersByAge.meta.count,
+            limit: data.me.usersByAge.meta.limit
+          }
+        })
+      }
+    },
+    *getStudentListByProfile({ payload: v }, { call, put }) {
+      const { data, error } = yield call(studentService.studentListByProfile, v);
+      console.log('student list by age  data ', data)
+      if(error) {
+        throw new Error(errors);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            studentList: data.me.usersByProfile.data,
+            page: data.me.usersByProfile.meta.page,
+            count: data.me.usersByProfile.meta.count,
+            limit: data.me.usersByProfile.meta.limit
+          }
+        })
+      }
+    },
     *getStudentDetail({ payload: uid }, { call, put }) {
       const { data, error } = yield call(studentService.studentDetail, uid);
       // console.log('data 334 4 ', data)
