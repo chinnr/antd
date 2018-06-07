@@ -34,6 +34,82 @@ export function studentList(v) {
   return graphRequest(query, { v }, 'young-admin');
 }
 
+export function studentListByAge(v,a) {
+  console.log("a>>>>>>>",a);
+  console.log("submit>>>>>>>",{v,a});
+  const query = `query
+    getStudentList($v: FormQuery,$a:Int!) {
+      me {
+        usersByAge(query: $v,age:$a) {
+          data {
+            uid
+            base {
+              phone
+              profile {
+                realName
+                icon
+              }
+            }
+            number
+            level
+            group {
+              name
+            }
+            isLead
+            leadList
+          }
+          meta {
+            count
+            limit
+            page
+          }
+        }
+      }
+    }
+  `;
+
+
+  return graphRequest(query, {v,a}, 'young-admin');
+}
+
+export function studentListByProfile(v) {
+
+  const query = `query
+    getStudentList($v: FormQuery) {
+      me {
+        usersByProfile(query: $v) {
+          data {
+            uid
+            base {
+              phone
+              profile {
+                realName
+                icon
+              }
+            }
+            number
+            level
+            group {
+              name
+            }
+            isLead
+            leadList
+          }
+          meta {
+            count
+            limit
+            page
+          }
+        }
+      }
+    }
+  `;
+
+
+  return graphRequest(query, {v}, 'young-admin');
+}
+
+
 export function studentDetail(uid) {
   const query = `
     query getStudentDetail($uid: String!) {
