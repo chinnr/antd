@@ -193,11 +193,8 @@ class StudentManage extends PureComponent {
             }
           })
           return;
-        }else{
-          delete obj.realName;
         }
         if(values.age === undefined){
-          delete obj.age;
           dispatch({
             type: 'student/getStudentList',
             payload: {
@@ -208,7 +205,7 @@ class StudentManage extends PureComponent {
             }
           })
         }else{
-          delete obj.age;
+
           dispatch({
             type: 'student/getStudentListByAge',
             payload: {
@@ -220,7 +217,8 @@ class StudentManage extends PureComponent {
             age:values.age
           })
         }
-
+        delete obj.age;
+        delete obj.realName;
         this.setState({
           filterObj: obj
         });
