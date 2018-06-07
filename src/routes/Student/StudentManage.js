@@ -1,7 +1,7 @@
 import React, {PureComponent, Fragment} from 'react';
 import {connect} from 'dva';
 import {routerRedux} from 'dva/router';
-import {Row, Col, Card, Table, Divider, Form, Input, Select, Modal, Button} from 'antd';
+import {Row, Col, Card, Table, Divider, Form, Input, Select, Modal, Button,InputNumber} from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {successNotification} from '../../utils/utils';
 import styles from './StudentManage.less';
@@ -172,28 +172,64 @@ class StudentManage extends PureComponent {
     const {filterObj} = this.state;
     form.validateFields((err, values) => {
       if (!err) {
-
+        console.log("奥术大师多",values.realName);
         const obj = {
           ...filterObj,
           ...values
         };
         if(values.sex === ""){
-          console.log("values:    ",values);
           delete obj.sex;
         }
-        console.log("obj>>>>>>>>>>>>>",obj);
+        if(values.realName){
+          let obj = {key:"realname",val:""};
+          obj.val = values.realName;
+          dispatch({
+            type: 'student/getStudentListByProfile',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"],
+              keyJson: JSON.stringify(obj)
+            }
+          })
+          return;
+        }else{
+          delete obj.realName;
+        }
+        if(values.age === undefined){
+          delete obj.age;
+          dispatch({
+            type: 'student/getStudentList',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"],
+              keyJson: JSON.stringify(obj)
+            }
+          })
+        }else{
+          delete obj.age;
+          dispatch({
+            type: 'student/getStudentListByAge',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"],
+              keyJson: JSON.stringify(obj)
+            },
+            age:values.age
+          })
+        }
+
         this.setState({
           filterObj: obj
         });
-        dispatch({
-          type: 'student/getStudentList',
-          payload: {
-            page: 0,
-            limit: 10,
-            sort: ["-createdAt"],
-            keyJson: JSON.stringify(obj)
-          }
-        })
+
+
+
+
+
+
       }
     })
   };
@@ -252,11 +288,28 @@ class StudentManage extends PureComponent {
             <Col md={8} sm={24}>
               <FormItem label="性别">
                 {getFieldDecorator('sex')(
-                  <Input placeholder="请输入性别"/>
+                  <Select placeholder="请选择">
+                    <Option value={0}>请选择</Option>
+                    <Option value={1}>男</Option>
+                    <Option value={2}>女</Option>
+                  </Select>
                 )}
               </FormItem>
             </Col>
-
+            <Col md={8} sm={24}>
+              <FormItem label="年龄">
+                {getFieldDecorator('age')(
+                  <InputNumber min={1} max={99} style={{width:'100%'}}/>
+                )}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="姓名">
+                {getFieldDecorator('realName')(
+                  <Input placeholder="请输入姓名"/>
+                )}
+              </FormItem>
+            </Col>
           </Row>
           <Row>
             <Col style={{float: "right"}}>
@@ -286,6 +339,7 @@ class StudentManage extends PureComponent {
       "level3": "探索",
       "level4": "乐扶"
     };
+
     const columns = [
       {
         title: '童军号',
