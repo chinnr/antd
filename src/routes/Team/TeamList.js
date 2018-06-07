@@ -286,6 +286,9 @@ export default class TeamList extends Component {
         if(fieldsValue.groupLevel === "") {
           fieldsValue.groupLevel = null;
         }
+        if(fieldsValue.name === ""){
+          delete fieldsValue.name;
+        }
         this.keyJson = fieldsValue;
         this.getAllTeams(teamsMeta.page ,this.keyJson)
       }
@@ -358,6 +361,23 @@ export default class TeamList extends Component {
                       <Option value="main">普通团</Option>
                       <Option value="temp">临时团</Option>
                     </Select>
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+              <Col md={8} sm={24}>
+                <FormItem {...formItemLayout} label="团名称">
+                  {getFieldDecorator('name', {
+                    initialValue: '',
+                    rules: [
+                      {
+                        required: false,
+                        message: '请输入团名称'
+                      }
+                    ]
+                  })(
+                    <Input />
                   )}
                 </FormItem>
               </Col>
