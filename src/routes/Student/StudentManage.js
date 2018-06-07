@@ -172,10 +172,16 @@ class StudentManage extends PureComponent {
     const {filterObj} = this.state;
     form.validateFields((err, values) => {
       if (!err) {
+
         const obj = {
           ...filterObj,
           ...values
         };
+        if(values.sex === ""){
+          console.log("values:    ",values);
+          delete obj.sex;
+        }
+        console.log("obj>>>>>>>>>>>>>",obj);
         this.setState({
           filterObj: obj
         });
@@ -237,6 +243,16 @@ class StudentManage extends PureComponent {
                     <Option value="level3">探索</Option>
                     <Option value="level4">乐扶</Option>
                   </Select>
+                )}
+              </FormItem>
+            </Col>
+
+          </Row>
+          <Row gutter={{md: 8, lg: 24, xl: 48}}>
+            <Col md={8} sm={24}>
+              <FormItem label="性别">
+                {getFieldDecorator('sex')(
+                  <Input placeholder="请输入性别"/>
                 )}
               </FormItem>
             </Col>
