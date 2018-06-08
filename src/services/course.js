@@ -74,6 +74,84 @@ export function courseTemplatePubList(payload) {
   return graphRequest(courseTemplatePubList, payload, 'course-admin');
 }
 
+export function courseTemplateByGroupName(payload) {
+  const courseTemplatePubList = `query courseListByGroupName($tempQuery:FormQuery,$groupName: String!){
+    me {
+      courseListByGroupName(query: $tempQuery,groupName:$groupName) {
+        data{
+        id
+        oid
+        title
+        description
+        content
+        skills
+        score
+        type
+        stage
+        level
+        lesson
+        payExpCoupons
+        payClassCoupons
+        instructors
+        state
+        cover
+        gallery
+        note
+        badgeList{
+          bid
+          name
+        }
+      }
+      meta {
+        limit
+        count
+        page
+      }
+      }
+    }
+  }`;
+  return graphRequest(courseTemplatePubList, payload, 'course-admin');
+}
+
+export function courseTemplateByCity(payload) {
+  const courseTemplatePubList = `query courseListByCity($tempQuery:FormQuery,$city: String!){
+    me {
+      courseListByGroupCity(query: $tempQuery,city:$city) {
+        data{
+        id
+        oid
+        title
+        description
+        content
+        skills
+        score
+        type
+        stage
+        level
+        lesson
+        payExpCoupons
+        payClassCoupons
+        instructors
+        state
+        cover
+        gallery
+        note
+        badgeList{
+          bid
+          name
+        }
+      }
+      meta {
+        limit
+        count
+        page
+      }
+      }
+    }
+  }`;
+  return graphRequest(courseTemplatePubList, payload, 'course-admin');
+}
+
 // 开课记录
 export function courseList(query) {
   const courseList = `query courseList($query: FormQuery!) {
