@@ -97,6 +97,60 @@ export default {
       }
     },
 
+    *courseTemplateByName({ payload }, { call, put }) {
+      const { data, errors } = yield call(
+        courseService.courseTemplateByGroupName,
+        payload
+      );
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log('courseTemplateListByName==>', data);
+
+        let courseTemplatePubList,
+          courseTemplatePubListMeta;
+
+        try{
+          courseTemplatePubList = data.me.courseListByGroupName.data;
+          courseTemplatePubListMeta = data.me.courseListByGroupName.meta;
+          yield put({
+            type: 'storeTemCourseList',
+            payload: { courseTemplatePubList, courseTemplatePubListMeta }
+          });
+        }catch(err){
+          console.log("err",err);
+        }
+      }
+    },
+
+    *courseTemplateByCity({ payload }, { call, put }) {
+      const { data, errors } = yield call(
+        courseService.courseTemplateByCity,
+        payload
+      );
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log('courseTemplateListByCity==>', data);
+
+        let courseTemplatePubList,
+          courseTemplatePubListMeta;
+
+        try{
+          courseTemplatePubList = data.me.courseListByGroupCity.data;
+          courseTemplatePubListMeta = data.me.courseListByGroupCity.meta;
+          yield put({
+            type: 'storeTemCourseList',
+            payload: { courseTemplatePubList, courseTemplatePubListMeta }
+          });
+        }catch(err){
+          console.log("err",err);
+        }
+      }
+    },
+
     *courseList({ payload }, { call, put }) {
       const { data, errors } = yield call(courseService.courseList, payload);
       if (errors) {
