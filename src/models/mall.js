@@ -369,6 +369,16 @@ export default {
             }
           })
         }
+        if(pathname === '/mall/goods-list'){
+          dispatch({
+            type: 'getGoodsType',
+            payload: {
+              page: 0,
+              limit: 12,
+              sort: ["-createdAt"]
+            }
+          });
+        }
         if(pathname === '/mall/advertising') {
           dispatch({
             type: 'getAdvertiseList'
