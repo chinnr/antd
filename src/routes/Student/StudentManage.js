@@ -280,7 +280,14 @@ class StudentManage extends PureComponent {
     const {form, dispatch} = this.props;
     form.resetFields();
     this.setState({
-      filterObj: {}
+      typeName: {
+        type: 'student/getStudentList',
+        payload: {
+          page: 0,
+          limit: 10,
+          sort: ["-createdAt"]
+        }
+      }
     });
     dispatch({
       type: 'student/getStudentList',
