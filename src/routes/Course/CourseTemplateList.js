@@ -236,6 +236,39 @@ export default class CourseTempalteList extends Component {
       }
     })
   };
+  //重置
+  handleFormReset = () => {
+    const {form, dispatch} = this.props;
+    form.resetFields();
+    this.setState({
+      type: "course/courseTemplatePubList",
+      payload: {
+        tempQuery: {
+          limit: 10,
+          page: 0,
+          keyJson: JSON.stringify({})
+        },
+        badgeQuery: {
+          limit: 10,
+          page: 0
+        }
+      }
+    });
+    dispatch({
+      type: "course/courseTemplatePubList",
+      payload: {
+        tempQuery: {
+          limit: 10,
+          page: 0,
+          keyJson: JSON.stringify({})
+        },
+        badgeQuery: {
+          limit: 10,
+          page: 0
+        }
+      }
+    })
+  };
 
   componentWillMount() {
     // this.getTempList();
@@ -336,6 +369,7 @@ export default class CourseTempalteList extends Component {
               </Row>
               <Row>
                 <FormItem>
+                  <Button style={{marginLeft: 8,float:"right"}} onClick={this.handleFormReset}>重置</Button>
                   <Button
                     type="primary"
                     htmlType="submit"
@@ -344,6 +378,7 @@ export default class CourseTempalteList extends Component {
                   >
                     筛选
                   </Button>
+
                 </FormItem>
               </Row>
             </Form>
