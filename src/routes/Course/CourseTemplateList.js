@@ -151,6 +151,24 @@ export default class CourseTempalteList extends Component {
       if (!err) {
         console.log("Received values of form: ", values);
         const {course: {courseTemplatePubListMeta}} = this.props;
+        if(!values.level){
+          delete values.level;
+        }
+        if(values.type === ''){
+          delete values.type;
+        }
+        if(!values.stage){
+          delete values.stage;
+        }
+        if(!values.city){
+          delete values.city;
+        }
+        if(!values.title){
+          delete values.title;
+        }
+        if(!values.groupName){
+          delete values.groupName;
+        }
 
         if(values.groupName){
           const {groupName} = values;
@@ -159,8 +177,17 @@ export default class CourseTempalteList extends Component {
           return;
         }
 
+        if(values.city){
+          const {city} = values;
+          delete values.city;
+          this.getTempListByCity(courseTemplatePubListMeta.p,city,values);
+          return;
+        }
+
+
+
         this.getTempList(courseTemplatePubListMeta.p, values);
-        form.resetFields();
+
       }
     });
   };
@@ -232,6 +259,37 @@ export default class CourseTempalteList extends Component {
             keyJson: JSON.stringify(keyJson)
           },
           groupName: name
+        }
+      }
+    })
+  };
+
+  getTempListByCity = (p = 0, city, keyJson = {}) => {
+    console.log("获取课程模板列表==>", Number(p));
+    this.props
+      .dispatch({
+        type: "course/courseTemplateByCity",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          },
+          city
+        }
+      })
+      .catch(err => err);
+
+    this.setState({
+      typeName:{
+        type: "course/courseTemplateByCity",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          },
+          city
         }
       }
     })
@@ -317,9 +375,10 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                   <FormItem {...formItemLayout} label="课程类型">
                     {getFieldDecorator("type", {
-                      initialValue: 0
+                      initialValue: ''
                     })(
                       <Select placeholder="请选择课程类型">
+                        <Option value={''}>不限</Option>
                         <Option value={0}>团集会</Option>
                         <Option value={1}>活动</Option>
                         <Option value={2}>兴趣课</Option>
@@ -330,9 +389,10 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                   <FormItem {...formItemLayout} label="课程级别">
                     {getFieldDecorator("level", {
-                      initialValue: 1
+                      initialValue: ''
                     })(
                       <Select placeholder="请选择课程级别">
+                        <Option value={''}>不限</Option>
                         <Option value={1}>海狸</Option>
                         <Option value={2}>小狼</Option>
                         <Option value={3}>探索</Option>
@@ -344,9 +404,10 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                 <FormItem {...formItemLayout} label="课程阶段">
                   {getFieldDecorator("stage", {
-                    initialValue: 1
+                    initialValue: ''
                   })(
                     <Select placeholder="请选择课程阶段">
+                      <Option value={''}>不限</Option>
                       <Option value={1}>一阶</Option>
                       <Option value={2}>二阶</Option>
                       <Option value={3}>三阶</Option>
@@ -364,6 +425,11 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                   <FormItem {...formItemLayout} label="团部名称">
                     {getFieldDecorator("groupName")(<Input/>)}
+                  </FormItem>
+                </Col>
+                <Col md={8} sm={24} xl={8}>
+                  <FormItem {...formItemLayout} label="旅部">
+                    {getFieldDecorator("city")(<Input/>)}
                   </FormItem>
                 </Col>
               </Row>
