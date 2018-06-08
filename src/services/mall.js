@@ -137,10 +137,10 @@ export function getTypeName(payload){
 // 获取商品列表
 export function goodsList(payload) {
   const getAllGoods = `
-    query getGoodsList($query: FormQuery, $queryOption: QueryData) {
+    query getGoodsList($query: FormQuery, $queryOption: QueryData,$stockRange: stockModel) {
       me {
         goods {
-          getAll(query: $query, queryOption:$queryOption) {
+          getAll(query: $query, queryOption:$queryOption,stockRange:$stockRange) {
             data {
               gid
               name
