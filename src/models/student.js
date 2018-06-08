@@ -61,10 +61,10 @@ export default {
         yield put({
           type: 'updateState',
           payload: {
-            studentList: data.me.usersByCity.data,
-            page: data.me.usersByCity.meta.page,
-            count: data.me.usersByCity.meta.count,
-            limit: data.me.usersByCity.meta.limit
+            studentList: data.me.usersByGroupCity.data,
+            page: data.me.usersByGroupCity.meta.page,
+            count: data.me.usersByGroupCity.meta.count,
+            limit: data.me.usersByGroupCity.meta.limit
           }
         })
       }
