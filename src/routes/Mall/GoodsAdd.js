@@ -305,6 +305,10 @@ class GoodsAdd extends Component {
           page: p - 1,
           limit: 10,
           sort: ["-createdAt"]
+        },
+        stockRange:{
+          stockStart:0,
+          stockEnd:100000000
         }
       }
     }).catch(err => err)
