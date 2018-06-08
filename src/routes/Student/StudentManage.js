@@ -78,21 +78,22 @@ class StudentManage extends PureComponent {
     modalVisible: false,
     confirmDirty: false,
     uid: null,
-    filterObj: {}
+    typeName:{
+      type: 'student/getStudentList',
+      payload: {
+        page: 0,
+        limit: 10,
+        sort: ["-createdAt"],
+        keyJson: JSON.stringify({})
+      }
+    }
   };
 
   handleTableChange = ({current, pageSize}) => {
     const {dispatch} = this.props;
-    const {filterObj} = this.state;
-    dispatch({
-      type: 'student/getStudentList',
-      payload: {
-        page: current - 1,
-        limit: pageSize,
-        sort: ["-createdAt"],
-        keyJson: JSON.stringify(filterObj)
-      }
-    });
+    const {filterObj,typeName} = this.state;
+    typeName.payload.page = current-1;
+    dispatch(typeName);
   };
 
   goToDetail = (uid) => {
@@ -169,15 +170,14 @@ class StudentManage extends PureComponent {
   handleSearch = (e) => {
     e.preventDefault();
     const {dispatch, form} = this.props;
-    const {filterObj} = this.state;
     form.validateFields((err, values) => {
       if (!err) {
-        console.log("奥术大师多",values.realName);
+
         const obj = {
-          ...filterObj,
           ...values
         };
-        if(values.sex === ""){
+        console.log("奥术大师多",obj);
+        if(!values.sex){
           delete obj.sex;
         }
         if(values.realName){
@@ -191,21 +191,24 @@ class StudentManage extends PureComponent {
               sort: ["-createdAt"],
               keyJson: JSON.stringify(obj)
             }
-          })
+          });
+          this.setState({
+            tyepName:{
+              type: 'student/getStudentListByProfile',
+              payload: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"],
+                keyJson: JSON.stringify(obj)
+              }
+            }
+          },()=>{
+            console.log("this.state>>>>>>>>>",this.state);
+          });
           return;
         }
-        if(values.age === undefined){
-          dispatch({
-            type: 'student/getStudentList',
-            payload: {
-              page: 0,
-              limit: 10,
-              sort: ["-createdAt"],
-              keyJson: JSON.stringify(obj)
-            }
-          })
-        }else{
-
+        if(values.age){
+          delete obj.age;
           dispatch({
             type: 'student/getStudentListByAge',
             payload: {
@@ -216,12 +219,53 @@ class StudentManage extends PureComponent {
             },
             age:values.age
           })
+          this.setState({
+            tyepName:{
+              type: 'student/getStudentListByAge',
+              payload: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"],
+                keyJson: JSON.stringify(obj)
+              },
+              age:values.age
+            }
+          },()=>{
+            console.log("this.state>>>>>>>>>",this.state);
+          });
+
+        }else{
+          delete obj.age;
+          dispatch({
+            type: 'student/getStudentList',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"],
+              keyJson: JSON.stringify(obj)
+            }
+          })
+          this.setState({
+            typeName:{
+              type: 'student/getStudentList',
+              payload: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"],
+                keyJson: JSON.stringify(obj)
+              }
+            }
+          },()=>{
+            console.log("this.state>>>>>>>>>",this.state);
+          });
         }
-        delete obj.age;
-        delete obj.realName;
-        this.setState({
-          filterObj: obj
-        });
+
+        // delete obj.realName;
+        // this.setState({
+        //   filterObj: obj
+        // },()=>{
+        //   console.log("filterObj>>>>>",this.state.filterObj);
+        // });
 
 
 
