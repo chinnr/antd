@@ -9,7 +9,8 @@ import {
   Button,
   Input,
   Row,
-  Col
+  Col,
+  DatePicker
 } from "antd";
 import {connect} from "dva";
 import {routerRedux} from "dva/router";
@@ -168,6 +169,9 @@ export default class CourseTempalteList extends Component {
         }
         if(!values.groupName){
           delete values.groupName;
+        }
+        if(!values.startedAt){
+          delete values.startedAt;
         }
 
         if(values.groupName){
@@ -430,6 +434,13 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                   <FormItem {...formItemLayout} label="旅部">
                     {getFieldDecorator("city")(<Input/>)}
+                  </FormItem>
+                </Col>
+                <Col md={8} sm={24} xl={8}>
+                  <FormItem {...formItemLayout} label="开课时间">
+                    {getFieldDecorator("startedAt")(
+                      <DatePicker style={{ width: '100%' }} />
+                    )}
                   </FormItem>
                 </Col>
               </Row>
