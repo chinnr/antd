@@ -16,10 +16,10 @@ export default {
   },
   effects: {
     *getStudentList({ payload: v }, { call, put }) {
-      const { data, error } = yield call(studentService.studentList, v);
+      const { data, errors } = yield call(studentService.studentList, v);
       console.log('student list  data ', data)
-      if(error) {
-        throw new Error(errors);
+      if(errors) {
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
@@ -34,10 +34,10 @@ export default {
       }
     },
     *getStudentListByAge({ payload: v,age:a }, { call, put }) {
-      const { data, error } = yield call(studentService.studentListByAge, v,a);
+      const { data, errors } = yield call(studentService.studentListByAge, v,a);
       console.log('student list by age  data ', data)
-      if(error) {
-        throw new Error(errors);
+      if(errors) {
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
@@ -52,10 +52,10 @@ export default {
       }
     },
     *getStudentListByProfile({ payload: v }, { call, put }) {
-      const { data, error } = yield call(studentService.studentListByProfile, v);
+      const { data, errors } = yield call(studentService.studentListByProfile, v);
       console.log('student list by age  data ', data)
-      if(error) {
-        throw new Error(errors);
+      if(errors) {
+        throw new Error(errors[0].message);
       }
       if(data.me) {
         yield put({
