@@ -80,7 +80,21 @@ export default class CourseTempalteList extends Component {
       data: [],
       visible: false,
       username: "",
-      filterValue: 1
+      filterValue: 1,
+      typeName:{
+        type: "course/courseTemplatePubList",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: 0,
+            keyJson: JSON.stringify({})
+          },
+          badgeQuery: {
+            limit: 10,
+            page: 0
+          }
+        }
+      }
     };
   }
 
@@ -120,25 +134,31 @@ export default class CourseTempalteList extends Component {
   // 处理翻页
   onPagination = p => {
     console.log("处理翻页==>", p.current);
-    const page = p.current;
-    this.getTempList(page - 1);
+    const {typeName} = this.state;
+    const page = p.current-1;
+    typeName.payload.tempQuery.page = page;
+    if(typeName.payload.badgeQuery){
+      typeName.payload.badgeQuery.page = page;
+    }
+    this.props.dispatch(typeName);
   };
 
   // 筛选
-  onChange = e => {
-    // console.log('radio checked', e.target.value);
-    // this.setState({
-    //   filterValue: e.target.value,
-    // });
-  };
-
-  filter = e => {
+  filter = (e) => {
     e.preventDefault();
     const form = this.props.form;
     form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
         const {course: {courseTemplatePubListMeta}} = this.props;
+
+        if(values.groupName){
+          const {groupName} = values;
+          delete values.groupName;
+          this.getTempListByName(courseTemplatePubListMeta.p,groupName,values);
+          return;
+        }
+
         this.getTempList(courseTemplatePubListMeta.p, values);
         form.resetFields();
       }
@@ -168,6 +188,53 @@ export default class CourseTempalteList extends Component {
         }
       })
       .catch(err => err);
+    this.setState({
+      typeName:{
+        type: "course/courseTemplatePubList",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          },
+          badgeQuery: {
+            limit: 10,
+            page: p
+          }
+        }
+      }
+    })
+  };
+
+  getTempListByName = (p = 0, name, keyJson = {}) => {
+    console.log("获取课程模板列表==>", Number(p));
+    this.props
+      .dispatch({
+        type: "course/courseTemplateByName",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          },
+          groupName: name
+        }
+      })
+      .catch(err => err);
+
+    this.setState({
+      typeName:{
+        type: "course/courseTemplateByName",
+        payload: {
+          tempQuery: {
+            limit: 10,
+            page: p,
+            keyJson: JSON.stringify(keyJson)
+          },
+          groupName: name
+        }
+      }
+    })
   };
 
   componentWillMount() {
@@ -259,6 +326,11 @@ export default class CourseTempalteList extends Component {
                 <Col md={8} sm={24} xl={8}>
                   <FormItem {...formItemLayout} label="课程主题">
                     {getFieldDecorator("title")(<Input/>)}
+                  </FormItem>
+                </Col>
+                <Col md={8} sm={24} xl={8}>
+                  <FormItem {...formItemLayout} label="团部名称">
+                    {getFieldDecorator("groupName")(<Input/>)}
                   </FormItem>
                 </Col>
               </Row>
