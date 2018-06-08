@@ -51,6 +51,24 @@ export default {
         })
       }
     },
+    *getStudentListByCity({ payload: v,city:a }, { call, put }) {
+      const { data, errors } = yield call(studentService.studentListByCity, v,a);
+      console.log('student list by city  data ', data)
+      if(errors) {
+        throw new Error(errors[0].message);
+      }
+      if(data.me) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            studentList: data.me.usersByCity.data,
+            page: data.me.usersByCity.meta.page,
+            count: data.me.usersByCity.meta.count,
+            limit: data.me.usersByCity.meta.limit
+          }
+        })
+      }
+    },
     *getStudentListByProfile({ payload: v }, { call, put }) {
       const { data, errors } = yield call(studentService.studentListByProfile, v);
       console.log('student list by age  data ', data)
