@@ -92,6 +92,7 @@ class StudentManage extends PureComponent {
   handleTableChange = ({current, pageSize}) => {
     const {dispatch} = this.props;
     const {filterObj,typeName} = this.state;
+    console.log("typeName>>>>>>>",typeName);
     typeName.payload.page = current-1;
     dispatch(typeName);
   };
@@ -180,6 +181,55 @@ class StudentManage extends PureComponent {
         if(!values.sex){
           delete obj.sex;
         }
+        if(!values.level){
+          delete obj.level;
+        }
+        if(!values.realName){
+          delete obj.realName;
+        }
+        if(!values.age){
+          delete obj.age;
+        }
+        if(!values.groupName){
+          delete obj.groupName;
+        }
+        if(!values.number){
+          delete obj.number;
+        }
+        if(!values.city){
+          delete obj.city;
+        }
+
+        if(values.city){
+          delete obj.city;
+          dispatch({
+            type: 'student/getStudentListByCity',
+            payload: {
+              page: 0,
+              limit: 10,
+              sort: ["-createdAt"],
+              keyJson: JSON.stringify(obj)
+            },
+            city:values.city
+          })
+          this.setState({
+            typeName:{
+              type: 'student/getStudentListByCity',
+              payload: {
+                page: 0,
+                limit: 10,
+                sort: ["-createdAt"],
+                keyJson: JSON.stringify(obj)
+              },
+              city:values.city
+            }
+          },()=>{
+            console.log("this.state>>>>>>>>>",this.state);
+          });
+
+          return;
+        }
+
         if(values.realName){
           let obj = {key:"realname",val:""};
           obj.val = values.realName;
@@ -233,6 +283,8 @@ class StudentManage extends PureComponent {
           },()=>{
             console.log("this.state>>>>>>>>>",this.state);
           });
+
+          return;
 
         }else{
           delete obj.age;
@@ -323,6 +375,7 @@ class StudentManage extends PureComponent {
               <FormItem label="阶段">
                 {getFieldDecorator('level')(
                   <Select placeholder="请选择">
+                    <Option value="">不限</Option>
                     <Option value="level1">海狸</Option>
                     <Option value="level2">小狼</Option>
                     <Option value="level3">探索</Option>
@@ -356,6 +409,13 @@ class StudentManage extends PureComponent {
               <FormItem label="姓名">
                 {getFieldDecorator('realName')(
                   <Input placeholder="请输入姓名"/>
+                )}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="旅部">
+                {getFieldDecorator('city')(
+                  <Input placeholder="请输入旅部"/>
                 )}
               </FormItem>
             </Col>
@@ -440,7 +500,7 @@ class StudentManage extends PureComponent {
             <Table
               loading={loading}
               dataSource={student.studentList}
-              rowKey={record => record.uid}
+              rowKey={record => record.uid+Math.random(0,1000)}
               columns={columns}
               pagination={pagination}
               onChange={this.handleTableChange}
