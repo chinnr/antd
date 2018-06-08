@@ -166,12 +166,13 @@ export default class BadgeList extends PureComponent {
   };
 
   // 获取团列表
-  getAllBadges = (p = 0, queryOption={}) => {
+  getAllBadges = (p = 0, queryOption={},keyJson={}) => {
+    keyJson = JSON.stringify(keyJson);
     this.props
       .dispatch({
         type: 'badge/getAllBadges',
         payload: {
-          query: { limit: 10, page: p },
+          query: { limit: 10, page: p,keyJson },
           queryOption: queryOption
         }
       })
@@ -181,15 +182,22 @@ export default class BadgeList extends PureComponent {
   // 筛选证章
   handleSearch = (v) => {
     console.log("筛选证章==>", v);
+    let keyJson = {};
+    if(v.name){
+      keyJson.name = v.name;
+      delete v.name;
+    }
+
     localStorage.setItem("badgeSearchKey", JSON.stringify(v));
     const { badge:{badgesMeta} } = this.props;
     this.setState({searchMode: true});
-    this.getAllBadges(badgesMeta.page, v);
+    this.getAllBadges(badgesMeta.page, v,keyJson);
   };
 
   componentWillMount() {
     this.getAllBadges();
   }
+
   componentWillUnmount() {
     localStorage.removeItem("badgeSearchKey");
   }

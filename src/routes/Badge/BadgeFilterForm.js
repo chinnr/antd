@@ -153,6 +153,13 @@ export default class BadgeFilterForm extends PureComponent {
               )}
             </FormItem>
           </Col>
+          <Col md={8} sm={24}>
+            <FormItem {...formItemLayout} label="证章名称">
+              {getFieldDecorator('name')(
+                <Input/>
+              )}
+            </FormItem>
+          </Col>
         </Row>
         <div style={{ overflow: 'hidden' }}>
           <span style={{ float: 'right', marginBottom: 24 }}>
