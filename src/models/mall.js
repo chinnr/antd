@@ -361,12 +361,12 @@ export default {
                 page: 0,
                 limit: 10,
                 sort: ["-createdAt"]
+              },
+              stockRange:{
+                stockStart:0,
+                stockEnd:100000000
               }
             },
-            stockRange:{
-              stockStart:0,
-              stockEnd:100000000
-            }
           })
         }
         if(pathname === '/mall/goods-list'){
