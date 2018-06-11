@@ -22,11 +22,11 @@ class GoodsManageTable extends PureComponent {
 
   render() {
     const { selectedRowKeys } = this.state;
-    const { data: { list, pagination }, loading, columns } = this.props;
-
+    const { data: { list, pagination }, loading, columns,onShowSizeChange } = this.props;
     const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
+      showSizeChanger: false,
+      showQuickJumper: false,
+      onShowSizeChange:(c,s)=>onShowSizeChange(c,s),
       ...pagination,
     };
 
@@ -39,6 +39,7 @@ class GoodsManageTable extends PureComponent {
           columns={columns}
           pagination={paginationProps}
           onChange={this.handleTableChange}
+
         />
       </div>
     );
