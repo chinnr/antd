@@ -204,7 +204,7 @@ class GoodsManage extends PureComponent {
         }
 
         if(values.goodsType){
-          queryOption.type = values.goodsType;
+          queryOption.skuPrefix = values.goodsType;
         }
 
         payload.queryOption = queryOption;
