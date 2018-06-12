@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Radio, Select, Modal, Button, InputNumber, Divider, Avatar } from 'antd';
+import { Card, Form, Radio, Select, Modal, Button, InputNumber, Divider, Avatar, Pagination } from 'antd';
 import DescriptionList from '../../components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {successNotification} from "../../utils/utils";
@@ -13,7 +13,8 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const CreateForm = Form.create()(props => {
-  const { visible, form, handleAdd, handleCancel, sourceData} = props;
+  const { visible, form, handleAdd, handleCancel, sourceData, dataMeta, onPagination} = props;
+  // console.log("sourceDataMeta >>> ", props);
   const { getFieldDecorator, validateFields } = form;
   const formItemLayout = {
     labelCol: { span: 6 },
@@ -78,7 +79,9 @@ const CreateForm = Form.create()(props => {
           )}
         </FormItem>
       </Form>
-      {/*<Pagination defaultCurrent={1} total={dataMeta.count} onChange={p => onPagination(p)} />*/}
+      {JSON.stringify(dataMeta).length > 2 &&
+        <Pagination defaultCurrent={1} total={dataMeta.count} onChange={p => onPagination(p)}/>
+      }
     </Modal>
   );
 });
@@ -89,6 +92,7 @@ const CreateForm = Form.create()(props => {
   mallLoading: loading.models.mall,
   myVirtualGoods: mall.myVirtualGoods,
   goodsList: mall.goodsList,
+  goodsListMeta: mall.goodsListMeta,
   virtualGoodsCount: mall.virtualGoodsCount,
 }))
 class StudentDetail extends PureComponent {
@@ -143,7 +147,9 @@ class StudentDetail extends PureComponent {
       })
       .catch(err => err);
   };
-
+  onPaginationGoodsList = (p) => {
+    this.getGoodsList(p-1)
+  };
    /**
    * 赠送卡券
    */
@@ -176,7 +182,7 @@ class StudentDetail extends PureComponent {
 
   render() {
     const { visible } = this.state;
-    const { loading, goodsList, mallLoading, studentDetail, virtualGoodsCount,myVirtualGoods } = this.props;
+    const { loading, goodsList, goodsListMeta, mallLoading, studentDetail, virtualGoodsCount,myVirtualGoods } = this.props;
     console.log("优惠券：     ",myVirtualGoods);
 
     const duty = studentDetail.isLead ? studentDetail.leadList.join('') : '无';
@@ -248,9 +254,10 @@ class StudentDetail extends PureComponent {
           <CreateForm
             visible={visible}
             sourceData={goodsList}
+            dataMeta={goodsListMeta}
             handleCancel={this.handleCancel}
             handleAdd={this.donateVirtualGoods}
-            onPagination={this.onPagination}
+            onPagination={(p) => this.onPaginationGoodsList(p)}
           />
         </Card>
         <Card
