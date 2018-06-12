@@ -109,7 +109,8 @@ export default class CourseRecord extends PureComponent {
     console.log('handleSearch ==> ', v.target.value);
     let keyJson = {};
     if (type === 'state' && v.target.value === -3) {
-      this.courseList(p + 1);
+      keyJson = { state: {$ne: -1} };
+      this.courseList(p + 1, keyJson);
     }else{
       keyJson = { state: v.target.value };
       this.courseList(p + 1, keyJson);
@@ -121,6 +122,11 @@ export default class CourseRecord extends PureComponent {
 
 
   };
+
+  componentDidMount () {
+    let keyJson = { state: {$ne: -1} };
+    this.courseList(1, keyJson);
+  }
 
   render() {
     const { course: { courseList, courseListMeta } } = this.props;

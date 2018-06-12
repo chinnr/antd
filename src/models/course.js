@@ -217,15 +217,15 @@ export default {
             }
           });
         }
-        if (pathname === '/course/course-record') {
-          dispatch({
-            type: 'courseList',
-            payload: {
-              page: 0,
-              limit: 10
-            }
-          });
-        }
+        // if (pathname === '/course/course-record') {
+        //   dispatch({
+        //     type: 'courseList',
+        //     payload: {
+        //       page: 0,
+        //       limit: 10
+        //     }
+        //   });
+        // }
       });
     }
   }
