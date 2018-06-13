@@ -1,5 +1,5 @@
 import * as statisticsService from "../services/statistics";
-import {rootUrl} from '../utils/constant';
+import {rootUrl,ssdUrl} from '../utils/constant';
 export default {
   namespace: "statistics",
   state: {
@@ -27,10 +27,11 @@ export default {
         const statistics = data.me.virtualGoods.generateExcel;
         console.log("请求成功后的data ---> ", statistics);
         window.open(
-          rootUrl+`/download/young/mall/${statistics}.xlsx`
+          rootUrl+`${ssdUrl}${statistics}.xlsx`
         );
       }
     },
+
     *getExcel({payload},{call}){
       console.log("type:      ",payload);
       const { data, errors } = yield call(statisticsService[payload],{});
@@ -45,7 +46,7 @@ export default {
           statistics = data.me.groupsDownLoad;
         console.log("请求成功后的data ---> ", statistics);
         window.open(
-          rootUrl+`/download/young/${statistics}.xlsx`
+          rootUrl+`${ssdUrl}${statistics}.xlsx`
         );
       }
     }
