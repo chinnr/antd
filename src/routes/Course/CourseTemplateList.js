@@ -101,6 +101,7 @@ export default class CourseTempalteList extends Component {
 
   // 跳转到修改编辑页面
   goToPage = record => {
+    console.log("跳转到修改编辑页面 >>> ", record);
     localStorage.setItem("courseId", record.id);
     this.props.dispatch(
       routerRedux.push({
