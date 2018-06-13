@@ -49,6 +49,7 @@ export default class CourseForm extends PureComponent {
     return Object.prototype.toString.call(obj)=='[object Array]';
   };
   handleCreate = (e) => {
+    const { briefArray } = this.props.course;
     e.preventDefault();
     const form = this.props.form;
     const props = this.props;
@@ -73,6 +74,7 @@ export default class CourseForm extends PureComponent {
           console.log("使用旧的图片 ",typeof values.cover);
         }
         values.id = localStorage.getItem("courseId");
+        values["brief"] = briefArray;
         this.props.dispatch({
           type: "course/updateCourseTemplate",
           payload: values
@@ -83,6 +85,7 @@ export default class CourseForm extends PureComponent {
             //   localStorage.removeItem('badgeParams');
             //   localStorage.setItem('isEditBadge', 'false');
             // }
+
           });
           form.resetFields();
         }).catch( err => err )
@@ -231,7 +234,7 @@ export default class CourseForm extends PureComponent {
     this.description = values.description;
     this.brief = values.brief;
     this.props.dispatch({
-      type: "updateState",
+      type: "course/updateState",
       payload: {briefArray: values.brief}
     })
   };
@@ -252,25 +255,11 @@ export default class CourseForm extends PureComponent {
    */
   handleCancelPreview = () => this.setState({ previewVisible: false });
 
-// 图片上传
-  uploadImage = (filename, type) => {
-    // console.log("uploadImage==>", type);
-    if(type === 'cover'){
-      this.setState({cover : filename})
-      this.props.form.setFieldsValue({
-        [type]: filename
-      });
-    }
-    if(type === 'gallery') {
-      this.gallery.push(filename);
-      this.setState({gallery : [...this.gallery]});
-      this.props.form.setFieldsValue({
-        [type]: this.gallery
-      });
-    }
+// 上传的图文混排的图片
+  uploadPicture = (filename, type) => {
     if (type.indexOf('brief') !== -1 && type.split("_")[2] === 'picture') {
       const { briefArray, courseObj } = this.props.course;
-      this.briefArrayClone = JSON.parse(JSON.stringify(briefArray));
+      this.briefArrayClone = briefArray;
       const _index = type.split("_")[1];
       this.briefArrayClone[_index].picture.push(filename);
       console.log("上传课程详情图片索引 >>>> ", type);
@@ -291,10 +280,11 @@ export default class CourseForm extends PureComponent {
   deleteUploadPicture = (filename, type) => {
     const { briefArray, courseObj } = this.props.course;
     this.briefArrayClone = JSON.parse(JSON.stringify(briefArray));
-    const _index = type.split("_")[1];
-    this.briefArrayClone[_index].picture.splice(_index, 1);
-    console.log("上传课程详情图片索引 >>>> ", type);
-    console.log("上传课程详情图片 >>>> ", this.briefArrayClone);
+    const _index = type.split("_")[1]; // 对应的图文组下标索引
+    const deletePicIndex = this.briefArrayClone[_index].picture.indexOf(filename);
+    // console.log("删除图片索引 >>>> ", deletePicIndex);
+    // console.log("删除的目标图片数组 >>>> ", this.briefArrayClone[_index].picture);
+    this.briefArrayClone[_index].picture.splice(deletePicIndex, 1);
     this.props.dispatch({
       type: "course/updateState",
       payload: {
@@ -339,12 +329,21 @@ export default class CourseForm extends PureComponent {
     this.getCourseParams();
   }
 
+  componentWillUnmount () {
+    // this.props.dispatch({
+    //   type: "course/updateState",
+    //   payload: {briefArray: {}}
+    // });
+    // localStorage.removeItem('courseTempInfo')
+  }
+
   render() {
     const { badges } = this.props.badge;
+    const { briefArray } = this.props.course;
     const { courseCover, gallery,previewVisible, previewImage } = this.state;
     const { getFieldDecorator, getFieldsError } = this.props.form;
 
-    console.log("z ===>", this.brief);
+    console.log("briefArray ===>", briefArray);
 
     const formItemLayout = {
       labelCol: {
@@ -532,14 +531,14 @@ export default class CourseForm extends PureComponent {
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="课程详细信息">
-          {this.brief.map((item, i) => (
+          {briefArray.map((item, i) => (
             <CourseBriefEdit
               key={i}
               uploadRef={"picture"+i}
               defaultTitle={item.title}
               defaultText={item.text}
               defaultImages={item.picture}
-              uploadImage={(filename) => this.uploadImage(filename, `brief_${i}_picture`)}
+              uploadImage={(filename) => this.uploadPicture(filename, `brief_${i}_picture`)}
               ondelete={filename => this.deleteUploadPicture(filename, `brief_${i}_picture`)}
               onEditTitle={(v) => this.handleEdit(`brief_${i}_title`, v)}
               onEditText={(v) => this.handleEdit(`brief_${i}_text`, v)}

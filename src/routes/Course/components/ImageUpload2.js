@@ -35,7 +35,10 @@ export default class ImageUpload extends Component {
       if (this.props.mode && this.props.mode === "multiple") {
         // console.log("可以上传多张图片");
         this.postGallery.push(filename);
-        this.setState({ gallery: [...this.postGallery] });
+        console.log("可以上传多张图片111 >>>> ", this.postGallery);
+        this.setState({ gallery: this.postGallery }, () => {
+          console.log("可以上传多张图片222 >>>> ", this.state.gallery)
+        });
       } else {
         // console.log("最多1张图片");
         this.postGallery = [];
@@ -88,15 +91,17 @@ export default class ImageUpload extends Component {
 
   componentDidMount() {
     const { defaultImages } = this.props;
-    this.setState({gallery: defaultImages})
+    const { uploadRef, uploadNum } = this.props;
+    const { gallery } = this.state;
   }
 
   render() {
-    const { uploadRef, uploadNum } = this.props;
+    const { uploadRef, uploadNum, defaultImages } = this.props;
     const { gallery } = this.state;
+    console.log("图文上传 render >>> ", defaultImages);
     return (
       <div>
-        {gallery.map((item, i) => (
+        {defaultImages.map((item, i) => (
           <div key={i} className={styles.upload_list_item}>
             <img
               className={styles.upload_list_img}

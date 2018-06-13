@@ -18,6 +18,7 @@ export default class CourseBriefEdit extends PureComponent {
   }
   render() {
     const { uploadImage, ondelete, onEditTitle, onEditText, uploadRef, defaultTitle, defaultText, defaultImages } = this.props;
+    // console.log("defaultImages >>>> ", defaultImages);
     return (
       <div style={{marginBottom: 10}}>
         <div style={{marginBottom: 10}}>
