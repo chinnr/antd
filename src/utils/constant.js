@@ -2,6 +2,7 @@
 export const gqlNetworkInterface = "https://api.yichui.net/api/young/graphql";
 export const wsUrl = "wss://api.yichui.net/api/young/ws";
 export const rootUrl = "https://api.yichui.net";
+export const ssdUrl = "/download/young/mall/";
 export const thumbnailPath = "/api/young/post/download/image/thumbnail/";
 export const originPath = "/api/young/post/download/image/origin/";
 export const uploadPath = "https://api.yichui.net/api/young/post/upload/image";
@@ -10,6 +11,7 @@ export const uploadPath = "https://api.yichui.net/api/young/post/upload/image";
 // export const gqlNetworkInterface = "https://api.bldsnapp.com/api/young/graphql";
 // export const wsUrl = "wss://api.bldsnapp.com/api/young/ws";
 // export const rootUrl = "https://api.bldsnapp.com";
+// export const ssdUrl = "/download/young/young/mall/";
 // export const thumbnailPath = "/api/young/post/download/image/thumbnail/";
 // export const originPath = "/api/young/post/download/image/origin/";
 // export const uploadPath = "https://api.bldsnapp.com/api/young/post/upload/image";
