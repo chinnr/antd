@@ -36,8 +36,7 @@ export default class CourseBriefEdit extends PureComponent {
             defaultImages={defaultImages}
             onUpload={filename => uploadImage(filename)}
             ondelete={filename => ondelete(filename)}
-            uploadPath={rootUrl + '/api/young/post/upload/image'}
-          />
+            uploadPath={rootUrl + '/api/young/post/upload/image'} />
         </div>
         <TextArea
           rows={4}

@@ -311,7 +311,7 @@ export default class CourseForm extends PureComponent {
         })
       }
       if(_key === 'text') {
-        this.briefArrayClone[_index].text = v;
+        briefArray[_index].text = v;
         this.props.dispatch({
           type: "course/updateState",
           payload: {
