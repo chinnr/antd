@@ -19,6 +19,7 @@ import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import {successNotification} from "../../../utils/utils";
 import {rootUrl, thumbnailPath} from "../../../utils/constant";
 import {routerRedux} from "dva/router";
+import CourseBriefEdit from './CourseBriefEdit';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -42,11 +43,13 @@ export default class CourseForm extends PureComponent {
   };
     this.gallery = [];
     this.description = '';
+    this.brief = [];
   }
   isArray = (obj) => {
     return Object.prototype.toString.call(obj)=='[object Array]';
   };
   handleCreate = (e) => {
+    const { briefArray } = this.props.course;
     e.preventDefault();
     const form = this.props.form;
     const props = this.props;
@@ -71,6 +74,7 @@ export default class CourseForm extends PureComponent {
           console.log("使用旧的图片 ",typeof values.cover);
         }
         values.id = localStorage.getItem("courseId");
+        values["brief"] = briefArray;
         this.props.dispatch({
           type: "course/updateCourseTemplate",
           payload: values
@@ -81,6 +85,7 @@ export default class CourseForm extends PureComponent {
             //   localStorage.removeItem('badgeParams');
             //   localStorage.setItem('isEditBadge', 'false');
             // }
+
           });
           form.resetFields();
         }).catch( err => err )
@@ -227,6 +232,11 @@ export default class CourseForm extends PureComponent {
       gallery: values.gallery,
     });
     this.description = values.description;
+    this.brief = values.brief;
+    this.props.dispatch({
+      type: "course/updateState",
+      payload: {briefArray: values.brief}
+    })
   };
 
   /**
@@ -245,15 +255,96 @@ export default class CourseForm extends PureComponent {
    */
   handleCancelPreview = () => this.setState({ previewVisible: false });
 
+// 上传的图文混排的图片
+  uploadPicture = (filename, type) => {
+    if (type.indexOf('brief') !== -1 && type.split("_")[2] === 'picture') {
+      const { briefArray, courseObj } = this.props.course;
+      this.briefArrayClone = briefArray;
+      const _index = type.split("_")[1];
+      this.briefArrayClone[_index].picture.push(filename);
+      console.log("上传课程详情图片索引 >>>> ", type);
+      console.log("上传课程详情图片 >>>> ", this.briefArrayClone);
+      this.props.dispatch({
+        type: "course/updateState",
+        payload: {
+          briefArray: this.briefArrayClone,
+          courseObj: Object.assign(courseObj, {brief: this.briefArrayClone})
+        }
+      })
+      // 上传课程详情图片
+      // console.log("上传课程详情图片 >>>> ", filename)
+    }
+  };
+
+  // 删除上传的图文混排的图片
+  deleteUploadPicture = (filename, type) => {
+    const { briefArray, courseObj } = this.props.course;
+    this.briefArrayClone = JSON.parse(JSON.stringify(briefArray));
+    const _index = type.split("_")[1]; // 对应的图文组下标索引
+    const deletePicIndex = this.briefArrayClone[_index].picture.indexOf(filename);
+    // console.log("删除图片索引 >>>> ", deletePicIndex);
+    // console.log("删除的目标图片数组 >>>> ", this.briefArrayClone[_index].picture);
+    this.briefArrayClone[_index].picture.splice(deletePicIndex, 1);
+    this.props.dispatch({
+      type: "course/updateState",
+      payload: {
+        briefArray: this.briefArrayClone,
+        courseObj: Object.assign(courseObj, {brief: this.briefArrayClone})
+      }
+    })
+  };
+
+  // 编辑图文混排的文字
+  handleEdit = (FieldValue, v) => {
+    const { briefArray, courseObj } = this.props.course;
+    if (FieldValue.indexOf('brief') !== -1) {
+      const _key = FieldValue.split("_")[2];
+      const _index = FieldValue.split("_")[1];
+      if(_key === 'title') {
+        briefArray[_index].title = v;
+        this.props.dispatch({
+          type: "course/updateState",
+          payload: {
+            briefArray: briefArray,
+            courseObj: Object.assign(courseObj, {brief: briefArray})
+          }
+        })
+      }
+      if(_key === 'text') {
+        this.briefArrayClone[_index].text = v;
+        this.props.dispatch({
+          type: "course/updateState",
+          payload: {
+            briefArray: briefArray,
+            courseObj: Object.assign(courseObj, {brief: briefArray})
+          }
+        })
+      }
+    }
+  };
+
+
   componentDidMount() {
     this.props.form.validateFields();
     this.getCourseParams();
   }
 
+  componentWillUnmount () {
+    // this.props.dispatch({
+    //   type: "course/updateState",
+    //   payload: {briefArray: {}}
+    // });
+    // localStorage.removeItem('courseTempInfo')
+  }
+
   render() {
     const { badges } = this.props.badge;
+    const { briefArray } = this.props.course;
     const { courseCover, gallery,previewVisible, previewImage } = this.state;
     const { getFieldDecorator, getFieldsError } = this.props.form;
+
+    console.log("briefArray ===>", briefArray);
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -433,11 +524,26 @@ export default class CourseForm extends PureComponent {
             </Upload>
           )}
         </FormItem>
-        <FormItem {...formItemLayout} label="课程详细信息" style={{ marginTop: 32 }}>
+        <FormItem {...formItemLayout} label="课程详细信息" style={{ marginTop: 32, display: 'none' }}>
           {getFieldDecorator("description", {
           })(
             <CourseIntroduce form={this.props.form} description={this.description}/>
           )}
+        </FormItem>
+        <FormItem {...formItemLayout} label="课程详细信息">
+          {briefArray.map((item, i) => (
+            <CourseBriefEdit
+              key={i}
+              uploadRef={"picture"+i}
+              defaultTitle={item.title}
+              defaultText={item.text}
+              defaultImages={item.picture}
+              uploadImage={(filename) => this.uploadPicture(filename, `brief_${i}_picture`)}
+              ondelete={filename => this.deleteUploadPicture(filename, `brief_${i}_picture`)}
+              onEditTitle={(v) => this.handleEdit(`brief_${i}_title`, v)}
+              onEditText={(v) => this.handleEdit(`brief_${i}_text`, v)}
+            />
+          ))}
         </FormItem>
         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
           <Button
