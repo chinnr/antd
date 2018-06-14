@@ -1,5 +1,5 @@
 import * as statisticsService from "../services/statistics";
-import {rootUrl,ssdUrl} from '../utils/constant';
+import {rootUrl,ssdUrl,cpuUrl} from '../utils/constant';
 export default {
   namespace: "statistics",
   state: {
@@ -66,7 +66,7 @@ export default {
           statistics = data.me.groupsDownLoad;
         console.log("请求成功后的data ---> ", statistics);
         window.open(
-          rootUrl+`${ssdUrl}${statistics}.xlsx`
+          rootUrl+`${cpuUrl}${statistics}.xlsx`
         );
       }
     }
