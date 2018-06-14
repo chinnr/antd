@@ -37,6 +37,30 @@ class Statistics extends Component {
     });
   };
 
+  handleSubmit3 = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const notDefaultTime = values.time2;
+        const time = {
+          startTime: notDefaultTime
+            ? moment(values.time2[0]).format("YYYY/MM/DD")
+            : "2017/1/1",
+          endTime: notDefaultTime
+            ? moment(values.time2[1]).format("YYYY/MM/DD")
+            : "2020/12/31"
+        };
+        console.log(time);
+        this.props.dispatch({
+          type: "statistics/getOrtherExcel", //触发函数:*getStatics
+          payload: time
+        });
+
+        // console.log('Received values of form: ', values);
+      }
+    });
+  };
+
   handleSubmit2 = (e,type) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -48,6 +72,7 @@ class Statistics extends Component {
       }
     });
   };
+
 
 
 
@@ -94,6 +119,23 @@ class Statistics extends Component {
               </Form>
             </Card>
           </Col>
+
+          <Col {...topColResponsiveProps}>
+            <Card bordered={false} title="消费订单表">
+              <Form
+                onSubmit={this.handleSubmit3}
+                style={{ textAlign: "center" }}
+              >
+                <FormItem {...formItemLayout} label="消费时间">
+                  {getFieldDecorator("time2")(<RangePicker />)}
+                </FormItem>
+                <Button type="primary" htmlType="submit">
+                  导出
+                </Button>
+              </Form>
+            </Card>
+          </Col>
+
           <Col {...topColResponsiveProps}>
             <Card bordered={false} title="团信息">
               <Form

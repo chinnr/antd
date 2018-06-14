@@ -11,6 +11,17 @@ export function getStatics(form) {
   return graphRequest(getStatics, form, "mall-admin");
 }
 
+export function getOrtherExcel(form) {
+  const getStatics = `mutation ortherExcel($startTime: String!,$endTime:String!) {
+  me {
+    Order {
+      generateExcel(startTime: $startTime,endTime:$endTime)
+    }
+  }
+}`;
+  return graphRequest(getStatics, form, "mall-admin");
+}
+
 export function getUserExcel(payload) {
   const getUser = `mutation getUserExcel {
   me {

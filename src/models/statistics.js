@@ -32,6 +32,26 @@ export default {
       }
     },
 
+    *getOrtherExcel({ payload }, { call, put }) {
+      console.log("*getOrtherExcel的参数payload：", payload);
+      const { data, errors } = yield call(
+        statisticsService.getOrtherExcel,
+        payload
+      );
+      if (errors) {
+        const err = errors[0].message;
+        throw new Error(err);
+      } else {
+        console.log("getOrtherExcel请求成功后的data ---> ", data);
+        const statistics = data.me.Order.generateExcel;
+
+
+        window.open(
+          rootUrl+`${ssdUrl}${statistics}.xlsx`
+        );
+      }
+    },
+
     *getExcel({payload},{call}){
       console.log("type:      ",payload);
       const { data, errors } = yield call(statisticsService[payload],{});
