@@ -610,7 +610,7 @@ class GoodsAdd extends Component {
                     message: '请输入商品名称'
                   },
                   {
-                    max: 8,
+                    max: 20,
                     message: '名称不能够过长'
                   }
                 ]
