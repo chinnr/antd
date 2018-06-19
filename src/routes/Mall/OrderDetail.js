@@ -238,6 +238,14 @@ export default class BasicProfile extends Component {
       goodsData=[];
     }
     console.log("商品信息:        ",goodsData);
+
+    let payData;
+    if(allPayRecord.length===1){
+      payData = JSON.parse(allPayRecord[0].returnCode);
+    }
+
+    console.log("支付信息：       ",payData);
+
     return (
       <PageHeaderLayout breadcrumbList={breadcrumbList}>
         <Card title="订单信息" style={{ marginBottom: 24 }} bordered={false}>
@@ -271,12 +279,12 @@ export default class BasicProfile extends Component {
         <Card title="支付信息" style={{marginBottom: 24}} bordered={false}>
           <DescriptionList>
             <Description term="支付方式">{allPayRecord.length > 0 && allPayRecord[0].platformName?allPayRecord[0].platformName:"查无数据"}</Description>
-            <Description term="支付账号">{allPayRecord.length > 0 && allPayRecord[0].account ? allPayRecord[0].account : '查无数据'}</Description>
+            <Description term="支付账号">{payData&&payData.buyer_logon_id}</Description>
             <Description
-              term="付款时间">{orderList.length > 0 && orderList[0].payTime ? moment(orderList[0].payTime).format('YYYY-MM-DD HH:mm:ss') : "查无数据"}</Description>
+              term="付款时间">{payData&&payData.gmt_payment}</Description>
             <Description term="交易号">{allPayRecord.length > 0 && allPayRecord[0].out_trade_no ? allPayRecord[0].out_trade_no : '查无数据'}</Description>
             <Description
-              term="实付金额">{allPayRecord.length > 0 && allPayRecord[0].buyer_pay_amount ? allPayRecord[0].buyer_pay_amount : '查无数据'}</Description>
+              term="实付金额">{payData&&payData.buyer_pay_amount}</Description>
           </DescriptionList>
         </Card>
         }
