@@ -105,7 +105,7 @@ class Statistics extends Component {
       <div>
         <Row gutter={24}>
           <Col {...topColResponsiveProps}>
-            <Card bordered={false} title="消费明细表">
+            <Card bordered={false} title="消费卡券明细表">
               <Form
                 onSubmit={this.handleSubmit}
                 style={{ textAlign: "center" }}
