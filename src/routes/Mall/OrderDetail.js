@@ -147,6 +147,16 @@ export default class BasicProfile extends Component {
     return str;
   };
 
+  timeFmt = (time)=>{
+    const y = time.slice(0,4);
+    const m = time.slice(4,6);
+    const d = time.slice(6,8);
+    const h = time.slice(8,10);
+    const mm = time.slice(10,12);
+    const ss = time.slice(12,14);
+    return `${y}-${m}-${d} ${h}:${mm}:${ss}`;
+  };
+
   render() {
     const { mall: { orderList, orderListMeta, allPayRecord, allPayRecordMeta } } = this.props;
     const {virtual} = this.state;
@@ -240,8 +250,10 @@ export default class BasicProfile extends Component {
     console.log("商品信息:        ",goodsData);
 
     let payData;
+    let platForm;
     if(allPayRecord.length===1){
       payData = JSON.parse(allPayRecord[0].returnCode);
+      platForm = allPayRecord[0].platformName;
     }
 
     console.log("支付信息：       ",payData);
@@ -279,12 +291,12 @@ export default class BasicProfile extends Component {
         <Card title="支付信息" style={{marginBottom: 24}} bordered={false}>
           <DescriptionList>
             <Description term="支付方式">{allPayRecord.length > 0 && allPayRecord[0].platformName?allPayRecord[0].platformName:"查无数据"}</Description>
-            <Description term="支付账号">{payData&&payData.buyer_logon_id}</Description>
+            <Description term="支付账号">{platForm==="支付宝"?payData&&payData.buyer_logon_id:payData&&payData.openid}</Description>
             <Description
-              term="付款时间">{payData&&payData.gmt_payment}</Description>
-            <Description term="交易号">{payData&&payData.trade_no}</Description>
+              term="付款时间">{platForm==="支付宝"?payData&&payData.gmt_payment:payData&&this.timeFmt(payData.time_end)}</Description>
+            <Description term="交易号">{platForm==="支付宝"?payData&&payData.trade_no:payData&&payData.transaction_id}</Description>
             <Description
-              term="实付金额">{payData&&payData.buyer_pay_amount}</Description>
+              term="实付金额">{platForm==="支付宝"?payData&&payData.buyer_pay_amount:payData&&parseInt(payData.cash_fee)/100}</Description>
           </DescriptionList>
         </Card>
         }
