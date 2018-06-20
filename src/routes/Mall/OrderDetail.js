@@ -282,7 +282,7 @@ export default class BasicProfile extends Component {
             <Description term="支付账号">{payData&&payData.buyer_logon_id}</Description>
             <Description
               term="付款时间">{payData&&payData.gmt_payment}</Description>
-            <Description term="交易号">{allPayRecord.length > 0 && allPayRecord[0].out_trade_no ? allPayRecord[0].out_trade_no : '查无数据'}</Description>
+            <Description term="交易号">{payData&&payData.trade_no}</Description>
             <Description
               term="实付金额">{payData&&payData.buyer_pay_amount}</Description>
           </DescriptionList>
