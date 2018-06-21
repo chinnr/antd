@@ -250,6 +250,7 @@ class StudentDetail extends PureComponent {
           <DescriptionList>
             <Description term="剩余课时券">{virtualGoodsCount.keshi}</Description>
             <Description term="剩余体验券">{virtualGoodsCount.tiyan}</Description>
+            <Description term="剩余可用优惠券">{virtualGoodsCount.youhui}</Description>
           </DescriptionList>
           <CreateForm
             visible={visible}
