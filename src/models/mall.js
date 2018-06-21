@@ -124,9 +124,9 @@ export default {
       }
     },
 
-    *getUserVirtualGoods({ payload: uid }, { call, put }) {
-      console.log("modal getUserVirtualGoods: ", uid);
-      const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid })
+    *getUserVirtualGoods({ payload:{uid,cardType} }, { call, put }) {
+      console.log("modal getUserVirtualGoods: ", uid,cardType);
+      const { data, errors } = yield call(mallService.virtualGoods, { limit: 10 }, { uid,cardType })
       if(errors) {
         throw new Error(errors[0].message);
       }
@@ -337,7 +337,10 @@ export default {
             });
             dispatch({
               type: 'getUserVirtualGoods',
-              payload: uid
+              payload: {
+                uid,
+                cardType:'BLD-05'
+              }
             });
             dispatch({
               type: 'getStudentDetail',
