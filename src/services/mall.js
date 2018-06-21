@@ -381,6 +381,7 @@ export function getVirtualGoodsCount(uid) {
         getVirtualGoodsCount(uid: $uid){
           keshi
           tiyan
+          youhui
         }
       }
     }
