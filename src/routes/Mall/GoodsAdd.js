@@ -66,6 +66,7 @@ class GoodsAdd extends Component {
 
   goodsJson = [];
   goodsJsonSkuPure = [];
+  goodsJsonGid = [];
   giftList = [];
   Package = false;
 
@@ -333,10 +334,9 @@ class GoodsAdd extends Component {
     if(type === "goodsListVisible") {
       const selectValues = this.props.form.getFieldValue("goodsJson");
       selectValues.forEach((item)=>{
-        const gid = item.split('|')[2];
-        const skuPure =  item.split('|')[0];
-        if(this.goodsJsonSkuPure.indexOf(skuPure)===-1){
-          this.goodsJsonSkuPure.push(skuPure);
+        const gid = item.split('|')[0];
+        if(this.goodsJsonGid.indexOf(gid)===-1){
+          this.goodsJsonGid.push(gid);
           this.goodsJson.push({
             gid,
             count:0
@@ -377,10 +377,10 @@ class GoodsAdd extends Component {
   /**
    * 赠品数量修改
    * @param v
-   * @param skuPure
+   * @param gid
    */
-  addGiftCount = (v, skuPure) => {
-    const idx = this.goodsJsonSkuPure.indexOf(skuPure);
+  addGiftCount = (v, gid) => {
+    const idx = this.goodsJsonGid.indexOf(gid);
     this.goodsJson[idx].count = v;
   };
 
@@ -408,9 +408,9 @@ class GoodsAdd extends Component {
    * 删除赠品
    * */
   deleteGift = (item) => {
-    const idx = this.goodsJsonSkuPure.indexOf(item.split('|')[0]);
+    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
     this.goodsJson.splice(idx,1);
-    this.goodsJsonSkuPure.splice(idx,1);
+    this.goodsJsonGid.splice(idx,1);
     this.giftList.splice(idx,1);
 
 
