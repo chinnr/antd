@@ -569,7 +569,7 @@ export default class GoodsEdit extends PureComponent {
 
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
-      const fileName = JSON.parse(xhr.responseText).filename;
+      const fileName = JSON.parse(xhr.responseText).data.path;
       const imgUrl = rootUrl+originPath + fileName;
       param.success({ url: imgUrl });
     };
@@ -590,7 +590,7 @@ export default class GoodsEdit extends PureComponent {
     xhr.addEventListener('abort', errorFn, false);
 
     fd.append('file', param.file);
-    xhr.open('POST', rootUrl+'/api/young/post/upload/image', true);
+    xhr.open('POST', rootUrl+'/api/young/filepool/upload-image', true);
     xhr.send(fd);
   };
 
