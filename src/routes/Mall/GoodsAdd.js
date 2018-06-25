@@ -541,7 +541,7 @@ class GoodsAdd extends Component {
                   {mall.goodsList.map((item, i) => {
                     return (
                       <Col span={12} key={i}>
-                        <Checkbox value={item.skuPure+"|"+item.name+"|"+item.gid}>{item.name}</Checkbox>
+                        <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
                       </Col>
                     )
                   })}
