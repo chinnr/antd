@@ -24,7 +24,8 @@ const colorMap = {
 export default class BasicProfile extends Component {
   payId = '';
   state = {
-    virtual:''
+    virtual:'',
+    havePayId:false,
   };
   componentDidMount() {
     const reg = /\/order-detail\/(.+)/;
@@ -62,6 +63,9 @@ export default class BasicProfile extends Component {
       // console.log("orderDetail:     ",res);
       if(res[0].payId){
         this.getAllPayRecord(0, {id:res[0].payId});
+        this.setState({
+          havePayId:true
+        });
       }
       let id = res[0].cardId;
       console.log("cardId:     ",id);
@@ -159,7 +163,7 @@ export default class BasicProfile extends Component {
 
   render() {
     const { mall: { orderList, orderListMeta, allPayRecord, allPayRecordMeta } } = this.props;
-    const {virtual} = this.state;
+    const {virtual,havePayId} = this.state;
     const breadcrumbList = [
       {
         title: '首页',
@@ -289,7 +293,8 @@ export default class BasicProfile extends Component {
         </Card>
         {orderList.length > 0 && orderList[0].status !== 0 &&
         <Card title="支付信息" style={{marginBottom: 24}} bordered={false}>
-          <DescriptionList>
+          {havePayId?(
+            <DescriptionList>
             <Description term="支付方式">{allPayRecord.length > 0 && allPayRecord[0].platformName?allPayRecord[0].platformName:"查无数据"}</Description>
             <Description term="支付账号">{platForm==="支付宝"?payData&&payData.buyer_logon_id:payData&&payData.openid}</Description>
             <Description
@@ -297,7 +302,10 @@ export default class BasicProfile extends Component {
             <Description term="交易号">{platForm==="支付宝"?payData&&payData.trade_no:payData&&payData.transaction_id}</Description>
             <Description
               term="实付金额">{platForm==="支付宝"?payData&&payData.buyer_pay_amount:payData&&parseInt(payData.cash_fee)/100}</Description>
-          </DescriptionList>
+          </DescriptionList>):(
+            <p>暂无支付信息</p>
+          )}
+
         </Card>
         }
         {orderList.length>0&&orderList[0].status === 1&&
