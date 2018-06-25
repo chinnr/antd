@@ -46,7 +46,7 @@ export default class NewBadge extends PureComponent {
     xhr.open('POST', uploadPath);
     xhr.send(formData);
     xhr.addEventListener('load', () => {
-      let _src = JSON.parse(xhr.responseText).filename;
+      let _src = JSON.parse(xhr.responseText).data.path;
       this.setState({ [type]: _src }, () =>
         console.log(type, this.state[type])
       );
