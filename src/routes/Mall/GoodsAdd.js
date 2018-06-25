@@ -807,7 +807,7 @@ class GoodsAdd extends Component {
                         </Col>
                         <Col span={14}>
                           <InputNumber min={0}
-                                       defaultValue={0} max={10000000}
+                                       defaultValue={item.split('|')[2]?item.split('|')[2]:0}
                                        style={{ width: '100%' }}
                                        onChange={(v) => this.addGiftCount(v, item.split("|")[0])}/>
                         </Col>
