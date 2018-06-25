@@ -15,7 +15,7 @@ import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import {successNotification} from "../../../utils/utils";
-import {rootUrl} from "../../../utils/constant";
+import {rootUrl,uploadPath} from "../../../utils/constant";
 import CourseBrief from './CourseBrief';
 import {routerRedux} from "dva/router";
 
@@ -333,7 +333,7 @@ export default class CourseForm extends PureComponent {
                 uploadNum={1}
                 onUpload={filename => this.uploadImage(filename, "cover")}
                 ondelete={filename => this.deleteUpload(filename, "cover")}
-                uploadPath={rootUrl+"/api/young/post/upload/image"}
+                uploadPath={uploadPath}
               />
             )}
           </FormItem>
@@ -468,7 +468,7 @@ export default class CourseForm extends PureComponent {
                 uploadRef={"gallery"}
                 onUpload={filename => this.uploadImage(filename, "gallery")}
                 ondelete={filename => this.deleteUpload(filename, "gallery")}
-                uploadPath={rootUrl+"/api/young/post/upload/image"}
+                uploadPath={uploadPath}
               />
             )}
           </FormItem>

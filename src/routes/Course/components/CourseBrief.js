@@ -5,7 +5,7 @@ import moment from 'moment';
 import CourseIntroduce from './CourseIntroduce';
 import ImageUpload from '../../../components/ImageUpload/ImageUpload';
 import { successNotification } from '../../../utils/utils';
-import { rootUrl } from '../../../utils/constant';
+import { rootUrl,uploadPath } from '../../../utils/constant';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -34,7 +34,7 @@ export default class CourseBrief extends PureComponent {
             uploadNum={10}
             onUpload={filename => uploadImage(filename)}
             ondelete={filename => ondelete(filename)}
-            uploadPath={rootUrl + '/api/young/post/upload/image'}
+            uploadPath={uploadPath}
           />
         </div>
         <TextArea
