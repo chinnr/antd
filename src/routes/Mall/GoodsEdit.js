@@ -302,14 +302,14 @@ export default class GoodsEdit extends PureComponent {
     let fileList = info.fileList;
     fileList = fileList.map(file => {
       if (file.response) {
-        file.url = file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
-
+        file.url = file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
     });
+
     console.log("fileList:         ",fileList);
     this.setState({ imgs: fileList});
   };
@@ -319,9 +319,9 @@ export default class GoodsEdit extends PureComponent {
     let listImg = info.fileList;
     listImg = listImg.map(file => {
       if (file.response) {
-        file.url = file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
