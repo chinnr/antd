@@ -171,9 +171,9 @@ class GoodsAdd extends Component {
     let fileList = info.fileList;
     fileList = fileList.map(file => {
       if (file.response) {
-        file.url = file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -190,9 +190,9 @@ class GoodsAdd extends Component {
     let listImg = info.fileList;
     listImg = listImg.map(file => {
       if (file.response) {
-        file.url = file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -234,7 +234,7 @@ class GoodsAdd extends Component {
     xhr.addEventListener('abort', errorFn, false);
 
     fd.append('file', param.file);
-    xhr.open('POST', rootUrl+'/api/young/post/upload/image', true);
+    xhr.open('POST', rootUrl+'/api/young/filepool/upload-image', true);
     xhr.send(fd);
   };
 
@@ -458,14 +458,14 @@ class GoodsAdd extends Component {
 
     const propsObj = {
       name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      action: rootUrl+'/api/young/filepool/upload-image',
       onChange: this.handleChange,
       multiple: true
     };
 
     const propsObj2 = {
       name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      action: rootUrl+'/api/young/filepool/upload-image',
       onChange: this.listImghandleChange,
       multiple: true
     };

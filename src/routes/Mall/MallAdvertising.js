@@ -117,7 +117,7 @@ class MallAdvertising extends PureComponent {
           <div style={{ display: 'inline-block' }}>
             <Upload
               name="file"
-              action={rootUrl + '/api/young/post/upload/image'}
+              action={rootUrl + '/api/young/filepool/upload-image'}
               multiple={false}
               onChange={info => this.uploadGoodsImg(info, record)}
             >
@@ -168,7 +168,7 @@ class MallAdvertising extends PureComponent {
       console.log('图片gid: ', record.gid);
       const form = {
         gid: record.gid,
-        img: info.file.response.filename,
+        img: info.file.response.data.path,
         sku: record.sku
       };
       console.log('form >>> ', form);

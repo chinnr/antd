@@ -334,7 +334,7 @@ export default class GoodsTypeAdd extends Component {
     };
     const propsObj = {
       name: 'file',
-      action: rootUrl + '/api/young/post/upload/image',
+      action: rootUrl + '/api/young/filepool/upload-image',
       multiple: false
     };
     const uploadButton = (
