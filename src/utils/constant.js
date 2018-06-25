@@ -6,7 +6,7 @@ export const ssdUrl = "/download/young/mall/";
 export const cpuUrl = "/download/young/young/";
 export const thumbnailPath = "/api/young/post/download/image/thumbnail/";
 export const originPath = "/api/young/post/download/image/origin/";
-export const uploadPath = "https://api.yichui.net/api/young/post/upload/image";
+export const uploadPath = "https://api.yichui.net/api/young/filepool/upload-image";
 
 // 在线服务器
 // export const gqlNetworkInterface = "https://api.bldsnapp.com/api/young/graphql";
