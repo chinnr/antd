@@ -70,6 +70,7 @@ export default class GoodsEdit extends PureComponent {
     this.goodsJson = [];//submit的赠品
     this.giftList = [];//列表渲染的的赠品
     this.goodsJsonSkuPure = [];//去重的赠品skuPure
+    this.goodsJsonGid = [];//去重的赠品gid
     this.skuPrefix = '';
     this.gid='';
   }
@@ -119,30 +120,29 @@ export default class GoodsEdit extends PureComponent {
     const _this = this;
 
     /*
-    * 去重后的skuPure
+    * 去重后的gid
     * */
     values.goodsJson.forEach((item)=>{
-      _this.goodsJsonSkuPure.push(item.skuPure);
+      _this.goodsJsonGid.push(item.gid);
     });
 
-    let aa = Array.from(new Set(this.goodsJsonSkuPure));
-    this.goodsJsonSkuPure = aa;
-    console.log("goodsJsonSkuPure=================>>>>>>>>>>>>>>>",this.goodsJsonSkuPure);
+    let aa = Array.from(new Set(this.goodsJsonGid));
+    this.goodsJsonGid = aa;
+    console.log("goodsJsonGid=================>>>>>>>>>>>>>>>",this.goodsJsonGid);
 
 
     /*
-    * 通过去重的skuPure把赠品中的重复赠品合并及把数量相加
+    * 通过去重的gid把赠品中的重复赠品合并及把数量相加
     * */
     let newGoodsList = [];
-    this.goodsJsonSkuPure.forEach((skuPure)=>{
-      let newJson = {skuPure,count:0,name:'',gid:''};
-        values.goodsJson.forEach(item=>{
-          if(item.skuPure==newJson.skuPure){
-            newJson.count+=item.count;
-            newJson.name = item.name;
-            newJson.gid = item.gid;
-          }
-        });
+    this.goodsJsonGid.forEach((gid)=>{
+      let newJson = {gid,count:0,name:''};
+      values.goodsJson.forEach(item=>{
+        if(item.gid==newJson.gid){
+          newJson.count+=item.count;
+          newJson.name = item.name;
+        }
+      });
       newGoodsList.push(newJson);
     });
     console.log("newGoodsList=======================>>>>>>>>>>>>>>>>>>>",newGoodsList);
@@ -153,7 +153,7 @@ export default class GoodsEdit extends PureComponent {
     newGoodsList.forEach((item)=>{
       /*
       * giftList做组件的列表渲染，需要name*/
-      let temp = item.skuPure +'|'+item.name+'|'+item.gid+'|'+item.count;
+      let temp = item.gid +'|'+item.name+'|'+item.count;
       _this.giftList.push(temp);
 
       /*
@@ -431,7 +431,7 @@ export default class GoodsEdit extends PureComponent {
         }).then(res=>{
           successNotification('编辑成功',()=>{
             _this.giftList = [];
-            _this.goodsJsonSkuPure = [];
+            _this.goodsJsonGid = [];
             _this.goodsJson = [];
             _this.getGoodsParams();
             return false;
@@ -454,12 +454,11 @@ export default class GoodsEdit extends PureComponent {
   handleOk = (type) => {
     if(type === "goodsListVisible") {
       const selectValues = this.props.form.getFieldValue("goodsJson");
-      console.log("选择的赠品================>>>>>>>>>>>>>>>>>",selectValues);
+      console.log("选择的赠品================>>>>>>>>>>>>>>>>>",this.props.form.getFieldValue("goodsJson"));
       selectValues.forEach((item)=>{
-        const gid = item.split('|')[2];
-        const skuPure = item.split('|')[0];
-        if(this.goodsJsonSkuPure.indexOf(skuPure)===-1){
-          this.goodsJsonSkuPure.push(skuPure);
+        const gid = item.split('|')[0];
+        if(this.goodsJsonGid.indexOf(gid)===-1){
+          this.goodsJsonGid.push(gid);
           this.goodsJson.push({
             gid,
             count:0
@@ -519,7 +518,7 @@ export default class GoodsEdit extends PureComponent {
 
   //修改赠品数量
   addGiftCount = (v, gid) => {
-    const idx = this.goodsJsonSkuPure.indexOf(gid);
+    const idx = this.goodsJsonGid.indexOf(gid);
     this.goodsJson[idx].count = v;
     console.log('goodsJson:          ',this.goodsJson);
   };
@@ -545,9 +544,9 @@ export default class GoodsEdit extends PureComponent {
 
   //删除赠品
   deleteGift = (item) => {
-    const idx = this.goodsJsonSkuPure.indexOf(item.split('|')[0]);
+    const idx = this.goodsJsonGid.indexOf(item.split('|')[0]);
     this.goodsJson.splice(idx,1);
-    this.goodsJsonSkuPure.splice(idx,1);
+    this.goodsJsonGid.splice(idx,1);
     this.giftList.splice(idx,1);
 
 
@@ -556,7 +555,7 @@ export default class GoodsEdit extends PureComponent {
     });
 
 
-    console.log("this.goodsJsonSkuPure:  ", this.goodsJsonSkuPure);
+    console.log("this.goodsJsonGid:  ", this.goodsJsonGid);
     console.log("this.goodsJson:  ", this.goodsJson);
     console.log("this.giftList:  ", this.giftList);
   };
@@ -736,7 +735,7 @@ export default class GoodsEdit extends PureComponent {
               })(
                 <Upload
                   multiple={true}
-                  action={rootUrl + "/api/young/post/upload/image"}
+                  action={rootUrl + "/api/young/filepool/upload-image"}
                   fileList={imgs}
                   listType="picture-card"
                   onPreview={this.handlePreview}
@@ -756,7 +755,7 @@ export default class GoodsEdit extends PureComponent {
                 ]
               })(
                 <Upload
-                  action={rootUrl + "/api/young/post/upload/image"}
+                  action={rootUrl + "/api/young/filepool/upload-image"}
                   fileList={listImg}
                   listType="picture-card"
                   onPreview={this.handlePreview}
@@ -915,7 +914,7 @@ export default class GoodsEdit extends PureComponent {
                           <span>数量: </span>
                         </Col>
                         <Col span={14}>
-                          <InputNumber min={0} defaultValue={item.split('|')[3]?item.split('|')[3]:0} max={10000000} style={{ width: '100%' }}
+                          <InputNumber min={0} defaultValue={item.split('|')[2]?item.split('|')[2]:0} max={10000000} style={{ width: '100%' }}
                                        onChange={(v) => this.addGiftCount(v, item.split('|')[0])}/>
                         </Col>
                         <Col span={2}>
@@ -1020,7 +1019,7 @@ export default class GoodsEdit extends PureComponent {
                 {mall.goodsList.map((item, i) => {
                   return (
                     <Col span={12} key={i}>
-                      <Checkbox value={item.skuPure+"|"+item.name+"|"+item.gid}>{item.name}</Checkbox>
+                      <Checkbox value={item.gid+"|"+item.name}>{item.name}</Checkbox>
                     </Col>
                   )
                 })}
