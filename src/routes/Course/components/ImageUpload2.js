@@ -27,7 +27,7 @@ export default class ImageUpload extends Component {
     const hide = message.loading("正在上传图片......", 0);
 
     xhr.addEventListener("load", () => {
-      const filename = JSON.parse(xhr.responseText).filename;
+      const filename = JSON.parse(xhr.responseText).data.path;
       // console.log("上传成功： ", filename);
       if (this.props.onUpload) {
         this.props.onUpload(filename);

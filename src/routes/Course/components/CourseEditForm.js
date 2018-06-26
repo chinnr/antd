@@ -17,7 +17,7 @@ import moment from "moment";
 import CourseIntroduce from "./CourseIntroduce";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import {successNotification} from "../../../utils/utils";
-import {rootUrl, thumbnailPath} from "../../../utils/constant";
+import {rootUrl, thumbnailPath,uploadPath} from "../../../utils/constant";
 import {routerRedux} from "dva/router";
 import CourseBriefEdit from './CourseBriefEdit';
 
@@ -48,6 +48,7 @@ export default class CourseForm extends PureComponent {
   isArray = (obj) => {
     return Object.prototype.toString.call(obj)=='[object Array]';
   };
+  //提交
   handleCreate = (e) => {
     const { briefArray } = this.props.course;
     e.preventDefault();
@@ -58,7 +59,6 @@ export default class CourseForm extends PureComponent {
       if (!err) {
         console.log('Received values of form: ', values);
         // console.log("gallery is array ? ",_this.isArray(values.gallery));
-
         if(!_this.isArray(values.gallery)) {
           console.log("gallery is not array!");
           let _gallery = [];
@@ -69,7 +69,7 @@ export default class CourseForm extends PureComponent {
         }
         if(typeof values.cover === 'object') {
           console.log("重新上传了图片 ",typeof values.cover);
-          values.cover = values.cover.file.response.filename;
+          values.cover = values.cover.file.response.data.path;
         }else {
           console.log("使用旧的图片 ",typeof values.cover);
         }
@@ -141,9 +141,9 @@ export default class CourseForm extends PureComponent {
     let gallery = info.fileList;
     gallery = gallery.map(file => {
       if (file.response) {
-        file.url = rootUrl + thumbnailPath + file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = rootUrl + thumbnailPath + file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -160,9 +160,9 @@ export default class CourseForm extends PureComponent {
     let courseCover = info.fileList;
     courseCover = courseCover.map(file => {
       if (file.response) {
-        file.url = rootUrl + thumbnailPath + file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = rootUrl + thumbnailPath + file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -202,15 +202,17 @@ export default class CourseForm extends PureComponent {
     }];
 
     let _gallery = [];
-    const galleryItem = {};
+
     values.gallery.map(item => {
+      const galleryItem = {};
       galleryItem['uid'] = item;
       galleryItem['name'] = item;
       galleryItem['status'] = 'done';
       galleryItem['url'] = rootUrl + thumbnailPath + item;
       galleryItem['thumbUrl'] = rootUrl + thumbnailPath + item;
+      _gallery.push(galleryItem);
     });
-    _gallery.push(galleryItem);
+
     console.log("_gallery==>", _gallery);
     this.setState({
       courseCover: _courseCover,
@@ -371,13 +373,13 @@ export default class CourseForm extends PureComponent {
     );
     const propsObj = {
       name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      action: uploadPath,
       onChange: this.handleChange,
       multiple: true
     };
     const propsObjCover = {
       name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      action: uploadPath,
       onChange: this.handleUploadIcon,
       multiple: false
     };
