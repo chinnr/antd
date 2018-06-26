@@ -20,7 +20,7 @@ import styles from "./team.less";
 import options from "../../utils/cascader-address-options";
 import { routerRedux } from "dva/router";
 import { successNotification } from "../../utils/utils";
-import { rootUrl, thumbnailPath } from "../../utils/constant";
+import { rootUrl, thumbnailPath,uploadPath } from "../../utils/constant";
 
 const pluginProps = {
   enableHighAccuracy: true,
@@ -152,10 +152,10 @@ export default class UpdateTeamInfo extends PureComponent {
           console.log("表单 values ", values);
           let _mien = [];
           values.mien.fileList.map(item => {
-            _mien.push(item.response.filename);
+            _mien.push(item.response.data.path);
           });
           const _description = {
-            icon: values.icon.file.response.filename,
+            icon: values.icon.file.response.data.path,
             mien: _mien,
             brief: values.brief
           };
@@ -199,7 +199,8 @@ export default class UpdateTeamInfo extends PureComponent {
 
             form.validateFieldsAndScroll((err, values) => {
               if (!err) {
-                // console.log("values: ", values);
+                console.log("values: ", values);
+
                 let _mien = [],
                   _icon;
                 const valueMien = values.mien,
@@ -209,13 +210,13 @@ export default class UpdateTeamInfo extends PureComponent {
                 if(valueMien.fileList){
                   valueMien.fileList.map(item => {
                     _mien.push(
-                      item.response ? item.response.filename : item.name
+                      item.response ? item.response.data.path : item.name
                     );
                   })
                 }else{//没有fileList这一级
                   valueMien.map(item => {
                     _mien.push(
-                      item.name ? item.name : item.response.filename
+                      item.name ? item.name : item.response.data.path
                     );
                   });
                 }
@@ -223,7 +224,7 @@ export default class UpdateTeamInfo extends PureComponent {
                 //如果提交的icon下有fileList这一级
                 if(valueIcon.fileList){
                   valueIcon.fileList.map(item => {
-                    _icon = item.response ? item.response.filename : item.name;
+                    _icon = item.response ? item.response.data.path : item.name;
                   })
                 }else{//没有fileList这一级
                   valueIcon.map(item => {
@@ -238,6 +239,7 @@ export default class UpdateTeamInfo extends PureComponent {
                   brief: values.brief,
                 };
                 console.log("description",_description);
+                // return;
                 props
                   .dispatch({
                     type: 'team/updateTeam',
@@ -363,9 +365,9 @@ export default class UpdateTeamInfo extends PureComponent {
     let fileList = info.fileList;
     fileList = fileList.map(file => {
       if (file.response) {
-        file.url = rootUrl + thumbnailPath + file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = rootUrl + thumbnailPath + file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -382,9 +384,9 @@ export default class UpdateTeamInfo extends PureComponent {
     let teamIcon = info.fileList;
     teamIcon = teamIcon.map(file => {
       if (file.response) {
-        file.url = rootUrl + thumbnailPath + file.response.filename;
-        file.uid = file.response.filename;
-        file.name = file.response.filename;
+        file.url = rootUrl + thumbnailPath + file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
         file.status = file.response.status;
       }
       return file;
@@ -455,13 +457,13 @@ export default class UpdateTeamInfo extends PureComponent {
 
     const propsObj = {
       name: "file",
-      action: rootUrl + "/api/young/post/upload/image",
+      action: uploadPath,
       onChange: this.handleChange,
       multiple: true
     };
     const propsObjIcon = {
       name: "file",
-      action: rootUrl + "/api/young/post/upload/image",
+      action: uploadPath,
       onChange: this.handleUploadIcon,
       multiple: false
     };

@@ -5,7 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { successNotification } from '../../utils/utils';
 import { routerRedux } from 'dva/router';
 import {message} from "antd/lib/index";
-import {rootUrl,thumbnailPath} from "../../utils/constant";
+import {rootUrl,thumbnailPath,uploadPath} from "../../utils/constant";
 
 const FormItem = Form.Item;
 
@@ -70,8 +70,18 @@ export default class UpdateTeamAccount extends PureComponent {
   }
 
   //更换头像
-  handleChange=(fileList)=>{
-    this.setState({ fileList:fileList.fileList });
+  handleChange=(info)=>{
+    let fileList = info.fileList;
+    fileList = fileList.map(file => {
+      if (file.response) {
+        file.url = rootUrl + thumbnailPath + file.response.data.path;
+        file.uid = file.response.data.path;
+        file.name = file.response.data.path;
+        file.status = file.response.status;
+      }
+      return file;
+    });
+    this.setState({ fileList });
   }
 
   // 提交新建团信息
@@ -82,7 +92,9 @@ export default class UpdateTeamAccount extends PureComponent {
       if (!err) {
         console.log('表单 values ', values);
         let _icon;
-        _icon = values.icon.fileList?values.icon.fileList[0].response.filename:values.icon[0].name;
+        _icon = values.icon.fileList?values.icon.fileList[0].response.data.path:values.icon[0].name;
+
+        console.log("头像》》》》》",_icon);
 
         this.props
           .dispatch({
@@ -222,7 +234,7 @@ export default class UpdateTeamAccount extends PureComponent {
 
     const propsObj = {
       name: 'file',
-      action: rootUrl+'/api/young/post/upload/image',
+      action: uploadPath,
       multiple: false
     };
 
