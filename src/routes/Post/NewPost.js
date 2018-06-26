@@ -13,7 +13,7 @@ import { routerRedux } from "dva/router";
 
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import styles from "./NewPost.less";
-import { thumbnailPath, rootUrl } from "../../utils/constant";
+import { thumbnailPath, rootUrl,uploadPath } from "../../utils/constant";
 // 引入编辑器以及编辑器样式
 import BraftEditor from "braft-editor";
 import "braft-editor/dist/braft.css";
@@ -49,7 +49,7 @@ export default class NewPost extends Component {
 
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
-      const fileName = JSON.parse(xhr.responseText).filename;
+      const fileName = JSON.parse(xhr.responseText).data.path;
       const imgUrl =
         rootUrl+"/api/young/post/download/image/origin/" +
         fileName;
@@ -74,7 +74,7 @@ export default class NewPost extends Component {
     fd.append("file", param.file);
     xhr.open(
       "POST",
-      rootUrl+"/api/young/post/upload/image",
+      uploadPath,
       true
     );
     xhr.send(fd);
@@ -88,10 +88,10 @@ export default class NewPost extends Component {
     formData.append("file", img);
     // console.log('formData ', formData, img)
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", rootUrl+"/api/young/post/upload/image");
+    xhr.open("POST", uploadPath);
     xhr.send(formData);
     xhr.addEventListener("load", () => {
-      let _src = JSON.parse(xhr.responseText).filename;
+      let _src = JSON.parse(xhr.responseText).data.path;
       this.srcArr.push(_src);
       this.postGallery = this.srcArr;
       // console.log("图片数组: ", this.srcArr);

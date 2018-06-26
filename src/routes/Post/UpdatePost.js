@@ -17,7 +17,7 @@ import styles from "./NewPost.less";
 import BraftEditor from "braft-editor";
 import "braft-editor/dist/braft.css";
 import { Form } from "antd/lib/index";
-import { rootUrl, thumbnailPath } from "../../utils/constant";
+import { rootUrl, thumbnailPath,uploadPath } from "../../utils/constant";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 let count = 0;
@@ -52,7 +52,7 @@ export default class UpdatePost extends Component {
 
     const successFn = response => {
       // console.log("图片上传成功:", JSON.parse(xhr.responseText));
-      const fileName = JSON.parse(xhr.responseText).filename;
+      const fileName = JSON.parse(xhr.responseText).data.path;
       const imgUrl =
         rootUrl+"/api/young/post/download/image/origin/" +
         fileName;
@@ -77,7 +77,7 @@ export default class UpdatePost extends Component {
     fd.append("file", param.file);
     xhr.open(
       "POST",
-      rootUrl+"/api/young/post/upload/image",
+      uploadPath,
       true
     );
     xhr.send(fd);
@@ -90,10 +90,10 @@ export default class UpdatePost extends Component {
     let formData = new FormData();
     formData.append("file", img);
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", rootUrl+"/api/young/post/upload/image");
+    xhr.open("POST", uploadPath);
     xhr.send(formData);
     xhr.addEventListener("load", () => {
-      let _src = JSON.parse(xhr.responseText).filename;
+      let _src = JSON.parse(xhr.responseText).data.path;
       this.srcArr.push(_src);
       // this.postGallery = this.srcArr;
       // console.log("图片数组: ", this.postGallery);
